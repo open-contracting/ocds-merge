@@ -1,1 +1,1 @@
-from merge import merge, merge_versioned
+from .merge import merge, merge_versioned

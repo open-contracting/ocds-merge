@@ -1,6 +1,6 @@
 from setuptools import setup
 setup(name='ocdsmerge',
-      version='0.2',
+      version='0.3',
       description='OCDS Release Merge Library',
       author='David Raznick',
       author_email='mr.raznick@gmail.com',
