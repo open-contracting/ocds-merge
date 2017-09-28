@@ -1,29 +1,31 @@
 import collections
 
-NOT_FLATTEN_KEYS = ['additionalIdentifiers', 
+NOT_FLATTEN_KEYS = ['additionalIdentifiers',
                     'additionalClassifications',
                     'suppliers',
                     'changes',
                     'tenderers'
-                   ]
+                    ]
+
 
 class IdValue(str):
     '''This is basically a string but is used to differentiate itself when doing an ininstance check.'''
+
     def __init__(self, value):
-         ## Save original value. this is needed if id was originally an integer and you want to keep that iformation.
-         self.original_value = value
-         str.__init__(value)
+        # Save original value. this is needed if id was originally an integer and you want to keep that iformation.
+        self.original_value = value
+        str.__init__(value)
 
 
 def flatten(path, flattened, obj):
     '''Flatten any nested json object into simple key value pairs.
-       The key is the json path represented as a tuple. 
+       The key is the json path represented as a tuple.
        eg. {"a": "I am a", "b": ["A", "list"], "c": [{"ca": "I am ca"}, {"cb": "I am cb"}]}
        will flatten to
        {('a',): 'I am a',
-        ('b', 1): 'list', 
-        ('c', 0, 'ca'): 'I am ca', 
-        ('b', 0): 'A', 
+        ('b', 1): 'list',
+        ('c', 0, 'ca'): 'I am ca',
+        ('b', 0): 'A',
         ('c', 1, 'cb'): 'I am cb'}
     '''
     if isinstance(obj, dict):
@@ -35,7 +37,7 @@ def flatten(path, flattened, obj):
         if not iterable:
             flattened[path] = []
     for key, value in iterable:
-        # We do not flatten these keys as the child lists of 
+        # We do not flatten these keys as the child lists of
         # these keys will not be merged, be totally replaced
         # and versioned as a whole
         if isinstance(value, (dict, list)) and key not in NOT_FLATTEN_KEYS:
@@ -44,6 +46,7 @@ def flatten(path, flattened, obj):
             flattened[path + (key,)] = value
     return flattened
 
+
 def unflatten(flattened):
     '''Unflatten flattened object back into nested form.'''
     unflattened = {}
@@ -51,7 +54,7 @@ def unflatten(flattened):
         current_pos = unflattened
         for num, item in enumerate(flat_key):
             if isinstance(item, IdValue):
-                if len(flat_key) - 1 == num: #when this is an array of string or ints
+                if len(flat_key) - 1 == num:  # when this is an array of string or ints
                     current_pos.append(flattened[flat_key])
                 else:
                     for obj in current_pos:
@@ -81,7 +84,6 @@ def unflatten(flattened):
     return unflattened
 
 
-
 def process_flattened(flattened):
     ''' Replace numbers in json path (representing position in arrays)
         with special id object. This is to make detecting what is an
@@ -93,7 +95,7 @@ def process_flattened(flattened):
         new_key = []
         for num, item in enumerate(key):
             if isinstance(item, int):
-                id_value = flattened.get(tuple(key[:num+1]) + ('id',))
+                id_value = flattened.get(tuple(key[:num + 1]) + ('id',))
                 if id_value is None:
                     id_value = item
                 new_key.append(IdValue(id_value))
@@ -104,7 +106,7 @@ def process_flattened(flattened):
 
 
 def merge(releases):
-    ''' Takes a list of releases and merge them making a 
+    ''' Takes a list of releases and merge them making a
     compiledRelease suitible for an OCDS Record '''
     merged = collections.OrderedDict({("tag",): ['compiled']})
     for release in sorted(releases, key=lambda rel: rel["date"]):
@@ -116,15 +118,16 @@ def merge(releases):
         processed = process_flattened(flat)
         # In flattening and adding the ids to the json path
         # we make sure each json path is going to same as long as
-        # all the ids match. Position in the array is not relevent 
-        # (however it will keep this order anyway due to having an ordered dict). 
+        # all the ids match. Position in the array is not relevent
+        # (however it will keep this order anyway due to having an ordered dict).
         # This makes the actual merging come down to
         # just this statement.
         merged.update(processed)
     return unflatten(merged)
 
+
 def merge_versioned(releases):
-    ''' Takes a list of releases and merge them making a 
+    ''' Takes a list of releases and merge them making a
     versionedRelease suitible for an OCDS Record '''
     merged = collections.OrderedDict()
     for release in sorted(releases, key=lambda rel: rel["date"]):
@@ -156,5 +159,3 @@ def merge_versioned(releases):
             merged[key].append(new_value)
 
     return unflatten(merged)
-
-

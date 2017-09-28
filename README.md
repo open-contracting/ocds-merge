@@ -1,35 +1,41 @@
-Open Contracting Data Standard Release Merge Library
-==============================================
+# Open Contracting Data Standard Release Merge Library
 
 This library provides functions to merge a list of OCDS Releases into either a compiledRelease or a versionedRelease needed to create an OCDS Record.
 
-Installation
--------------
-```
+## Installation
+
+```shell
 pip install ocdsmerge
 ```
+
 or clone the repository and paste:
-```
+
+```shell
 python setup.py install
 ```
+
 or for development use:
-```
+
+```shell
 python setup.py develop
 ```
+
 This requires setuptools to be installed.
-It has no dependencies outside the stadard library so no pip requirements files are needed. 
+It has no dependencies outside the stadard library so no pip requirements files are needed.
 
 To test run:
-```
+
+```shell
 python -m unittest discover
 ```
 
-Usage
---------
+## Usage
+
 The only to functions are merge and merge_versioned. They both take a list of python dicts representing OCDS releases (what you get if you json.loads a release json).
 
 Here is a simple example.
-```
+
+```python
 import ocdsmerge
 
 releases = [
