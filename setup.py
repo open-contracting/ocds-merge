@@ -8,4 +8,4 @@ setup(name='ocdsmerge',
       packages=['ocdsmerge', 'ocdsmerge.fixtures'],
       include_package_data=True,
       url='https://github.com/open-contracting/ocds-merge'
-)
+      )

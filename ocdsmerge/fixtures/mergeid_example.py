@@ -1,44 +1,44 @@
 releases = [
-{
-    "ocid": "A",
-    "id": "1",
-    "date": "2014-01-01",
-    "tag": ["tender"],
-    "tender": {
-        "items": [
-            {
-                "id": "1",
-                "description": "Item 1",
-                "quantity": 1
-            },
-            {
-                "id": "2",
-                "description": "Item 2",
-                "quantity": 1
-            }
-        ]
+    {
+        "ocid": "A",
+        "id": "1",
+        "date": "2014-01-01",
+        "tag": ["tender"],
+        "tender": {
+            "items": [
+                {
+                    "id": "1",
+                    "description": "Item 1",
+                    "quantity": 1
+                },
+                {
+                    "id": "2",
+                    "description": "Item 2",
+                    "quantity": 1
+                }
+            ]
+        }
+    },
+    {
+        "ocid": "A",
+        "id": "2",
+        "date": "2014-01-02",
+        "tag": ["tender"],
+        "tender": {
+            "items": [
+                {
+                    "id": "1",
+                    "description": "Item 1",
+                    "quantity": 2
+                },
+                {
+                    "id": "3",
+                    "description": "Item 3",
+                    "quantity": 1
+                }
+            ]
+        }
     }
-},
-{
-    "ocid": "A",
-    "id": "2",
-    "date": "2014-01-02",
-    "tag": ["tender"],
-    "tender": {
-        "items": [
-            {
-                "id": "1",
-                "description": "Item 1",
-                "quantity": 2
-            },
-            {
-                "id": "3",
-                "description": "Item 3",
-                "quantity": 1
-            }
-        ]
-    }
-}
 ]
 
 compiledRelease = {
@@ -137,4 +137,3 @@ versionedRelease = {
         ]
     }
 }
-
