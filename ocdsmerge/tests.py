@@ -1,5 +1,5 @@
 import unittest
-import ocdsmerge.merge as merge
+from ocdsmerge.merge import merge, merge_versioned
 import ocdsmerge.fixtures as fixtures
 import os
 
@@ -17,11 +17,11 @@ class TestAllFixtures(unittest.TestCase):
             __import__("ocdsmerge.fixtures." + name)
             fixture = getattr(fixtures, name)
 
-            self.assertEqual(merge.merge(fixture.releases),
+            self.assertEqual(merge(fixture.releases),
                              fixture.compiledRelease,
                              'Test compiled for ' + name)
 
-            self.assertEqual(merge.merge_versioned(fixture.releases),
+            self.assertEqual(merge_versioned(fixture.releases),
                              fixture.versionedRelease,
                              'Test versioned for ' + name)
 
