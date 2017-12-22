@@ -1,11 +1,6 @@
 import collections
-
-NOT_FLATTEN_KEYS = ['additionalIdentifiers',
-                    'additionalClassifications',
-                    'suppliers',
-                    'changes',
-                    'tenderers'
-                    ]
+import requests
+import jsonref
 
 
 class IdValue(str):
@@ -17,7 +12,58 @@ class IdValue(str):
         str.__init__(value)
 
 
-def flatten(path, flattened, obj):
+def get_latest_schema_uri():
+    schema_list_page = requests.get('http://standard.open-contracting.org/schema').text
+
+    parts = schema_list_page.split('href="')
+    all_versions = []
+    for part in parts:
+        start = part[:part.find('"')].strip("/")
+        version_parts = tuple(start.split("__"))
+        if len(version_parts) != 3 or version_parts[-1] == "RC":
+            continue
+        all_versions.append(version_parts)
+    all_versions.sort()
+    latest_version = "__".join(all_versions[-1])
+
+    return 'http://standard.open-contracting.org/schema/' + latest_version + '/release-schema.json'
+
+
+def merge_rule_generate(properties, current_path):
+    for key, value in properties.items():
+        prop_type = value.get('type')
+        if not prop_type:
+            continue
+        new_path = current_path + (key,)
+
+        special_props = []
+        for special_prop in ['omitWhenMerged', 'versionId', 'wholeListMerge']:
+            if special_prop in value:
+                special_props.append(special_prop)
+        if special_props:
+            yield (new_path, special_props)
+
+        if 'object' in prop_type and 'properties' in value:
+            yield from merge_rule_generate(value['properties'], current_path=new_path)
+        if 'array' in prop_type and 'items' in value and 'object' in value['items']['type']:
+            yield from merge_rule_generate(value['items']['properties'], current_path=new_path)
+
+
+def remove_number_path(path):
+    return tuple(item for item in path if not isinstance(item, int))
+
+
+def process_schema(schema):
+    schema = schema or get_latest_schema_uri()
+    if schema.startswith('http'):
+        deref_schema = jsonref.load_uri(schema)
+    else:
+        with open(schema) as f:
+            deref_schema = jsonref.load(f)
+    return dict(merge_rule_generate(deref_schema['properties'], tuple()))
+
+
+def flatten(path, flattened, obj, merge_rules):
     '''Flatten any nested json object into simple key value pairs.
        The key is the json path represented as a tuple.
        eg. {"a": "I am a", "b": ["A", "list"], "c": [{"ca": "I am ca"}, {"cb": "I am cb"}]}
@@ -40,10 +86,14 @@ def flatten(path, flattened, obj):
         # We do not flatten these keys as the child lists of
         # these keys will not be merged, be totally replaced
         # and versioned as a whole
-        if isinstance(value, (dict, list)) and key not in NOT_FLATTEN_KEYS:
-            flatten(path + (key,), flattened, value)
+        new_path = path + (key,)
+
+        if isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):
+            flatten(new_path, flattened, value, merge_rules)
+        elif 'omitWhenMerged' in merge_rules.get(remove_number_path(new_path), []):
+            continue
         else:
-            flattened[path + (key,)] = value
+            flattened[new_path] = value
     return flattened
 
 
@@ -105,15 +155,22 @@ def process_flattened(flattened):
     return processed
 
 
-def merge(releases):
+def merge(releases, schema=None):
     ''' Takes a list of releases and merge them making a
     compiledRelease suitible for an OCDS Record '''
+    merge_rules = process_schema(schema)
     merged = collections.OrderedDict({("tag",): ['compiled']})
     for release in sorted(releases, key=lambda rel: rel["date"]):
         release = release.copy()
         release.pop('tag', None)
 
-        flat = flatten((), {}, release)
+        releaseID = release.pop("id")
+        date = release.pop("date")
+
+        flat = flatten((), {}, release, merge_rules)
+
+        flat[("id",)] = releaseID
+        flat[("date",)] = date
 
         processed = process_flattened(flat)
         # In flattening and adding the ids to the json path
@@ -126,9 +183,10 @@ def merge(releases):
     return unflatten(merged)
 
 
-def merge_versioned(releases):
+def merge_versioned(releases, schema=None):
     ''' Takes a list of releases and merge them making a
     versionedRelease suitible for an OCDS Record '''
+    merge_rules = process_schema(schema)
     merged = collections.OrderedDict()
     for release in sorted(releases, key=lambda rel: rel["date"]):
         release = release.copy()
@@ -138,14 +196,11 @@ def merge_versioned(releases):
         releaseID = release.pop("id")
         date = release.pop("date")
         tag = release.pop('tag', None)
-        flat = flatten((), {}, release)
+        flat = flatten((), {}, release, merge_rules)
 
         processed = process_flattened(flat)
 
         for key, value in processed.items():
-            if key[-1] == 'id' and isinstance(key[-2], tuple):
-                merged[key] = value
-                continue
             new_value = {"releaseID": releaseID,
                          "releaseDate": date,
                          "releaseTag": tag,
