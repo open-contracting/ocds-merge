@@ -69,3 +69,19 @@ versionedRelease = ocdsmerge.merge_versioned(releases)
 
 This library takes no responsibly in serializing or unserializing the json nor does it help in constructing the rest of the OCDS record.
 
+### Using different versions of release schema
+
+*Note: This library only works against version 1.1 of OCDS and above*
+
+By default the library will use the latest stable version of OCDS release schema by fetching it online. However you may want use a different schema version, an extended schema or just want the library to work locally.  In order to do this there is a second optional argument to ```merge``` and ```merge_versioned``` which is a string of the schema location. If the string starts with http it will fetch the file from web otherwise it assumes a relative (to your current working directory) path. Full absolute paths can be used too:
+
+```python
+# Fetch from the web
+ocdsmerge.merge(eleases, 'http://standard.open-contracting.org/schema/1__1__1/release-schema.json')
+
+# Use relese-schema.json in current working directory
+ocdsmerge.merge(releases, 'release-schema.json')
+
+# Use relese-schema.json using absolute path
+ocdsmerge.merge(releases, '/some/full/path/release-schema.json')
+```

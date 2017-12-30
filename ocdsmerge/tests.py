@@ -23,6 +23,14 @@ class TestAllFixtures(unittest.TestCase):
                              fixture.compiledRelease,
                              'Test compiled for ' + name)
 
+            self.assertEqual(ocdsmerge.merge(fixture.releases, 'http://standard.open-contracting.org/schema/1__1__1/release-schema.json'),
+                             fixture.compiledRelease,
+                             'Test compiled for ' + name)
+
+            self.assertEqual(ocdsmerge.merge(fixture.releases, os.path.join(current_dir, 'release-schema.json')),
+                             fixture.compiledRelease,
+                             'Test compiled for ' + name)
+
             self.assertEqual(ocdsmerge.merge_versioned(fixture.releases),
                              fixture.versionedRelease,
                              'Test versioned for ' + name)

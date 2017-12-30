@@ -9,4 +9,5 @@ install:
   - curl -s -S $BASEDIR/tests/install.sh | bash -
 script:
   - curl -s -S $BASEDIR/tests/script.sh | bash -
+  - pip install .
   - python -m unittest discover
