@@ -113,7 +113,11 @@ def unflatten(flattened):
                             current_pos = obj
                             break
                     else:
-                        new_pos = {"id": item.original_value}
+                        # Don't introduce "id" fields if the original didn't have any.
+                        if flattened.get(tuple(flat_key[:num + 1]) + ('id',)):
+                            new_pos = {"id": item.original_value}
+                        else:
+                            new_pos = {}
                         current_pos.append(new_pos)
                         current_pos = new_pos
                 continue
