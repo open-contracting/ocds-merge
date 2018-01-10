@@ -9,4 +9,5 @@ install:
   - curl -s -S --retry 3 $BASEDIR/tests/install.sh | bash -
 script:
   - curl -s -S --retry 3 $BASEDIR/tests/script.sh | bash -
+  - pip install .
   - python -m unittest discover
