@@ -141,7 +141,7 @@ def process_flattened(flattened):
 
     # Keep ordered so that arrays will stay in the same order.
     processed = collections.OrderedDict()
-    for key in sorted(flattened.keys(), key=lambda a: (len(a),) + a):
+    for key in flattened:
         new_key = []
         for num, item in enumerate(key):
             if isinstance(item, int):
