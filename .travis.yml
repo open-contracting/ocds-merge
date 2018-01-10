@@ -6,7 +6,7 @@ python:
 env:
   - BASEDIR="https://raw.githubusercontent.com/open-contracting/standard-maintenance-scripts/master"
 install:
-  - curl -s -S $BASEDIR/tests/install.sh | bash -
+  - curl -s -S --retry 3 $BASEDIR/tests/install.sh | bash -
 script:
-  - curl -s -S $BASEDIR/tests/script.sh | bash -
+  - curl -s -S --retry 3 $BASEDIR/tests/script.sh | bash -
   - python -m unittest discover
