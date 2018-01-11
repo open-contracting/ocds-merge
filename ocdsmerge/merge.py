@@ -141,7 +141,7 @@ def process_flattened(flattened):
 
     # Keep ordered so that arrays will stay in the same order.
     processed = collections.OrderedDict()
-    for key in sorted(flattened.keys(), key=lambda a: (len(a),) + a):
+    for key in flattened:
         new_key = []
         for num, item in enumerate(key):
             if isinstance(item, int):
@@ -167,7 +167,7 @@ def merge(releases, schema=None):
         releaseID = release.pop("id")
         date = release.pop("date")
 
-        flat = flatten((), {}, release, merge_rules)
+        flat = flatten((), collections.OrderedDict(), release, merge_rules)
 
         flat[("id",)] = releaseID
         flat[("date",)] = date
@@ -196,7 +196,7 @@ def merge_versioned(releases, schema=None):
         releaseID = release.pop("id")
         date = release.pop("date")
         tag = release.pop('tag', None)
-        flat = flatten((), {}, release, merge_rules)
+        flat = flatten((), collections.OrderedDict(), release, merge_rules)
 
         processed = process_flattened(flat)
 
