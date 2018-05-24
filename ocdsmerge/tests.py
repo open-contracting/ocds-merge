@@ -23,7 +23,7 @@ class TestAllFixtures(unittest.TestCase):
                              fixture.compiledRelease,
                              'Test compiled for ' + name)
 
-            self.assertEqual(ocdsmerge.merge(fixture.releases, 'http://standard.open-contracting.org/schema/1__1__1/release-schema.json'),
+            self.assertEqual(ocdsmerge.merge(fixture.releases, 'http://standard.open-contracting.org/schema/1__1__1/release-schema.json'),  # noqa
                              fixture.compiledRelease,
                              'Test compiled for ' + name)
 
