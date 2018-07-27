@@ -8,7 +8,9 @@ releases = [
             "id": "A",
             "items": [{
                 "id" : "item1",
-                "unit" : {"id": "unit_id"}
+                "unit" : {"id": "EA",
+                         "scheme":"UNCEFACT",
+                         "name":"Each"}
             }]
         }
     },
@@ -21,7 +23,9 @@ releases = [
             "id": "A",
             "items": [{
                 "id" : "item1",
-                "unit" : {"id": "unit_id_2"}
+                "unit" : {"id": "TNE",
+                         "scheme":"UNCEFACT"
+                         }
             }]
         }
     }
@@ -36,27 +40,56 @@ compiledRelease = {
         "id": "A",
         "items": [{
             "id" : "item1",
-            "unit" : {"id": "unit_id_2"}
+            "unit" : {"id": "TNE",
+                      "scheme":"UNCEFACT"
+                     }
         }]
     }
 }
 
 versionedRelease = {
     'ocid': 'A',
-    'tender': {'id': [{'releaseDate': '2014-01-01',
-                    'releaseID': '1',
-                    'releaseTag': ['tender'],
-                    'value': 'A'}],
-               'items': [{'id': 'item1',
-                          'unit': {'id': [{'releaseDate': '2014-01-01',
-                                          'releaseID': '1',
-                                          'releaseTag': ['tender'],
-                                          'value': 'unit_id'},
-                                          {'releaseDate': '2014-01-02',
-                                          'releaseID': '2',
-                                          'releaseTag': ['tender'],
-                                          'value': 'unit_id_2'}]}}
-                     ]
-              }
+    'tender': {
+          'id': [
+            {
+              'releaseDate': '2014-01-11T00:00:00Z',
+              'releaseID': '1',
+              'releaseTag': [
+                'tender'
+              ],
+              'value': 'A'
+            }
+          ],
+          'items': [
+            {
+              'id': 'item1',
+              'unit': [
+                {
+                  'releaseDate': '2014-01-01T00:00:00Z',
+                  'releaseID': '1',
+                  'releaseTag': [
+                    'tender'
+                  ],
+                  'value': {
+                    'id': 'EA',
+                    'scheme': 'UNCEFACT',
+                    'name': 'Each'
+                  }
+                },
+                {
+                  'releaseDate': '2014-01-02T00:00:00Z',
+                  'releaseID': '2',
+                  'releaseTag': [
+                    'tender'
+                  ],
+                  'value': {
+                    'id': 'TNE',
+                    'scheme': 'UNCEFACT'
+                  }
+                }
+              ]
+            }
+          ]
+        }
 }
 
