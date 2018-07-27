@@ -88,7 +88,9 @@ def flatten(path, flattened, obj, merge_rules):
         # and versioned as a whole
         new_path = path + (key,)
 
-        if isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):  # noqa
+        if isinstance(value, list) and value and not isinstance(value[0], dict):
+            flattened[new_path] = value
+        elif isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):  # noqa
             flatten(new_path, flattened, value, merge_rules)
         elif 'omitWhenMerged' in merge_rules.get(remove_number_path(new_path), []):
             continue
