@@ -47,11 +47,11 @@ versionedRelease = {
                           'releaseTag': ['award'],
                           'value': 'new name'}],
                 'roles': [{'releaseDate': '2014-01-01',
-                          'releaseID': '1',
-                          'releaseTag': ['award'],
-                          'value': ['buyer']},
-                         {'releaseDate': '2014-01-02',
-                          'releaseID': '1',
-                          'releaseTag': ['award'],
-                          'value': ['tenderer']}]}]
+                           'releaseID': '1',
+                           'releaseTag': ['award'],
+                           'value': ['buyer']},
+                          {'releaseDate': '2014-01-02',
+                           'releaseID': '1',
+                           'releaseTag': ['award'],
+                           'value': ['tenderer']}]}]
 }

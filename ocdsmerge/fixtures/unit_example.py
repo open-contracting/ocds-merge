@@ -7,8 +7,8 @@ releases = [
         "tender": {
             "id": "A",
             "items": [{
-                "id" : "item1",
-                "unit" : {"id": "unit_id"}
+                "id": "item1",
+                "unit": {"id": "unit_id"}
             }]
         }
     },
@@ -20,8 +20,8 @@ releases = [
         "tender": {
             "id": "A",
             "items": [{
-                "id" : "item1",
-                "unit" : {"id": "unit_id_2"}
+                "id": "item1",
+                "unit": {"id": "unit_id_2"}
             }]
         }
     }
@@ -35,8 +35,8 @@ compiledRelease = {
     "tender": {
         "id": "A",
         "items": [{
-            "id" : "item1",
-            "unit" : {"id": "unit_id_2"}
+            "id": "item1",
+            "unit": {"id": "unit_id_2"}
         }]
     }
 }
@@ -44,19 +44,18 @@ compiledRelease = {
 versionedRelease = {
     'ocid': 'A',
     'tender': {'id': [{'releaseDate': '2014-01-01',
-                    'releaseID': '1',
-                    'releaseTag': ['tender'],
-                    'value': 'A'}],
+                       'releaseID': '1',
+                       'releaseTag': ['tender'],
+                       'value': 'A'}],
                'items': [{'id': 'item1',
                           'unit': {'id': [{'releaseDate': '2014-01-01',
-                                          'releaseID': '1',
-                                          'releaseTag': ['tender'],
-                                          'value': 'unit_id'},
+                                           'releaseID': '1',
+                                           'releaseTag': ['tender'],
+                                           'value': 'unit_id'},
                                           {'releaseDate': '2014-01-02',
-                                          'releaseID': '2',
-                                          'releaseTag': ['tender'],
-                                          'value': 'unit_id_2'}]}}
-                     ]
-              }
+                                           'releaseID': '2',
+                                           'releaseTag': ['tender'],
+                                           'value': 'unit_id_2'}]}}
+                         ]
+               }
 }
-
