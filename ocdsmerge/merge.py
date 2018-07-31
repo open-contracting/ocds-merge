@@ -84,8 +84,9 @@ def flatten(path, flattened, obj, merge_rules):
             flattened[path] = []
     for key, value in iterable:
         new_path = path + (key,)
-        # Treat any non lists of objects (such as lists of ints, lists, strings)
-        # as whole entities so that we merge them as whole.
+
+        # Unless it is a list of objects, the list should be treated and merged as a whole entity. Such lists include
+        # lists of: strings, ints, floats, and lists (which occur, for example, in GeoJSON fields).
         if isinstance(value, list) and value and not isinstance(value[0], dict):
             flattened[new_path] = value
         elif isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):  # noqa
