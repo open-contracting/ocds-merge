@@ -36,7 +36,7 @@ To test run:
 Usage
 -----
 
-The only to functions are merge and merge_versioned. They both take a
+The only two functions are merge and merge_versioned. They both take a
 list of python dicts representing OCDS releases (what you get if you
 json.loads a release json).
 
