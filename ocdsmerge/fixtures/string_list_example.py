@@ -7,7 +7,7 @@ releases = [
         "parties": [{
           "id": "consequat reprehenderit",
           "name": "sit Lorem irure proident",
-          "roles": ["buyer"]
+          "roles": ["buyer", "supplier"]
         }],
     },
     {
@@ -49,7 +49,7 @@ versionedRelease = {
                 'roles': [{'releaseDate': '2014-01-01',
                            'releaseID': '1',
                            'releaseTag': ['award'],
-                           'value': ['buyer']},
+                           'value': ["buyer", "supplier"]},
                           {'releaseDate': '2014-01-02',
                            'releaseID': '1',
                            'releaseTag': ['award'],
