@@ -83,12 +83,13 @@ def flatten(path, flattened, obj, merge_rules):
         if not iterable:
             flattened[path] = []
     for key, value in iterable:
-        # We do not flatten these keys as the child lists of
-        # these keys will not be merged, be totally replaced
-        # and versioned as a whole
         new_path = path + (key,)
 
-        if isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):  # noqa
+        # Unless it is a list of objects, the list should be treated and merged as a whole entity. Such lists include
+        # lists of: strings, ints, floats, and lists (which occur, for example, in GeoJSON fields).
+        if isinstance(value, list) and value and not isinstance(value[0], dict):
+            flattened[new_path] = value
+        elif isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):  # noqa
             flatten(new_path, flattened, value, merge_rules)
         elif 'omitWhenMerged' in merge_rules.get(remove_number_path(new_path), []):
             continue
