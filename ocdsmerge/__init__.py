@@ -1,1 +1,2 @@
-from .merge import merge, merge_versioned  # noqa
+from .merge import merge, merge_versioned,\
+    process_schema  # noqa
