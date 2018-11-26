@@ -53,7 +53,7 @@ def remove_number_path(path):
     return tuple(item for item in path if not isinstance(item, int))
 
 
-def process_schema(schema):
+def get_merge_rules(schema):
     schema = schema or get_latest_schema_uri()
     if schema.startswith('http'):
         deref_schema = jsonref.load_uri(schema)
@@ -156,10 +156,11 @@ def process_flattened(flattened):
     return processed
 
 
-def merge(releases, schema=None):
+def merge(releases, schema=None, merge_rules=None):
     ''' Takes a list of releases and merge them making a
     compiledRelease suitible for an OCDS Record '''
-    merge_rules = process_schema(schema)
+    if not merge_rules:
+        merge_rules = get_merge_rules(schema)
     merged = collections.OrderedDict({("tag",): ['compiled']})
     for release in sorted(releases, key=lambda rel: rel["date"]):
         release = release.copy()
@@ -184,10 +185,11 @@ def merge(releases, schema=None):
     return unflatten(merged)
 
 
-def merge_versioned(releases, schema=None):
+def merge_versioned(releases, schema=None, merge_rules=None):
     ''' Takes a list of releases and merge them making a
     versionedRelease suitible for an OCDS Record '''
-    merge_rules = process_schema(schema)
+    if not merge_rules:
+        merge_rules = get_merge_rules(schema)
     merged = collections.OrderedDict()
     for release in sorted(releases, key=lambda rel: rel["date"]):
         release = release.copy()
