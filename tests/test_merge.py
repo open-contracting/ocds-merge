@@ -3,7 +3,6 @@ import os
 from glob import glob
 
 import ocdsmerge
-from tests import fixtures
 
 
 def test_all():
