@@ -7,6 +7,10 @@
 * Allow specifying cached or customized merge rules.
 * Allow specifying a custom schema as parsed JSON.
 
+### Fixed
+
+* If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
+
 ## 0.4 (2018-01-04)
 
 * Use the schema to determine the merge rules.

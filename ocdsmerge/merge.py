@@ -40,7 +40,7 @@ def _get_merge_rules(properties, path):
 
         new_path = path + (key,)
 
-        rules = [p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if p in value]
+        rules = [p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if value.get(p)]
         if rules:
             yield (new_path, rules)
 
