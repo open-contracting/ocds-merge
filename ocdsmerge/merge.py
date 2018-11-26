@@ -54,7 +54,9 @@ def _get_merge_rules(properties, path):
 
 def get_merge_rules(schema=None):
     schema = schema or get_latest_release_schema_url()
-    if schema.startswith('http'):
+    if isinstance(schema, dict):
+        deref_schema = jsonref.JsonRef.replace_refs(schema)
+    elif schema.startswith('http'):
         deref_schema = jsonref.load_uri(schema)
     else:
         with open(schema) as f:

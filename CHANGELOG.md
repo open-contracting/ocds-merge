@@ -2,7 +2,10 @@
 
 ## 0.5
 
+### Added
+
 * Allow specifying cached or customized merge rules.
+* Allow specifying a custom schema as parsed JSON.
 
 ## 0.4 (2018-01-04)
 
