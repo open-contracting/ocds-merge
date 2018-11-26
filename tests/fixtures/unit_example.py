@@ -56,6 +56,7 @@ compiledRelease = {
         "id": "item1",
         "unit": {
           "id": "TNE",
+          "name": "Each",
           "scheme": "UNCEFACT"
         }
       }
@@ -68,7 +69,7 @@ versionedRelease = {
   'tender': {
     'id': [
       {
-        'releaseDate': '2014-01-11T00:00:00Z',
+        'releaseDate': '2014-01-01T00:00:00Z',
         'releaseID': '1',
         'releaseTag': [
           'tender'
@@ -79,31 +80,46 @@ versionedRelease = {
     'items': [
       {
         'id': 'item1',
-        'unit': [
-          {
-            'releaseDate': '2014-01-01T00:00:00Z',
-            'releaseID': '1',
-            'releaseTag': [
-              'tender'
-            ],
-            'value': {
-              'id': 'EA',
-              'scheme': 'UNCEFACT',
-              'name': 'Each'
+        'unit': {
+          'id': [
+            {
+              'releaseDate': '2014-01-01T00:00:00Z',
+              'releaseID': '1',
+              'releaseTag': [
+                'tender'
+              ],
+              'value': 'EA'
+            },
+            {
+              'releaseDate': '2014-01-02T00:00:00Z',
+              'releaseID': '2',
+              'releaseTag': [
+                'tender'
+              ],
+              'value': 'TNE'
             }
-          },
-          {
-            'releaseDate': '2014-01-02T00:00:00Z',
-            'releaseID': '2',
-            'releaseTag': [
-              'tender'
-            ],
-            'value': {
-              'id': 'TNE',
-              'scheme': 'UNCEFACT'
+          ],
+          'name': [
+            {
+              'releaseDate': '2014-01-01T00:00:00Z',
+              'releaseID': '1',
+              'releaseTag': [
+                'tender'
+              ],
+              'value': 'Each'
             }
-          }
-        ]
+          ],
+          'scheme': [
+            {
+              'releaseDate': '2014-01-01T00:00:00Z',
+              'releaseID': '1',
+              'releaseTag': [
+                'tender'
+              ],
+              'value': 'UNCEFACT'
+            }
+          ]
+        }
       }
     ]
   }
