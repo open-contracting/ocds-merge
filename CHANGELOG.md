@@ -10,6 +10,7 @@
 ### Fixed
 
 * If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
+* If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
 
 ## 0.4 (2018-01-04)
 

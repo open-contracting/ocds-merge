@@ -1,4 +1,3 @@
-import warnings
 import re
 from collections import OrderedDict
 
@@ -31,9 +30,12 @@ def get_latest_release_schema_url():
     return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(get_latest_version())
 
 
-def _get_merge_rules(properties, path):
+def _get_merge_rules(properties, path=None):
+    if path is None:
+        path = ()
+
     for key, value in properties.items():
-        # All fields with merge rules must have a `type`.
+        # All fields with merge rules are expected to have a `type`.
         prop_type = value.get('type')
         if not prop_type:
             continue
@@ -61,46 +63,65 @@ def get_merge_rules(schema=None):
     else:
         with open(schema) as f:
             deref_schema = jsonref.load(f)
-    return dict(_get_merge_rules(deref_schema['properties'], tuple()))
+    return dict(_get_merge_rules(deref_schema['properties']))
 
 
-def remove_number_path(path):
-    return tuple(item for item in path if not isinstance(item, int))
+def remove_indices_from_path(path):
+    return tuple(part for part in path if not isinstance(part, int))
 
 
-def flatten(path, flattened, obj, merge_rules):
+def flatten(obj, merge_rules=None, path=None, flattened=None):
     """
-    Flatten any nested json object into simple key value pairs.
-    The key is the json path represented as a tuple.
-    eg. {"a": "I am a", "b": ["A", "list"], "c": [{"ca": "I am ca"}, {"cb": "I am cb"}]}
-    will flatten to
-    {('a',): 'I am a',
-     ('b', 1): 'list',
-     ('c', 0, 'ca'): 'I am ca',
-     ('b', 0): 'A',
-     ('c', 1, 'cb'): 'I am cb'}
+    Flatten any nested JSON object into simple key-value pairs. The key is the JSON path as a tuple. For example:
+
+    {
+        "a": "I am a",
+        "b": ["A", "list"],
+        "c": [
+            {"ca": "I am ca"},
+            {"cb": "I am cb"}
+        ]
+    }
+
+    flattens to:
+
+    {
+        ('a',): 'I am a',
+        ('b',): ['A', 'list'],
+        ('c', 0, 'ca'): 'I am ca',
+        ('c', 1, 'cb'): 'I am cb',
+    }
     """
+    if merge_rules is None:
+        merge_rules = {}
+    if path is None:
+        path = ()
+    if flattened is None:
+        flattened = OrderedDict()
+
     if isinstance(obj, dict):
-        iterable = list(obj.items())
+        iterable = obj.items()
         if not iterable:
             flattened[path] = {}
     else:
-        iterable = list(enumerate(obj))
+        iterable = enumerate(obj)
         if not iterable:
             flattened[path] = []
+
     for key, value in iterable:
         new_path = path + (key,)
+        new_path_merge_rules = merge_rules.get(remove_indices_from_path(new_path), [])
+        array_of_objects = isinstance(value, list) and all(isinstance(item, dict) for item in value)
 
-        # Unless it is a list of objects, the list should be treated and merged as a whole entity. Such lists include
-        # lists of: strings, ints, floats, and lists (which occur, for example, in GeoJSON fields).
-        if isinstance(value, list) and value and not isinstance(value[0], dict):
-            flattened[new_path] = value
-        elif isinstance(value, (dict, list)) and 'wholeListMerge' not in merge_rules.get(remove_number_path(new_path), []):  # noqa
-            flatten(new_path, flattened, value, merge_rules)
-        elif 'omitWhenMerged' in merge_rules.get(remove_number_path(new_path), []):
+        if 'omitWhenMerged' in new_path_merge_rules:
             continue
+        elif isinstance(value, list) and value and not isinstance(value[0], dict):
+            flattened[new_path] = value
+        elif isinstance(value, (dict, list)) and 'wholeListMerge' not in new_path_merge_rules:
+            flatten(value, merge_rules, new_path, flattened)
         else:
             flattened[new_path] = value
+
     return flattened
 
 
@@ -180,7 +201,7 @@ def merge(releases, schema=None, merge_rules=None):
         releaseID = release.pop("id")
         date = release.pop("date")
 
-        flat = flatten((), OrderedDict(), release, merge_rules)
+        flat = flatten(release, merge_rules)
 
         flat[("id",)] = releaseID
         flat[("date",)] = date
@@ -212,7 +233,7 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         releaseID = release.pop("id")
         date = release.pop("date")
         tag = release.pop('tag', None)
-        flat = flatten((), OrderedDict(), release, merge_rules)
+        flat = flatten(release, merge_rules)
 
         processed = process_flattened(flat)
 

@@ -7,6 +7,43 @@ from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, g
 
 schema_url = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
 
+schema = {
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string",
+            "omitWhenMerged": True
+        },
+        "date": {
+            "type": "string",
+            "omitWhenMerged": True
+        },
+        "omitWhenMerged": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "omitWhenMerged": True
+        },
+        "keepWhenMerged": {
+            "type": "string",
+            "omitWhenMerged": False
+        },
+        "identifierMerge": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "wholeListMerge": False
+        }
+    }
+}
+
 
 def test_merge():
     filenames = glob(os.path.join('tests', 'fixtures', '*_example.py'))
@@ -22,36 +59,6 @@ def test_merge():
 
 
 def test_merge_if_merge_property_is_false():
-    schema = {
-        "type": "object",
-        "properties": {
-            "id": {
-                "type": "string",
-                "omitWhenMerged": True
-            },
-            "date": {
-                "type": "string",
-                "omitWhenMerged": True
-            },
-            "keepWhenMerged": {
-                "type": "string",
-                "omitWhenMerged": False
-            },
-            "identifierMerge": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "integer"
-                        }
-                    }
-                },
-                "wholeListMerge": False
-            }
-        }
-    }
-
     data = [{
         "id": "1",
         "date": "2000-01-01T00:00:00Z",
@@ -83,6 +90,19 @@ def test_merge_if_merge_property_is_false():
         ],
     }
 
+
+def test_merge_if_list_is_omitted():
+    data = [{
+        "id": "1",
+        "date": "2000-01-01T00:00:00Z",
+        "omitWhenMerged": ["value"]
+    }]
+
+    assert merge(data, schema) == {
+        'id': '1',
+        'date': '2000-01-01T00:00:00Z',
+        'tag': ['compiled'],
+    }
 
 def test_get_latest_version():
     assert get_latest_version() >= '1__1__3'
