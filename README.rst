@@ -102,12 +102,12 @@ path. Full absolute paths can be used too:
    # Use relese-schema.json using absolute path
    ocdsmerge.merge(releases, '/some/full/path/release-schema.json')
 
-Using processed schema
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using pre-processed release schema
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   # process schema
-   rules = ocdsmerge.process_schema('release-schema.json')
-   # merge releases
-   ocdsmerge.merge(releases, merge_rules=rules)
+   # Extract the merging rules from the schema
+   merge_rules = ocdsmerge.get_merge_rules('release-schema.json')
+   # Use the merging rules
+   ocdsmerge.merge(releases, merge_rules=merge_rules)
