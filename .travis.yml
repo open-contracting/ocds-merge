@@ -10,6 +10,6 @@ install:
   - pip install .[test]
 script:
   - curl -s -S --retry 3 $BASEDIR/tests/script.sh | bash -
-  - pytest --cov ocdsmerge
+  - pytest -rs --cov ocdsmerge
 after_success:
   coveralls

@@ -1,32 +1,33 @@
-import collections
-import requests
+import re
+from collections import OrderedDict
+
 import jsonref
+import requests
 
 
 class IdValue(str):
-    '''This is basically a string but is used to differentiate itself when doing an ininstance check.'''
-
+    """
+    This is used to differentiate `id` values from other strings in `isinstance` checks.
+    """
     def __init__(self, value):
-        # Save original value. this is needed if id was originally an integer and you want to keep that iformation.
+        # Save the original value. For example, if the value is an integer, this attribute helps us to avoid coercing
+        # the value to a string while merging.
         self.original_value = value
         str.__init__(value)
 
 
-def get_latest_schema_uri():
-    schema_list_page = requests.get('http://standard.open-contracting.org/schema').text
+def get_latest_version():
+    """
+    Returns the tag of the latest version of OCDS.
+    """
+    return re.findall(r'\d+__\d+__\d+', requests.get('http://standard.open-contracting.org/schema/').text)[-1]
 
-    parts = schema_list_page.split('href="')
-    all_versions = []
-    for part in parts:
-        start = part[:part.find('"')].strip("/")
-        version_parts = tuple(start.split("__"))
-        if len(version_parts) != 3 or version_parts[-1] == "RC":
-            continue
-        all_versions.append(version_parts)
-    all_versions.sort()
-    latest_version = "__".join(all_versions[-1])
 
-    return 'http://standard.open-contracting.org/schema/' + latest_version + '/release-schema.json'
+def get_latest_release_schema_url():
+    """
+    Returns the URL of the release schema in the latest version of OCDS.
+    """
+    return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(get_latest_version())
 
 
 def merge_rule_generate(properties, current_path):
@@ -49,12 +50,8 @@ def merge_rule_generate(properties, current_path):
             yield from merge_rule_generate(value['items']['properties'], current_path=new_path)
 
 
-def remove_number_path(path):
-    return tuple(item for item in path if not isinstance(item, int))
-
-
-def get_merge_rules(schema):
-    schema = schema or get_latest_schema_uri()
+def get_merge_rules(schema=None):
+    schema = schema or get_latest_release_schema_url()
     if schema.startswith('http'):
         deref_schema = jsonref.load_uri(schema)
     else:
@@ -63,17 +60,22 @@ def get_merge_rules(schema):
     return dict(merge_rule_generate(deref_schema['properties'], tuple()))
 
 
+def remove_number_path(path):
+    return tuple(item for item in path if not isinstance(item, int))
+
+
 def flatten(path, flattened, obj, merge_rules):
-    '''Flatten any nested json object into simple key value pairs.
-       The key is the json path represented as a tuple.
-       eg. {"a": "I am a", "b": ["A", "list"], "c": [{"ca": "I am ca"}, {"cb": "I am cb"}]}
-       will flatten to
-       {('a',): 'I am a',
-        ('b', 1): 'list',
-        ('c', 0, 'ca'): 'I am ca',
-        ('b', 0): 'A',
-        ('c', 1, 'cb'): 'I am cb'}
-    '''
+    """
+    Flatten any nested json object into simple key value pairs.
+    The key is the json path represented as a tuple.
+    eg. {"a": "I am a", "b": ["A", "list"], "c": [{"ca": "I am ca"}, {"cb": "I am cb"}]}
+    will flatten to
+    {('a',): 'I am a',
+     ('b', 1): 'list',
+     ('c', 0, 'ca'): 'I am ca',
+     ('b', 0): 'A',
+     ('c', 1, 'cb'): 'I am cb'}
+    """
     if isinstance(obj, dict):
         iterable = list(obj.items())
         if not iterable:
@@ -99,7 +101,9 @@ def flatten(path, flattened, obj, merge_rules):
 
 
 def unflatten(flattened):
-    '''Unflatten flattened object back into nested form.'''
+    """
+    Unflatten flattened object back into nested form.
+    """
     unflattened = {}
     for flat_key in flattened:
         current_pos = unflattened
@@ -136,12 +140,13 @@ def unflatten(flattened):
 
 
 def process_flattened(flattened):
-    ''' Replace numbers in json path (representing position in arrays)
-        with special id object. This is to make detecting what is an
-        array possible without needed to check schema.'''
-
+    """
+    Replace numbers in json path (representing position in arrays)
+    with special id object. This is to make detecting what is an
+    array possible without needed to check schema.
+    """
     # Keep ordered so that arrays will stay in the same order.
-    processed = collections.OrderedDict()
+    processed = OrderedDict()
     for key in flattened:
         new_key = []
         for num, item in enumerate(key):
@@ -157,11 +162,13 @@ def process_flattened(flattened):
 
 
 def merge(releases, schema=None, merge_rules=None):
-    ''' Takes a list of releases and merge them making a
-    compiledRelease suitible for an OCDS Record '''
+    """
+    Takes a list of releases and merge them making a
+    compiledRelease suitible for an OCDS Record
+    """
     if not merge_rules:
         merge_rules = get_merge_rules(schema)
-    merged = collections.OrderedDict({("tag",): ['compiled']})
+    merged = OrderedDict({("tag",): ['compiled']})
     for release in sorted(releases, key=lambda rel: rel["date"]):
         release = release.copy()
         release.pop('tag', None)
@@ -169,7 +176,7 @@ def merge(releases, schema=None, merge_rules=None):
         releaseID = release.pop("id")
         date = release.pop("date")
 
-        flat = flatten((), collections.OrderedDict(), release, merge_rules)
+        flat = flatten((), OrderedDict(), release, merge_rules)
 
         flat[("id",)] = releaseID
         flat[("date",)] = date
@@ -186,11 +193,13 @@ def merge(releases, schema=None, merge_rules=None):
 
 
 def merge_versioned(releases, schema=None, merge_rules=None):
-    ''' Takes a list of releases and merge them making a
-    versionedRelease suitible for an OCDS Record '''
+    """
+    Takes a list of releases and merge them making a
+    versionedRelease suitible for an OCDS Record
+    """
     if not merge_rules:
         merge_rules = get_merge_rules(schema)
-    merged = collections.OrderedDict()
+    merged = OrderedDict()
     for release in sorted(releases, key=lambda rel: rel["date"]):
         release = release.copy()
         ocid = release.pop("ocid")
@@ -199,7 +208,7 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         releaseID = release.pop("id")
         date = release.pop("date")
         tag = release.pop('tag', None)
-        flat = flatten((), collections.OrderedDict(), release, merge_rules)
+        flat = flatten((), OrderedDict(), release, merge_rules)
 
         processed = process_flattened(flat)
 
