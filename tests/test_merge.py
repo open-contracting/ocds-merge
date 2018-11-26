@@ -5,7 +5,7 @@ from glob import glob
 import pytest
 
 import ocdsmerge
-from ocdsmerge.merge import get_latest_release_schema_url
+from ocdsmerge.merge import get_latest_release_schema_url, get_merge_rules
 
 schema = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
 
@@ -26,3 +26,24 @@ def test_all():
 @pytest.mark.skip(reason=get_latest_release_schema_url())
 def test_get_latest_release_schema_url():
     pass  # to display the return value when running `pytest -rs`
+
+
+def test_get_merge_rules():
+    assert get_merge_rules(schema) == {
+        ('awards', 'items', 'additionalClassifications'): ['wholeListMerge'],
+        ('awards', 'items', 'unit', 'id'): ['versionId'],
+        ('awards', 'suppliers', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('buyer', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('contracts', 'implementation', 'transactions', 'payee', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('contracts', 'implementation', 'transactions', 'payer', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('contracts', 'items', 'additionalClassifications'): ['wholeListMerge'],
+        ('contracts', 'items', 'unit', 'id'): ['versionId'],
+        ('date',): ['omitWhenMerged'],
+        ('id',): ['omitWhenMerged'],
+        ('parties', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('tender', 'id'): ['versionId'],
+        ('tender', 'items', 'additionalClassifications'): ['wholeListMerge'],
+        ('tender', 'items', 'unit', 'id'): ['versionId'],
+        ('tender', 'procuringEntity', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('tender', 'tenderers', 'additionalIdentifiers'): ['wholeListMerge'],
+    }

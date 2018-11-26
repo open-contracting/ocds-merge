@@ -1,3 +1,4 @@
+import warnings
 import re
 from collections import OrderedDict
 
@@ -30,24 +31,25 @@ def get_latest_release_schema_url():
     return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(get_latest_version())
 
 
-def merge_rule_generate(properties, current_path):
+def _get_merge_rules(properties, path):
     for key, value in properties.items():
+        # All fields with merge rules must have a `type`.
         prop_type = value.get('type')
         if not prop_type:
             continue
-        new_path = current_path + (key,)
 
-        special_props = []
-        for special_prop in ['omitWhenMerged', 'versionId', 'wholeListMerge']:
-            if special_prop in value:
-                special_props.append(special_prop)
-        if special_props:
-            yield (new_path, special_props)
+        new_path = path + (key,)
+
+        rules = [p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if p in value]
+        if rules:
+            yield (new_path, rules)
 
         if 'object' in prop_type and 'properties' in value:
-            yield from merge_rule_generate(value['properties'], current_path=new_path)
-        if 'array' in prop_type and 'items' in value and 'object' in value['items']['type']:
-            yield from merge_rule_generate(value['items']['properties'], current_path=new_path)
+            yield from _get_merge_rules(value['properties'], path=new_path)
+        if 'array' in prop_type and 'items' in value:
+            item_type = value['items'].get('type')
+            if 'object' in item_type and 'properties' in value['items']:
+                yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
 
 def get_merge_rules(schema=None):
@@ -57,7 +59,7 @@ def get_merge_rules(schema=None):
     else:
         with open(schema) as f:
             deref_schema = jsonref.load(f)
-    return dict(merge_rule_generate(deref_schema['properties'], tuple()))
+    return dict(_get_merge_rules(deref_schema['properties'], tuple()))
 
 
 def remove_number_path(path):
