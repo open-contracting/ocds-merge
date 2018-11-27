@@ -147,47 +147,52 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
     return flattened
 
 
-def unflatten(flattened):
+def unflatten(processed):
     """
-    Unflattens a flattend object into a JSON object.
+    Unflattens a processed object into a JSON object.
     """
     unflattened = {}
 
-    for key in flattened:
-        current_pos = unflattened
+    for key in processed:
+        current_node = unflattened
         for end, part in enumerate(key, 1):
             # If this is a path to an item in an array.
+            # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#identifier-merge
             if isinstance(part, IdValue):
-                for obj in current_pos:
-                    obj_id = obj.get('id')
-                    if obj_id == part.original_value:
-                        current_pos = obj
+                # If the `id` of an object in the array matches, change into it.
+                for obj in current_node:
+                    object_id = obj.get('id')
+                    if object_id == part.original_value:
+                        current_node = obj
                         break
+                # Otherwise, append a new object, and change into it.
                 else:
-                    new_pos = {'id': part.original_value}
-                    current_pos.append(new_pos)
-                    current_pos = new_pos
+                    new_node = {'id': part.original_value}
+                    current_node.append(new_node)
+                    current_node = new_node
                 continue
 
-            new_pos = current_pos.get(part)
-            # True if this is a partial path to an array of objects or a path to an `id` field in an array of objects.
-            if new_pos is not None:
-                current_pos = new_pos
+            node = current_node.get(part)
+            # If this is a partial path to an array or object that we've visited before, change into it.
+            # Or, if this is a full path to an `id` of an object in an array, change into it, to avoid
+            # replacing it with e.g. a versioned ID.
+            if node is not None:
+                current_node = node
                 continue
 
             # If this is a full path, copy the data.
             if len(key) == end:
-                current_pos[part] = flattened[key]
+                current_node[part] = processed[key]
+                continue
+
             # If the partial path is a new array, start a new array, and change into it.
-            elif isinstance(key[end], IdValue):
-                new_array = []
-                current_pos[part] = new_array
-                current_pos = new_array
+            if isinstance(key[end], IdValue):
+                new_node = []
             # If the partial path is a new object, start a new object, and change into it.
             else:
-                new_object = {}
-                current_pos[part] = new_object
-                current_pos = new_object
+                new_node = {}
+            current_node[part] = new_node
+            current_node = new_node
 
     return unflattened
 
@@ -245,6 +250,7 @@ def merge(releases, schema=None, merge_rules=None):
         # This makes the actual merging come down to
         # just this statement.
         merged.update(processed)
+
     return unflatten(merged)
 
 
@@ -270,18 +276,18 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         processed = process_flattened(flat)
 
         for key, value in processed.items():
-            new_value = {
+            # If value is unchanged, don't add to history.
+            if key in merged and value == merged[key][-1]['value']:
+                continue
+
+            if key not in merged:
+                merged[key] = []
+
+            merged[key].append({
                 'releaseID': releaseID,
                 'releaseDate': date,
                 'releaseTag': tag,
                 'value': value,
-            }
-            if key in merged:
-                if value == merged[key][-1]['value']:
-                    continue
-
-            if key not in merged:
-                merged[key] = []
-            merged[key].append(new_value)
+            })
 
     return unflatten(merged)
