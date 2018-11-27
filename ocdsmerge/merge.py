@@ -51,14 +51,11 @@ def _get_merge_rules(properties, path=None):
 
         if 'object' in types and 'properties' in value:
             yield from _get_merge_rules(value['properties'], path=new_path)
-
         if 'array' in types and 'items' in value:
             item_types = _get_types(value['items'])
-
             # Arrays that mix objects and non-objects are always wholeListMerge.
             if 'object' in item_types and any(t for t in item_types if t not in ('object', 'null')):
                 rules.add('wholeListMerge')
-
             if 'object' in item_types and 'properties' in value['items']:
                 yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
@@ -76,10 +73,6 @@ def get_merge_rules(schema=None):
         with open(schema) as f:
             deref_schema = jsonref.load(f)
     return dict(_get_merge_rules(deref_schema['properties']))
-
-
-def remove_indices_from_path(path):
-    return tuple(part for part in path if not isinstance(part, int))
 
 
 def flatten(obj, merge_rules=None, path=None, flattened=None):
@@ -122,7 +115,7 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
 
     for key, value in iterable:
         new_path = path + (key,)
-        new_path_merge_rules = merge_rules.get(remove_indices_from_path(new_path), [])
+        new_path_merge_rules = merge_rules.get(tuple(part for part in new_path if not isinstance(part, int)), [])
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
