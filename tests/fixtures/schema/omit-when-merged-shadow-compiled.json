@@ -4,7 +4,7 @@
   "shadow": [
     {
       "id": 1,
-      "omitWhenMerge": "value"
+      "omitWhenMerged": "value"
     }
   ],
   "tag": [
