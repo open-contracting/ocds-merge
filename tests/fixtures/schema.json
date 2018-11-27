@@ -38,6 +38,10 @@
                 }
               }
             }
+          },
+          "omitWhenMerged": {
+            "type": "string",
+            "omitWhenMerged": true
           }
         }
       },
