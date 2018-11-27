@@ -1,9 +1,10 @@
 import importlib
 import os
+from copy import deepcopy
 from glob import glob
 
-from ocdsmerge import merge, merge_versioned
-from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, get_merge_rules, flatten
+from ocdsmerge import merge, merge_versioned, get_merge_rules
+from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten
 
 schema_url = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
 
@@ -40,6 +41,20 @@ schema = {
                 }
             },
             "wholeListMerge": False
+        },
+        "mixedArray": {
+            "type": "array",
+            "items": {
+                "type": [
+                    "object",
+                    "string"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    }
+                }
+            }
         }
     }
 }
@@ -58,7 +73,7 @@ def test_merge():
         assert fixture.versionedRelease == merge_versioned(fixture.releases, schema_url), '{} merge_versioned with schema differs'.format(basename)  # noqa
 
 
-def test_merge_if_merge_property_is_false():
+def test_merge_when_merge_property_is_false():
     data = [{
         "id": "1",
         "date": "2000-01-01T00:00:00Z",
@@ -91,7 +106,7 @@ def test_merge_if_merge_property_is_false():
     }
 
 
-def test_merge_if_list_is_omitted():
+def test_merge_when_array_of_non_objects_is_omit_when_merged():
     data = [{
         "id": "1",
         "date": "2000-01-01T00:00:00Z",
@@ -104,6 +119,47 @@ def test_merge_if_list_is_omitted():
         'tag': ['compiled'],
     }
 
+
+def test_merge_when_array_is_mixed():
+    data = [{
+        "id": "1",
+        "date": "2000-01-01T00:00:00Z",
+        "mixedArray": [
+            {"id": 1},
+            "foo"
+        ]
+    }, {
+        "id": "2",
+        "date": "2000-01-02T00:00:00Z",
+        "mixedArray": [
+            {"id": 2},
+            "bar"
+        ]
+    }]
+
+    output = {
+        'id': '2',
+        'date': '2000-01-02T00:00:00Z',
+        'tag': ['compiled'],
+        'mixedArray': [
+            {'id': 2},
+            'bar',
+        ],
+    }
+
+    assert merge(data, schema) == output
+
+    for i in range(2):
+        for j in range(2):
+            actual = deepcopy(data)
+            expected = deepcopy(output)
+            del actual[i]['mixedArray'][j]
+            if i == 1:
+                del expected['mixedArray'][j]
+
+            assert merge(actual, schema) == expected
+
+
 def test_get_latest_version():
     assert get_latest_version() >= '1__1__3'
 
@@ -114,22 +170,22 @@ def test_get_latest_release_schema_url():
 
 def test_get_merge_rules():
     assert get_merge_rules(schema_url) == {
-        ('awards', 'items', 'additionalClassifications'): ['wholeListMerge'],
-        ('awards', 'items', 'unit', 'id'): ['versionId'],
-        ('awards', 'suppliers', 'additionalIdentifiers'): ['wholeListMerge'],
-        ('buyer', 'additionalIdentifiers'): ['wholeListMerge'],
-        ('contracts', 'implementation', 'transactions', 'payee', 'additionalIdentifiers'): ['wholeListMerge'],
-        ('contracts', 'implementation', 'transactions', 'payer', 'additionalIdentifiers'): ['wholeListMerge'],
-        ('contracts', 'items', 'additionalClassifications'): ['wholeListMerge'],
-        ('contracts', 'items', 'unit', 'id'): ['versionId'],
-        ('date',): ['omitWhenMerged'],
-        ('id',): ['omitWhenMerged'],
-        ('parties', 'additionalIdentifiers'): ['wholeListMerge'],
-        ('tender', 'id'): ['versionId'],
-        ('tender', 'items', 'additionalClassifications'): ['wholeListMerge'],
-        ('tender', 'items', 'unit', 'id'): ['versionId'],
-        ('tender', 'procuringEntity', 'additionalIdentifiers'): ['wholeListMerge'],
-        ('tender', 'tenderers', 'additionalIdentifiers'): ['wholeListMerge'],
+        ('awards', 'items', 'additionalClassifications'): {'wholeListMerge'},
+        ('awards', 'items', 'unit', 'id'): {'versionId'},
+        ('awards', 'suppliers', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('buyer', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('contracts', 'implementation', 'transactions', 'payee', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('contracts', 'implementation', 'transactions', 'payer', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('contracts', 'items', 'additionalClassifications'): {'wholeListMerge'},
+        ('contracts', 'items', 'unit', 'id'): {'versionId'},
+        ('date',): {'omitWhenMerged'},
+        ('id',): {'omitWhenMerged'},
+        ('parties', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('tender', 'id'): {'versionId'},
+        ('tender', 'items', 'additionalClassifications'): {'wholeListMerge'},
+        ('tender', 'items', 'unit', 'id'): {'versionId'},
+        ('tender', 'procuringEntity', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('tender', 'tenderers', 'additionalIdentifiers'): {'wholeListMerge'},
     }
 
 

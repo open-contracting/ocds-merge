@@ -30,28 +30,40 @@ def get_latest_release_schema_url():
     return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(get_latest_version())
 
 
+def _get_types(value):
+    if 'type' not in value:
+        return []
+    elif isinstance(value['type'], str):
+        return [value['type']]
+    else:
+        return value['type']
+
+
 def _get_merge_rules(properties, path=None):
     if path is None:
         path = ()
 
     for key, value in properties.items():
-        # All fields with merge rules are expected to have a `type`.
-        prop_type = value.get('type')
-        if not prop_type:
-            continue
-
         new_path = path + (key,)
+        types = _get_types(value)
 
-        rules = [p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if value.get(p)]
+        rules = {p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if value.get(p)}
+
+        if 'object' in types and 'properties' in value:
+            yield from _get_merge_rules(value['properties'], path=new_path)
+
+        if 'array' in types and 'items' in value:
+            item_types = _get_types(value['items'])
+
+            # Arrays that mix objects and non-objects are always wholeListMerge.
+            if 'object' in item_types and any(t for t in item_types if t not in ('object', 'null')):
+                rules.add('wholeListMerge')
+
+            if 'object' in item_types and 'properties' in value['items']:
+                yield from _get_merge_rules(value['items']['properties'], path=new_path)
+
         if rules:
             yield (new_path, rules)
-
-        if 'object' in prop_type and 'properties' in value:
-            yield from _get_merge_rules(value['properties'], path=new_path)
-        if 'array' in prop_type and 'items' in value:
-            item_type = value['items'].get('type')
-            if 'object' in item_type and 'properties' in value['items']:
-                yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
 
 def get_merge_rules(schema=None):
@@ -111,11 +123,10 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
     for key, value in iterable:
         new_path = path + (key,)
         new_path_merge_rules = merge_rules.get(remove_indices_from_path(new_path), [])
-        array_of_objects = isinstance(value, list) and all(isinstance(item, dict) for item in value)
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
-        elif isinstance(value, list) and value and not isinstance(value[0], dict):
+        elif isinstance(value, list) and any(not isinstance(item, dict) for item in value):
             flattened[new_path] = value
         elif isinstance(value, (dict, list)) and 'wholeListMerge' not in new_path_merge_rules:
             flatten(value, merge_rules, new_path, flattened)

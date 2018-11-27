@@ -11,6 +11,7 @@
 
 * If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
 * If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
+* If an array mixed objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
 
 ## 0.4 (2018-01-04)
 
