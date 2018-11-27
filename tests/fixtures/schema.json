@@ -35,6 +35,18 @@
               "properties": {
                 "id": {
                   "type": "integer"
+                },
+                "subsubarray": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "wholeListMerge": true
                 }
               }
             }
