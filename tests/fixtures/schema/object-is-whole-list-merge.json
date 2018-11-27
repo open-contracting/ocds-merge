@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "date": "2000-01-01T00:00:00Z",
+    "wholeListMergeObject": {
+      "a": "value"
+    }
+  },
+  {
+    "id": "1",
+    "date": "2000-01-01T00:00:00Z",
+    "wholeListMergeObject": {
+      "b": "value"
+    }
+  }
+]

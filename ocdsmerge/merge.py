@@ -53,7 +53,16 @@ def _get_merge_rules(properties, path=None):
     for key, value in properties.items():
         new_path = path + (key,)
         types = _get_types(value)
-        rules = {p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if value.get(p)}
+
+        rules = set()
+        if key == 'id' and value.get('versionId'):
+            rules.add('versionId')
+
+        if 'array' in types and value.get('wholeListMerge'):
+            rules.add('wholeListMerge')
+
+        if value.get('omitWhenMerged'):
+            rules.add('omitWhenMerged')
 
         if 'object' in types and 'properties' in value:
             yield from _get_merge_rules(value['properties'], path=new_path)

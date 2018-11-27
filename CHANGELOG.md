@@ -13,6 +13,7 @@ Note: Behavior is undefined and inconsistent if an array is not defined in the s
 
 * If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
 * If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
+* If `wholeListMerge` were set on an object, prior object versions were discarded.
 * If an array mixed objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
 
 ## 0.4 (2018-01-04)

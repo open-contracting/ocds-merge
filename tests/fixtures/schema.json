@@ -32,6 +32,18 @@
       },
       "wholeListMerge": false
     },
+    "wholeListMergeObject": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        }
+      },
+      "wholeListMerge": true
+    },
     "mixedArray": {
       "type": "array",
       "items": {
