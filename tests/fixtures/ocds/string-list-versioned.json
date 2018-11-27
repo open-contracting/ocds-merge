@@ -1,0 +1,49 @@
+{
+  "ocid": "A",
+  "parties": [
+    {
+      "id": "consequat reprehenderit",
+      "name": [
+        {
+          "releaseDate": "2014-01-01",
+          "releaseID": "1",
+          "releaseTag": [
+            "award"
+          ],
+          "value": "sit Lorem irure proident"
+        },
+        {
+          "releaseDate": "2014-01-02",
+          "releaseID": "1",
+          "releaseTag": [
+            "award"
+          ],
+          "value": "new name"
+        }
+      ],
+      "roles": [
+        {
+          "releaseDate": "2014-01-01",
+          "releaseID": "1",
+          "releaseTag": [
+            "award"
+          ],
+          "value": [
+            "buyer",
+            "supplier"
+          ]
+        },
+        {
+          "releaseDate": "2014-01-02",
+          "releaseID": "1",
+          "releaseTag": [
+            "award"
+          ],
+          "value": [
+            "tenderer"
+          ]
+        }
+      ]
+    }
+  ]
+}

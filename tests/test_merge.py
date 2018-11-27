@@ -1,5 +1,6 @@
-import importlib
+import json
 import os
+import re
 from copy import deepcopy
 from glob import glob
 
@@ -10,116 +11,31 @@ from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, f
 
 schema_url = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
 
-schema = {
-    "type": "object",
-    "properties": {
-        "id": {
-            "type": "string",
-            "omitWhenMerged": True
-        },
-        "date": {
-            "type": "string",
-            "omitWhenMerged": True
-        },
-        "omitWhenMerged": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "omitWhenMerged": True
-        },
-        "keepWhenMerged": {
-            "type": "string",
-            "omitWhenMerged": False
-        },
-        "identifierMerge": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer"
-                    }
-                }
-            },
-            "wholeListMerge": False
-        },
-        "mixedArray": {
-            "type": "array",
-            "items": {
-                "type": [
-                    "object",
-                    "string"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "integer"
-                    }
-                }
-            }
-        }
-    }
-}
+with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
+    simple_schema = json.load(f)
+
+argvalues = []
+for directory, schemas in (('ocds', (None, schema_url)), ('schema', (simple_schema,))):
+    for schema in schemas:
+        for suffix in ('compiled', 'versioned'):
+            filenames = glob(os.path.join('tests', 'fixtures', directory, '*-{}.json'.format(suffix)))
+            # assert len(filenames), '{} fixtures not found'.format(suffix)
+            argvalues += [(filename, schema) for filename in filenames]
 
 
-def test_merge():
-    filenames = glob(os.path.join('tests', 'fixtures', '*_example.py'))
-    assert len(filenames), 'fixtures not found'
-    for filename in filenames:
-        basename = os.path.splitext(os.path.basename(filename))[0]
-        fixture = importlib.import_module('tests.fixtures.' + basename)
+@pytest.mark.parametrize('filename,schema', argvalues)
+def test_merge(filename, schema):
+    if filename.endswith('-compiled.json'):
+        method = merge
+    else:
+        method = merge_versioned
 
-        assert fixture.compiledRelease == merge(fixture.releases), '{} merge differs'.format(basename)
-        assert fixture.compiledRelease == merge(fixture.releases, schema_url), '{} merge with schema differs'.format(basename)  # noqa
-        assert fixture.versionedRelease == merge_versioned(fixture.releases), '{} merge_versioned differs'.format(basename)  # noqa
-        assert fixture.versionedRelease == merge_versioned(fixture.releases, schema_url), '{} merge_versioned with schema differs'.format(basename)  # noqa
+    with open(filename) as f:
+        expected = json.load(f)
+    with open(re.sub(r'-(?:compiled|versioned)', '', filename)) as f:
+        releases = json.load(f)
 
-
-def test_merge_when_merge_property_is_false():
-    data = [{
-        "id": "1",
-        "date": "2000-01-01T00:00:00Z",
-        "keepWhenMerged": "value",
-        "identifierMerge": [
-            {
-                "id": 1
-            }
-        ]
-    }, {
-        "id": "2",
-        "date": "2000-01-02T00:00:00Z",
-        "keepWhenMerged": "value",
-        "identifierMerge": [
-            {
-                "id": 2
-            }
-        ]
-    }]
-
-    assert merge(data, schema) == {
-        'id': '2',
-        'date': '2000-01-02T00:00:00Z',
-        'tag': ['compiled'],
-        'keepWhenMerged': 'value',
-        'identifierMerge': [
-            {'id': 1},
-            {'id': 2},
-        ],
-    }
-
-
-def test_merge_when_array_of_non_objects_is_omit_when_merged():
-    data = [{
-        "id": "1",
-        "date": "2000-01-01T00:00:00Z",
-        "omitWhenMerged": ["value"]
-    }]
-
-    assert merge(data, schema) == {
-        'id': '1',
-        'date': '2000-01-01T00:00:00Z',
-        'tag': ['compiled'],
-    }
+    assert method(releases, schema) == expected, filename
 
 
 def test_merge_when_array_is_mixed():
@@ -149,7 +65,7 @@ def test_merge_when_array_is_mixed():
         ],
     }
 
-    assert merge(data, schema) == output
+    assert merge(data, simple_schema) == output
 
     for i in range(2):
         for j in range(2):
@@ -159,7 +75,7 @@ def test_merge_when_array_is_mixed():
             if i == 1:
                 del expected['mixedArray'][j]
 
-            assert merge(actual, schema) == expected, 'removed item index {} from release index {}'.format(j, i)
+            assert merge(actual, simple_schema) == expected, 'removed item index {} from release index {}'.format(j, i)
 
 
 def test_merge_when_array_is_mixed_without_schema():

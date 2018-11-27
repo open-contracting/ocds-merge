@@ -1,0 +1,16 @@
+{
+  "id": "2",
+  "date": "2000-01-02T00:00:00Z",
+  "tag": [
+    "compiled"
+  ],
+  "keepWhenMerged": "value",
+  "identifierMerge": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}

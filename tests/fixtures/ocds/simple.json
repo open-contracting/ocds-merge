@@ -1,0 +1,26 @@
+[
+  {
+    "ocid": "A",
+    "id": "1",
+    "date": "2014-01-01",
+    "tag": [
+      "tender"
+    ],
+    "tender": {
+      "id": "A",
+      "procurementMethod": "Selective"
+    }
+  },
+  {
+    "ocid": "A",
+    "id": "2",
+    "date": "2014-01-02",
+    "tag": [
+      "tender"
+    ],
+    "tender": {
+      "id": "A",
+      "procurementMethod": "Open"
+    }
+  }
+]

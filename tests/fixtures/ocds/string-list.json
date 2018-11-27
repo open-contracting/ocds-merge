@@ -1,0 +1,37 @@
+[
+  {
+    "ocid": "A",
+    "id": "1",
+    "date": "2014-01-01",
+    "tag": [
+      "award"
+    ],
+    "parties": [
+      {
+        "id": "consequat reprehenderit",
+        "name": "sit Lorem irure proident",
+        "roles": [
+          "buyer",
+          "supplier"
+        ]
+      }
+    ]
+  },
+  {
+    "ocid": "A",
+    "id": "1",
+    "date": "2014-01-02",
+    "tag": [
+      "award"
+    ],
+    "parties": [
+      {
+        "id": "consequat reprehenderit",
+        "name": "new name",
+        "roles": [
+          "tenderer"
+        ]
+      }
+    ]
+  }
+]

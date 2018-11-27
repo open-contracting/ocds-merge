@@ -1,0 +1,33 @@
+{
+  "ocid": "A",
+  "tender": {
+    "id": [
+      {
+        "releaseDate": "2014-01-01",
+        "releaseID": "1",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": "A"
+      }
+    ],
+    "procurementMethod": [
+      {
+        "value": "Selective",
+        "releaseDate": "2014-01-01",
+        "releaseTag": [
+          "tender"
+        ],
+        "releaseID": "1"
+      },
+      {
+        "value": "Open",
+        "releaseDate": "2014-01-02",
+        "releaseTag": [
+          "tender"
+        ],
+        "releaseID": "2"
+      }
+    ]
+  }
+}

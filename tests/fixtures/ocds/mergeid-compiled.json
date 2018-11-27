@@ -1,0 +1,27 @@
+{
+  "ocid": "A",
+  "id": "2",
+  "date": "2014-01-02",
+  "tag": [
+    "compiled"
+  ],
+  "tender": {
+    "items": [
+      {
+        "id": "1",
+        "description": "Item 1",
+        "quantity": 2
+      },
+      {
+        "id": "2",
+        "description": "Item 2",
+        "quantity": 1
+      },
+      {
+        "id": "3",
+        "description": "Item 3",
+        "quantity": 1
+      }
+    ]
+  }
+}

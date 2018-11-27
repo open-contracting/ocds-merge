@@ -1,0 +1,12 @@
+{
+  "ocid": "A",
+  "id": "2",
+  "date": "2014-01-02",
+  "tag": [
+    "compiled"
+  ],
+  "tender": {
+    "id": "A",
+    "procurementMethod": "Open"
+  }
+}

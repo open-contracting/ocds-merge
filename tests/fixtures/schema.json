@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "omitWhenMerged": true
+    },
+    "date": {
+      "type": "string",
+      "omitWhenMerged": true
+    },
+    "omitWhenMerged": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "omitWhenMerged": true
+    },
+    "keepWhenMerged": {
+      "type": "string",
+      "omitWhenMerged": false
+    },
+    "identifierMerge": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        }
+      },
+      "wholeListMerge": false
+    },
+    "mixedArray": {
+      "type": "array",
+      "items": {
+        "type": [
+          "object",
+          "string"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

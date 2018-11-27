@@ -1,0 +1,84 @@
+{
+  "ocid": "A",
+  "tender": {
+    "items": [
+      {
+        "id": "1",
+        "description": [
+          {
+            "value": "Item 1",
+            "releaseDate": "2014-01-01",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "1"
+          }
+        ],
+        "quantity": [
+          {
+            "value": 1,
+            "releaseDate": "2014-01-01",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "1"
+          },
+          {
+            "value": 2,
+            "releaseDate": "2014-01-02",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "2"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "description": [
+          {
+            "value": "Item 2",
+            "releaseDate": "2014-01-01",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "1"
+          }
+        ],
+        "quantity": [
+          {
+            "value": 1,
+            "releaseDate": "2014-01-01",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "1"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "description": [
+          {
+            "value": "Item 3",
+            "releaseDate": "2014-01-02",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "2"
+          }
+        ],
+        "quantity": [
+          {
+            "value": 1,
+            "releaseDate": "2014-01-02",
+            "releaseTag": [
+              "tender"
+            ],
+            "releaseID": "2"
+          }
+        ]
+      }
+    ]
+  }
+}
