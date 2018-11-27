@@ -36,10 +36,9 @@ def _get_types(prop):
     """
     if 'type' not in prop:
         return []
-    elif isinstance(prop['type'], str):
+    if isinstance(prop['type'], str):
         return [prop['type']]
-    else:
-        return prop['type']
+    return prop['type']
 
 
 def _get_merge_rules(properties, path=None):

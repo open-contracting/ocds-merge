@@ -1,0 +1,28 @@
+{
+  "date": "2000-01-02T00:00:00Z",
+  "id": "2",
+  "identifierMerge": [
+    {
+      "id": 1,
+      "subarray": [
+        {
+          "id": 10
+        },
+        {
+          "id": 11
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "subarray": [
+        {
+          "id": 12
+        }
+      ]
+    }
+  ],
+  "tag": [
+    "compiled"
+  ]
+}
