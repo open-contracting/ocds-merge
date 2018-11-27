@@ -156,19 +156,15 @@ def unflatten(flattened):
         for end, part in enumerate(key, 1):
             # If this is a path to an item in an array.
             if isinstance(part, IdValue):
-                # If this is a full path (e.g. when it is an array of strings), append the data.
-                if len(key) == end:
-                    current_pos.append(flattened[key])
+                for obj in current_pos:
+                    obj_id = obj.get('id')
+                    if obj_id == part.original_value:
+                        current_pos = obj
+                        break
                 else:
-                    for obj in current_pos:
-                        obj_id = obj.get('id')
-                        if obj_id == part.original_value:
-                            current_pos = obj
-                            break
-                    else:
-                        new_pos = {'id': part.original_value}
-                        current_pos.append(new_pos)
-                        current_pos = new_pos
+                    new_pos = {'id': part.original_value}
+                    current_pos.append(new_pos)
+                    current_pos = new_pos
                 continue
 
             new_pos = current_pos.get(part)
