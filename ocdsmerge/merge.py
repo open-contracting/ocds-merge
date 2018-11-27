@@ -233,9 +233,9 @@ def merge(releases, schema=None, merge_rules=None):
     for release in sorted(releases, key=lambda rel: rel['date']):
         release = release.copy()
 
-        releaseID = release.pop('id')
-        date = release.pop('date')
-        release.pop('tag', None)
+        releaseID = release['id']
+        date = release['date']
+        release.pop('tag', None)  # `tag` becomes ["compiled"]
         flat = flatten(release, merge_rules)
 
         flat[('id',)] = releaseID
@@ -268,8 +268,8 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         ocid = release.pop('ocid')
         merged[('ocid',)] = ocid
 
-        releaseID = release.pop('id')
-        date = release.pop('date')
+        releaseID = release['id']
+        date = release['date']
         tag = release.pop('tag', None)
         flat = flatten(release, merge_rules)
 
