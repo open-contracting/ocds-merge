@@ -7,7 +7,7 @@ from glob import glob
 import pytest
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
-from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten
+from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten, process_flattened
 
 schema_url = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
 
@@ -151,7 +151,7 @@ def test_get_merge_rules():
     }
 
 
-def test_flatten():
+def test_flatten():  # from documentation
     data = {
         "a": "I am a",
         "b": ["A", "list"],
@@ -166,4 +166,18 @@ def test_flatten():
         ('b',): ['A', 'list'],
         ('c', 0, 'ca'): 'I am ca',
         ('c', 1, 'cb'): 'I am cb',
+    }
+
+
+def test_process_flattened():
+    data = {
+        "a": [
+            {"id": "identifier"},
+            {"key": "value"}
+        ]
+    }
+
+    assert process_flattened(flatten(data)) == {
+        ('a', 'identifier', 'id'): 'identifier',
+        ('a', '1', 'key'): 'value',
     }
