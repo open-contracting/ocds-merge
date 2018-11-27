@@ -35,7 +35,10 @@ def test_merge(filename, schema):
     with open(re.sub(r'-(?:compiled|versioned)', '', filename)) as f:
         releases = json.load(f)
 
+    original = deepcopy(releases)
+
     assert method(releases, schema) == expected, filename
+    assert releases == original
 
 
 def test_merge_when_array_is_mixed():
