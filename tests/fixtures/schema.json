@@ -55,6 +55,22 @@
       },
       "wholeListMerge": true
     },
+    "shadow": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "omitWhenMerged": {
+            "type": "string",
+            "omitWhenMerged": true
+          }
+        }
+      },
+      "wholeListMerge": true
+    },
     "mixedArray": {
       "type": "array",
       "items": {
