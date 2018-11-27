@@ -147,40 +147,50 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
 
 def unflatten(flattened):
     """
-    Unflatten flattened object back into nested form.
+    Unflattens a flattend object into a JSON object.
     """
     unflattened = {}
-    for flat_key in flattened:
+
+    for key in flattened:
         current_pos = unflattened
-        for num, item in enumerate(flat_key):
-            if isinstance(item, IdValue):
-                if len(flat_key) - 1 == num:  # when this is an array of string or ints
-                    current_pos.append(flattened[flat_key])
+        for end, part in enumerate(key, 1):
+            # If this is a path to an item in an array.
+            if isinstance(part, IdValue):
+                # If this is a full path (e.g. when it is an array of strings), append the data.
+                if len(key) == end:
+                    current_pos.append(flattened[key])
                 else:
                     for obj in current_pos:
                         obj_id = obj.get('id')
-                        if obj_id == item.original_value:
+                        if obj_id == part.original_value:
                             current_pos = obj
                             break
                     else:
-                        new_pos = {"id": item.original_value}
+                        new_pos = {'id': part.original_value}
                         current_pos.append(new_pos)
                         current_pos = new_pos
                 continue
-            new_pos = current_pos.get(item)
+
+            new_pos = current_pos.get(part)
+            # True if this is a partial path to an array of objects or a path to an `id` field in an array of objects.
             if new_pos is not None:
                 current_pos = new_pos
                 continue
-            if len(flat_key) - 1 == num:
-                current_pos[item] = flattened[flat_key]
-            elif isinstance(flat_key[num + 1], IdValue):
-                new_pos = []
-                current_pos[item] = new_pos
-                current_pos = new_pos
+
+            # If this is a full path, copy the data.
+            if len(key) == end:
+                current_pos[part] = flattened[key]
+            # If the partial path is a new array, start a new array, and change into it.
+            elif isinstance(key[end], IdValue):
+                new_array = []
+                current_pos[part] = new_array
+                current_pos = new_array
+            # If the partial path is a new object, start a new object, and change into it.
             else:
-                new_pos = {}
-                current_pos[item] = new_pos
-                current_pos = new_pos
+                new_object = {}
+                current_pos[part] = new_object
+                current_pos = new_object
+
     return unflattened
 
 
