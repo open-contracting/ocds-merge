@@ -2,6 +2,8 @@
 
 ## 0.5
 
+Note: Behavior is undefined and inconsistent if an array is not defined in the schema and contains objects in some releases but not in others.
+
 ### Added
 
 * Allow specifying cached or customized merge rules.

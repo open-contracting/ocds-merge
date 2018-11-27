@@ -131,8 +131,10 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
-        # If it is neither an object nor an array, if it is `wholeListMerge`, or if it is an array containing non-objects
-        # (even if `wholeListMerge` is `false`), use the whole list merge strategy.
+        # If it is neither an object nor an array, if it is `wholeListMerge`, or if it is an array containing
+        # non-objects (even if `wholeListMerge` is `false`), use the whole list merge strategy.
+        # Note: Behavior is undefined and inconsistent if the array is not in the schema and contains objects in some
+        # cases but not in others.
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
         elif (not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or

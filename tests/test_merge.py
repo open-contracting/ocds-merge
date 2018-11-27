@@ -3,6 +3,8 @@ import os
 from copy import deepcopy
 from glob import glob
 
+import pytest
+
 from ocdsmerge import merge, merge_versioned, get_merge_rules
 from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten
 
@@ -157,7 +159,48 @@ def test_merge_when_array_is_mixed():
             if i == 1:
                 del expected['mixedArray'][j]
 
-            assert merge(actual, schema) == expected
+            assert merge(actual, schema) == expected, 'removed item index {} from release index {}'.format(j, i)
+
+
+def test_merge_when_array_is_mixed_without_schema():
+    data = [{
+        "id": "1",
+        "date": "2000-01-01T00:00:00Z",
+        "mixedArray": [
+            {"id": 1},
+            "foo"
+        ]
+    }, {
+        "id": "2",
+        "date": "2000-01-02T00:00:00Z",
+        "mixedArray": [
+            {"id": 2},
+            "bar"
+        ]
+    }]
+
+    output = {
+        'id': '2',
+        'date': '2000-01-02T00:00:00Z',
+        'tag': ['compiled'],
+        'mixedArray': [
+            {'id': 2},
+            'bar',
+        ],
+    }
+
+    assert merge(data, {}) == output
+
+    with pytest.raises(AssertionError):
+        for i in range(2):
+            for j in range(2):
+                actual = deepcopy(data)
+                expected = deepcopy(output)
+                del actual[i]['mixedArray'][j]
+                if i == 1:
+                    del expected['mixedArray'][j]
+
+                assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
 
 
 def test_get_latest_version():
