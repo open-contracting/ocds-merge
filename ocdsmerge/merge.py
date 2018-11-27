@@ -119,12 +119,12 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
-        elif isinstance(value, list) and any(not isinstance(item, dict) for item in value):
+        # If it is an array containing non-objects, or it is neither a list nor an object, or is is `wholeListMerge`.
+        elif (isinstance(value, list) and any(not isinstance(item, dict) for item in value) or
+                not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules):
             flattened[new_path] = value
-        elif isinstance(value, (dict, list)) and 'wholeListMerge' not in new_path_merge_rules:
-            flatten(value, merge_rules, new_path, flattened)
         else:
-            flattened[new_path] = value
+            flatten(value, merge_rules, new_path, flattened)
 
     return flattened
 
