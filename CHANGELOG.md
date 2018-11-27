@@ -5,7 +5,8 @@
 ### Advisories
 
 * Behavior is undefined and inconsistent if an array is not defined in the schema and contains objects in some releases but not in others.
-* If an array sets `wholeListMerge`, then `omitWhenMerged` is ignored on its sub-properties.
+* If an array sets `wholeListMerge`, `omitWhenMerged` is ignored on its sub-properties.
+* If an array doesn't set `wholeListMerge` and objects have the same `id` in one release, only the last object is retained.
 
 ### Added
 
@@ -16,7 +17,7 @@
 
 * If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
 * If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
-* If `wholeListMerge` were set on an object, prior object versions were discarded.
+* If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release.
 * If an array were mixing objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
 
 ## 0.4 (2018-01-04)

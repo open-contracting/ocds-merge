@@ -28,6 +28,9 @@
           "id": {
             "type": "integer"
           },
+          "key": {
+            "type": "string"
+          },
           "subarray": {
             "type": "array",
             "items": {
