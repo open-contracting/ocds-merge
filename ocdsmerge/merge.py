@@ -156,14 +156,13 @@ def unflatten(processed):
     for key in processed:
         current_node = unflattened
         for end, part in enumerate(key, 1):
-            # If this is a path to an item in an array.
+            # If this is a path to an item of an array.
             # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#identifier-merge
             if isinstance(part, IdValue):
                 # If the `id` of an object in the array matches, change into it.
-                for obj in current_node:
-                    object_id = obj.get('id')
-                    if object_id == part.original_value:
-                        current_node = obj
+                for node in current_node:
+                    if node.get('id') == part.original_value:
+                        current_node = node
                         break
                 # Otherwise, append a new object, and change into it.
                 else:
@@ -172,8 +171,9 @@ def unflatten(processed):
                     current_node = new_node
                 continue
 
+            # Otherwise, this is a path to a property of an object.
             node = current_node.get(part)
-            # If this is a partial path to an array or object that we've visited before, change into it.
+            # If this is a path to a node we visited before, change into it.
             # Or, if this is a full path to an `id` of an object in an array, change into it, to avoid
             # replacing it with e.g. a versioned ID.
             if node is not None:
@@ -185,10 +185,10 @@ def unflatten(processed):
                 current_node[part] = processed[key]
                 continue
 
-            # If the partial path is a new array, start a new array, and change into it.
+            # If the path is to a new array, start a new array, and change into it.
             if isinstance(key[end], IdValue):
                 new_node = []
-            # If the partial path is a new object, start a new object, and change into it.
+            # If the path is to a new object, start a new object, and change into it.
             else:
                 new_node = {}
             current_node[part] = new_node
@@ -200,7 +200,7 @@ def unflatten(processed):
 def process_flattened(flattened):
     """
     Replace numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
-    in arrays with different `id` values have different JSON paths – and makes easy to identify such arrays.
+    in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
     """
     # Keep arrays in order.
     processed = OrderedDict()
