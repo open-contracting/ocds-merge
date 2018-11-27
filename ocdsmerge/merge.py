@@ -30,31 +30,38 @@ def get_latest_release_schema_url():
     return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(get_latest_version())
 
 
-def _get_types(value):
-    if 'type' not in value:
+def _get_types(prop):
+    """
+    Returns a property's `type` as a list.
+    """
+    if 'type' not in prop:
         return []
-    elif isinstance(value['type'], str):
-        return [value['type']]
+    elif isinstance(prop['type'], str):
+        return [prop['type']]
     else:
-        return value['type']
+        return prop['type']
 
 
 def _get_merge_rules(properties, path=None):
+    """
+    Yields merge rules as key-value pairs, in which the first element is a JSON path as a tuple, and the second element
+    is a list of merge properties whose values are `true`.
+    """
     if path is None:
         path = ()
 
     for key, value in properties.items():
         new_path = path + (key,)
         types = _get_types(value)
-
         rules = {p for p in ('omitWhenMerged', 'versionId', 'wholeListMerge') if value.get(p)}
 
         if 'object' in types and 'properties' in value:
             yield from _get_merge_rules(value['properties'], path=new_path)
         if 'array' in types and 'items' in value:
             item_types = _get_types(value['items'])
-            # Arrays that mix objects and non-objects are always wholeListMerge.
-            if 'object' in item_types and any(t for t in item_types if t not in ('object', 'null')):
+            # Arrays containing non-objects use the whole list merge strategy (even if `wholeListMerge` is `false`).
+            # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
+            if 'object' in item_types and any(t for t in item_types if t != 'object'):
                 rules.add('wholeListMerge')
             if 'object' in item_types and 'properties' in value['items']:
                 yield from _get_merge_rules(value['items']['properties'], path=new_path)
@@ -64,6 +71,10 @@ def _get_merge_rules(properties, path=None):
 
 
 def get_merge_rules(schema=None):
+    """
+    Returns merge rules as key-value pairs, in which the key is a JSON path as a tuple, and the value is a list of
+    merge properties whose values are `true`.
+    """
     schema = schema or get_latest_release_schema_url()
     if isinstance(schema, dict):
         deref_schema = jsonref.JsonRef.replace_refs(schema)
@@ -77,7 +88,7 @@ def get_merge_rules(schema=None):
 
 def flatten(obj, merge_rules=None, path=None, flattened=None):
     """
-    Flatten any nested JSON object into simple key-value pairs. The key is the JSON path as a tuple. For example:
+    Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
     {
         "a": "I am a",
@@ -115,14 +126,19 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
 
     for key, value in iterable:
         new_path = path + (key,)
+        # Remove array indices to find the merge rule for this JSON path in the data.
         new_path_merge_rules = merge_rules.get(tuple(part for part in new_path if not isinstance(part, int)), [])
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
-        # If it is an array containing non-objects, or it is neither a list nor an object, or is is `wholeListMerge`.
-        elif (isinstance(value, list) and any(not isinstance(item, dict) for item in value) or
-                not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules):
+        # If it is neither an object nor an array, if it is `wholeListMerge`, or if it is an array containing non-objects
+        # (even if `wholeListMerge` is `false`), use the whole list merge strategy.
+        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
+        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
+        elif (not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or
+                isinstance(value, list) and any(not isinstance(item, dict) for item in value)):
             flattened[new_path] = value
+        # Recurse into objects, and arrays of objects that aren't `wholeListMerge`.
         else:
             flatten(value, merge_rules, new_path, flattened)
 
@@ -170,47 +186,50 @@ def unflatten(flattened):
 
 def process_flattened(flattened):
     """
-    Replace numbers in json path (representing position in arrays)
-    with special id object. This is to make detecting what is an
-    array possible without needed to check schema.
+    Replace numbers in JSON path (representing position in arrays) with special id objects. This is to make detecting
+    what is an array possible without needed to check schema.
     """
-    # Keep ordered so that arrays will stay in the same order.
+    # Keep arrays in order.
     processed = OrderedDict()
     for key in flattened:
         new_key = []
-        for num, item in enumerate(key):
-            if isinstance(item, int):
-                id_value = flattened.get(tuple(key[:num + 1]) + ('id',))
+        for end, part in enumerate(key, 1):
+            # If this is a path to an item in an array.
+            if isinstance(part, int):
+                # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
+                # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
+                id_value = flattened.get(tuple(key[:end]) + ('id',))
+                # If the objects contain no top-level `id` values, the whole list merge strategy is used.
+                # http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
                 if id_value is None:
-                    id_value = item
-                new_key.append(IdValue(id_value))
-                continue
-            new_key.append(item)
+                    id_value = part
+                part = IdValue(id_value)
+            new_key.append(part)
         processed[tuple(new_key)] = flattened[key]
     return processed
 
 
 def merge(releases, schema=None, merge_rules=None):
     """
-    Takes a list of releases and merge them making a
-    compiledRelease suitible for an OCDS Record
+    Merges a list of releases into a compiledRelease.
     """
     if not merge_rules:
         merge_rules = get_merge_rules(schema)
-    merged = OrderedDict({("tag",): ['compiled']})
-    for release in sorted(releases, key=lambda rel: rel["date"]):
+
+    merged = OrderedDict({('tag',): ['compiled']})
+    for release in sorted(releases, key=lambda rel: rel['date']):
         release = release.copy()
+
+        releaseID = release.pop('id')
+        date = release.pop('date')
         release.pop('tag', None)
-
-        releaseID = release.pop("id")
-        date = release.pop("date")
-
         flat = flatten(release, merge_rules)
 
-        flat[("id",)] = releaseID
-        flat[("date",)] = date
+        flat[('id',)] = releaseID
+        flat[('date',)] = date
 
         processed = process_flattened(flat)
+
         # In flattening and adding the ids to the json path
         # we make sure each json path is going to same as long as
         # all the ids match. Position in the array is not relevent
@@ -223,29 +242,32 @@ def merge(releases, schema=None, merge_rules=None):
 
 def merge_versioned(releases, schema=None, merge_rules=None):
     """
-    Takes a list of releases and merge them making a
-    versionedRelease suitible for an OCDS Record
+    Merges a list of releases into a versionedRelease.
     """
     if not merge_rules:
         merge_rules = get_merge_rules(schema)
-    merged = OrderedDict()
-    for release in sorted(releases, key=lambda rel: rel["date"]):
-        release = release.copy()
-        ocid = release.pop("ocid")
-        merged[("ocid",)] = ocid
 
-        releaseID = release.pop("id")
-        date = release.pop("date")
+    merged = OrderedDict()
+    for release in sorted(releases, key=lambda rel: rel['date']):
+        release = release.copy()
+
+        ocid = release.pop('ocid')
+        merged[('ocid',)] = ocid
+
+        releaseID = release.pop('id')
+        date = release.pop('date')
         tag = release.pop('tag', None)
         flat = flatten(release, merge_rules)
 
         processed = process_flattened(flat)
 
         for key, value in processed.items():
-            new_value = {"releaseID": releaseID,
-                         "releaseDate": date,
-                         "releaseTag": tag,
-                         "value": value}
+            new_value = {
+                'releaseID': releaseID,
+                'releaseDate': date,
+                'releaseTag': tag,
+                'value': value,
+            }
             if key in merged:
                 if value == merged[key][-1]['value']:
                     continue
