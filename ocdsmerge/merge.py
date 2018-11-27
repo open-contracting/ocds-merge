@@ -199,8 +199,8 @@ def unflatten(processed):
 
 def process_flattened(flattened):
     """
-    Replace numbers in JSON path (representing position in arrays) with special id objects. This is to make detecting
-    what is an array possible without needed to check schema.
+    Replace numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
+    in arrays with different `id` values have different JSON paths – and makes easy to identify such arrays.
     """
     # Keep arrays in order.
     processed = OrderedDict()
@@ -230,25 +230,18 @@ def merge(releases, schema=None, merge_rules=None):
         merge_rules = get_merge_rules(schema)
 
     merged = OrderedDict({('tag',): ['compiled']})
-    for release in sorted(releases, key=lambda rel: rel['date']):
+    for release in sorted(releases, key=lambda release: release['date']):
         release = release.copy()
 
         releaseID = release['id']
         date = release['date']
-        release.pop('tag', None)  # `tag` becomes ["compiled"]
+        release.pop('tag', None)  # becomes ["compiled"]
         flat = flatten(release, merge_rules)
-
-        flat[('id',)] = releaseID
-        flat[('date',)] = date
-
         processed = process_flattened(flat)
 
-        # In flattening and adding the ids to the json path
-        # we make sure each json path is going to same as long as
-        # all the ids match. Position in the array is not relevent
-        # (however it will keep this order anyway due to having an ordered dict).
-        # This makes the actual merging come down to
-        # just this statement.
+        # Add an `id` and `date`.
+        processed[('id',)] = releaseID
+        processed[('date',)] = date
         merged.update(processed)
 
     return unflatten(merged)
@@ -262,9 +255,10 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         merge_rules = get_merge_rules(schema)
 
     merged = OrderedDict()
-    for release in sorted(releases, key=lambda rel: rel['date']):
+    for release in sorted(releases, key=lambda release: release['date']):
         release = release.copy()
 
+        # Don't version the OCID.
         ocid = release.pop('ocid')
         merged[('ocid',)] = ocid
 
@@ -272,7 +266,6 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         date = release['date']
         tag = release.pop('tag', None)
         flat = flatten(release, merge_rules)
-
         processed = process_flattened(flat)
 
         for key, value in processed.items():
