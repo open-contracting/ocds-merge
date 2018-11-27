@@ -191,16 +191,19 @@ def test_merge_when_array_is_mixed_without_schema():
 
     assert merge(data, {}) == output
 
-    with pytest.raises(AssertionError):
-        for i in range(2):
-            for j in range(2):
-                actual = deepcopy(data)
-                expected = deepcopy(output)
-                del actual[i]['mixedArray'][j]
-                if i == 1:
-                    del expected['mixedArray'][j]
+    for i in range(2):
+        for j in range(2):
+            actual = deepcopy(data)
+            expected = deepcopy(output)
+            del actual[i]['mixedArray'][j]
+            if i == 1:
+                del expected['mixedArray'][j]
 
+            if j == 0:
                 assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
+            else:
+                with pytest.raises((AttributeError, AssertionError)):
+                    assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
 
 
 def test_get_latest_version():
