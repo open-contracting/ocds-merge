@@ -53,32 +53,32 @@ def _get_merge_rules(properties, path=None):
         new_path = path + (key,)
         types = _get_types(value)
 
-        rules = set()
+        # `omitWhenMerged` supersedes all other rules.
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#omit-when-merged
         if value.get('omitWhenMerged'):
-            rules.add('omitWhenMerged')
+            yield (new_path, {'omitWhenMerged'})
+        # `wholeListMerge` supersedes any nested rules.
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
-        if 'array' in types and value.get('wholeListMerge'):
-            rules.add('wholeListMerge')
-        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
-        if key == 'id' and value.get('versionId'):
-            rules.add('versionId')
-
-        if 'object' in types and 'properties' in value:
+        elif 'array' in types and value.get('wholeListMerge'):
+            yield (new_path, {'wholeListMerge'})
+        elif 'object' in types and 'properties' in value:
             yield from _get_merge_rules(value['properties'], path=new_path)
-        if 'array' in types and 'items' in value:
+        elif 'array' in types and 'items' in value:
             item_types = _get_types(value['items'])
             # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
             if any(item_type != 'object' for item_type in item_types):
-                rules.add('wholeListMerge')
-            if 'object' in item_types and 'properties' in value['items']:
+                yield (new_path, {'wholeListMerge'})
+            elif 'object' in item_types and 'properties' in value['items']:
                 # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
                 if 'id' not in value['items']['properties']:
-                    rules.add('wholeListMerge')
-                yield from _get_merge_rules(value['items']['properties'], path=new_path)
-
-        if rules:
-            yield (new_path, rules)
+                    yield (new_path, {'wholeListMerge'})
+                else:
+                    yield from _get_merge_rules(value['items']['properties'], path=new_path)
+        # `versionId` only belongs on `id` fields of objects in arrays, which are otherwise unversioned. That said,
+        # adding it to the `id` fields of objects not in arrays has no side effect, as it's the default behavior.
+        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
+        elif key == 'id' and value.get('versionId'):
+            yield (new_path, {'versionId'})
 
 
 def get_merge_rules(schema=None):
@@ -158,7 +158,7 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
     return flattened
 
 
-def unflatten(processed):
+def unflatten(processed, merge_rules):
     """
     Unflattens a processed object into a JSON object.
     """
@@ -184,10 +184,11 @@ def unflatten(processed):
 
             # Otherwise, this is a path to a property of an object.
             node = current_node.get(part)
-            # If this is a path to a node we visited before, change into it.
-            # Or, if this is a full path to an `id` of an object in an array, change into it, to avoid
-            # replacing it with e.g. a versioned ID.
-            if node is not None:
+            node_merge_rules = merge_rules.get(tuple(part for part in key[:end] if not isinstance(part, IdValue)), [])
+
+            # If this is a path to a node we visited before, change into it. If it's an `id` field, it's already been
+            # set to its original value. However, if it sets `versionId`, pass-thru to set it to its versioned value.
+            if node is not None and 'versionId' not in node_merge_rules:
                 current_node = node
                 continue
 
@@ -256,7 +257,7 @@ def merge(releases, schema=None, merge_rules=None):
         merged[('date',)] = date
         merged.update(processed)
 
-    return unflatten(merged)
+    return unflatten(merged, merge_rules)
 
 
 def merge_versioned(releases, schema=None, merge_rules=None):
@@ -295,4 +296,4 @@ def merge_versioned(releases, schema=None, merge_rules=None):
                 ('value', value),
             ]))
 
-    return unflatten(merged)
+    return unflatten(merged, merge_rules)

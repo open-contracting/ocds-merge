@@ -1,6 +1,9 @@
 {
   "type": "object",
   "properties": {
+    "ocid": {
+      "type": "string"
+    },
     "id": {
       "type": "string",
       "omitWhenMerged": true
@@ -8,6 +11,59 @@
     "date": {
       "type": "string",
       "omitWhenMerged": true
+    },
+    "versionIdObject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "versionId": true
+        }
+      }
+    },
+    "noVersionIdObject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "versionIdArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "versionId": true
+          }
+        }
+      }
+    },
+    "noVersionIdArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "versionIdArrayWholeListMerge": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "versionId": true
+          }
+        }
+      },
+      "wholeListMerge": true
     },
     "omitWhenMerged": {
       "type": "array",

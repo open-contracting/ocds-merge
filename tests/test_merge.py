@@ -38,7 +38,7 @@ def test_merge(filename, schema):
 
     original = deepcopy(releases)
 
-    assert method(releases, schema) == expected, filename
+    assert method(releases, schema) == expected, filename + '\n' + json.dumps(method(releases, schema))
     assert releases == original
 
 
