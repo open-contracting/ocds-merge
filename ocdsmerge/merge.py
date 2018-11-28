@@ -54,10 +54,13 @@ def _get_merge_rules(properties, path=None):
         types = _get_types(value)
 
         rules = set()
+        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#omit-when-merged
         if value.get('omitWhenMerged'):
             rules.add('omitWhenMerged')
+        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
         if 'array' in types and value.get('wholeListMerge'):
             rules.add('wholeListMerge')
+        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
         if key == 'id' and value.get('versionId'):
             rules.add('versionId')
 
@@ -65,11 +68,13 @@ def _get_merge_rules(properties, path=None):
             yield from _get_merge_rules(value['properties'], path=new_path)
         if 'array' in types and 'items' in value:
             item_types = _get_types(value['items'])
-            # Arrays containing non-objects use the whole list merge strategy (even if `wholeListMerge` is `false`).
             # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
             if 'object' in item_types and any(t for t in item_types if t != 'object'):
                 rules.add('wholeListMerge')
             if 'object' in item_types and 'properties' in value['items']:
+                # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
+                if 'id' not in value['items']['properties']:
+                    rules.add('wholeListMerge')
                 yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
         if rules:

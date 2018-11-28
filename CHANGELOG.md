@@ -18,6 +18,7 @@
 * If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
 * If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
 * If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release.
+* If the objects in an array had no `id` field according to the schema, the identifier merge strategy would be used instead of the whole list merge strategy.
 * If an array were mixing objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
 
 ## 0.4 (2018-01-04)

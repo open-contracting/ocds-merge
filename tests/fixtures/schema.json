@@ -90,6 +90,17 @@
       },
       "wholeListMerge": true
     },
+    "arrayWithoutObjectId": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "mixedArray": {
       "type": "array",
       "items": {
