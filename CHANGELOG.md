@@ -20,6 +20,7 @@
 * If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release.
 * If the objects in an array had no `id` field according to the schema, the identifier merge strategy would be used instead of the whole list merge strategy.
 * If an array were mixing objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
+* If the items in an array were non-objects, the list would not be treated as a single value. #14
 
 ## 0.4 (2018-01-04)
 
