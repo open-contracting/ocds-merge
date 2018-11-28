@@ -1,10 +1,10 @@
 {
-  "ocid": "A",
-  "id": "2",
-  "date": "2014-01-02T00:00:00Z",
   "tag": [
     "compiled"
   ],
+  "id": "2",
+  "date": "2014-01-02T00:00:00Z",
+  "ocid": "A",
   "tender": {
     "id": "A",
     "items": [
@@ -12,8 +12,8 @@
         "id": "item1",
         "unit": {
           "id": "TNE",
-          "name": "Each",
-          "scheme": "UNCEFACT"
+          "scheme": "UNCEFACT",
+          "name": "Each"
         }
       }
     ]

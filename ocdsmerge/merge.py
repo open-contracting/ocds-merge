@@ -162,7 +162,7 @@ def unflatten(processed):
     """
     Unflattens a processed object into a JSON object.
     """
-    unflattened = {}
+    unflattened = OrderedDict()
 
     for key in processed:
         current_node = unflattened
@@ -177,7 +177,7 @@ def unflatten(processed):
                         break
                 # Otherwise, append a new object, and change into it.
                 else:
-                    new_node = {'id': part.original_value}
+                    new_node = OrderedDict({'id': part.original_value})
                     current_node.append(new_node)
                     current_node = new_node
                 continue
@@ -201,7 +201,7 @@ def unflatten(processed):
                 new_node = []
             # If the path is to a new object, start a new object, and change into it.
             else:
-                new_node = {}
+                new_node = OrderedDict()
             current_node[part] = new_node
             current_node = new_node
 
@@ -215,6 +215,7 @@ def process_flattened(flattened):
     """
     # Keep arrays in order.
     processed = OrderedDict()
+
     for key in flattened:
         new_key = []
         for end, part in enumerate(key, 1):
@@ -229,6 +230,7 @@ def process_flattened(flattened):
                 part = IdValue(id_value)
             new_key.append(part)
         processed[tuple(new_key)] = flattened[key]
+
     return processed
 
 
@@ -250,8 +252,8 @@ def merge(releases, schema=None, merge_rules=None):
         processed = process_flattened(flat)
 
         # Add an `id` and `date`.
-        processed[('id',)] = releaseID
-        processed[('date',)] = date
+        merged[('id',)] = releaseID
+        merged[('date',)] = date
         merged.update(processed)
 
     return unflatten(merged)
@@ -286,11 +288,11 @@ def merge_versioned(releases, schema=None, merge_rules=None):
             if key not in merged:
                 merged[key] = []
 
-            merged[key].append({
-                'releaseID': releaseID,
-                'releaseDate': date,
-                'releaseTag': tag,
-                'value': value,
-            })
+            merged[key].append(OrderedDict([
+                ('releaseID', releaseID),
+                ('releaseDate', date),
+                ('releaseTag', tag),
+                ('value', value),
+            ]))
 
     return unflatten(merged)

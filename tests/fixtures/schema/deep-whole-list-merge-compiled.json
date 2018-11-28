@@ -1,6 +1,9 @@
 {
-  "date": "2000-01-02T00:00:00Z",
+  "tag": [
+    "compiled"
+  ],
   "id": "2",
+  "date": "2000-01-02T00:00:00Z",
   "identifierMerge": [
     {
       "id": 1,
@@ -15,8 +18,5 @@
         }
       ]
     }
-  ],
-  "tag": [
-    "compiled"
   ]
 }

@@ -1,11 +1,11 @@
 {
-  "date": "2000-01-02T00:00:00Z",
+  "tag": [
+    "compiled"
+  ],
   "id": "2",
+  "date": "2000-01-02T00:00:00Z",
   "wholeListMergeObject": {
     "a": "value",
     "b": "value"
-  },
-  "tag": [
-    "compiled"
-  ]
+  }
 }

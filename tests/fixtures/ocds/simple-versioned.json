@@ -3,8 +3,8 @@
   "tender": {
     "id": [
       {
-        "releaseDate": "2014-01-01",
         "releaseID": "1",
+        "releaseDate": "2014-01-01",
         "releaseTag": [
           "tender"
         ],
@@ -13,20 +13,20 @@
     ],
     "procurementMethod": [
       {
-        "value": "Selective",
+        "releaseID": "1",
         "releaseDate": "2014-01-01",
         "releaseTag": [
           "tender"
         ],
-        "releaseID": "1"
+        "value": "Selective"
       },
       {
-        "value": "Open",
+        "releaseID": "2",
         "releaseDate": "2014-01-02",
         "releaseTag": [
           "tender"
         ],
-        "releaseID": "2"
+        "value": "Open"
       }
     ]
   }

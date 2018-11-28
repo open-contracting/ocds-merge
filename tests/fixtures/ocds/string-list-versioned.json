@@ -5,16 +5,16 @@
       "id": "consequat reprehenderit",
       "name": [
         {
-          "releaseDate": "2014-01-01",
           "releaseID": "1",
+          "releaseDate": "2014-01-01",
           "releaseTag": [
             "award"
           ],
           "value": "sit Lorem irure proident"
         },
         {
-          "releaseDate": "2014-01-02",
           "releaseID": "1",
+          "releaseDate": "2014-01-02",
           "releaseTag": [
             "award"
           ],
@@ -23,8 +23,8 @@
       ],
       "roles": [
         {
-          "releaseDate": "2014-01-01",
           "releaseID": "1",
+          "releaseDate": "2014-01-01",
           "releaseTag": [
             "award"
           ],
@@ -34,8 +34,8 @@
           ]
         },
         {
-          "releaseDate": "2014-01-02",
           "releaseID": "1",
+          "releaseDate": "2014-01-02",
           "releaseTag": [
             "award"
           ],

@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from collections import OrderedDict
 from copy import deepcopy
 from glob import glob
 
@@ -31,9 +32,9 @@ def test_merge(filename, schema):
         method = merge_versioned
 
     with open(filename) as f:
-        expected = json.load(f)
+        expected = json.load(f, object_pairs_hook=OrderedDict)
     with open(re.sub(r'-(?:compiled|versioned)', '', filename)) as f:
-        releases = json.load(f)
+        releases = json.load(f, object_pairs_hook=OrderedDict)
 
     original = deepcopy(releases)
 
@@ -170,19 +171,19 @@ def test_get_merge_rules():
 
 def test_flatten():  # from documentation
     data = {
-        "a": "I am a",
+        "c": "I am a",
         "b": ["A", "list"],
-        "c": [
-            {"ca": "I am ca"},
-            {"cb": "I am cb"}
+        "a": [
+            {"cb": "I am ca"},
+            {"ca": "I am cb"}
         ]
     }
 
     assert flatten(data) == {
-        ('a',): 'I am a',
+        ('c',): 'I am a',
         ('b',): ['A', 'list'],
-        ('c', 0, 'ca'): 'I am ca',
-        ('c', 1, 'cb'): 'I am cb',
+        ('a', 0, 'cb'): 'I am ca',
+        ('a', 1, 'ca'): 'I am cb',
     }
 
 

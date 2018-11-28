@@ -6,30 +6,30 @@
         "id": "1",
         "description": [
           {
-            "value": "Item 1",
+            "releaseID": "1",
             "releaseDate": "2014-01-01",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "1"
+            "value": "Item 1"
           }
         ],
         "quantity": [
           {
-            "value": 1,
+            "releaseID": "1",
             "releaseDate": "2014-01-01",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "1"
+            "value": 1
           },
           {
-            "value": 2,
+            "releaseID": "2",
             "releaseDate": "2014-01-02",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "2"
+            "value": 2
           }
         ]
       },
@@ -37,22 +37,22 @@
         "id": "2",
         "description": [
           {
-            "value": "Item 2",
+            "releaseID": "1",
             "releaseDate": "2014-01-01",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "1"
+            "value": "Item 2"
           }
         ],
         "quantity": [
           {
-            "value": 1,
+            "releaseID": "1",
             "releaseDate": "2014-01-01",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "1"
+            "value": 1
           }
         ]
       },
@@ -60,22 +60,22 @@
         "id": "3",
         "description": [
           {
-            "value": "Item 3",
+            "releaseID": "2",
             "releaseDate": "2014-01-02",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "2"
+            "value": "Item 3"
           }
         ],
         "quantity": [
           {
-            "value": 1,
+            "releaseID": "2",
             "releaseDate": "2014-01-02",
             "releaseTag": [
               "tender"
             ],
-            "releaseID": "2"
+            "value": 1
           }
         ]
       }

@@ -1,10 +1,10 @@
 {
-  "ocid": "A",
-  "id": "2",
-  "date": "2014-01-02",
   "tag": [
     "compiled"
   ],
+  "id": "2",
+  "date": "2014-01-02",
+  "ocid": "A",
   "tender": {
     "items": [
       {

@@ -1,13 +1,13 @@
 {
-  "date": "2000-01-01T00:00:00Z",
+  "tag": [
+    "compiled"
+  ],
   "id": "1",
+  "date": "2000-01-01T00:00:00Z",
   "shadow": [
     {
       "id": 1,
       "omitWhenMerged": "value"
     }
-  ],
-  "tag": [
-    "compiled"
   ]
 }

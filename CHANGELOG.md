@@ -13,6 +13,10 @@
 * Allow specifying cached or customized merge rules.
 * Allow specifying a custom schema as parsed JSON.
 
+### Changed
+
+* Maintain the same order as the input data, as much as possible.
+
 ### Fixed
 
 * If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
