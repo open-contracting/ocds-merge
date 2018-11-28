@@ -69,7 +69,7 @@ def _get_merge_rules(properties, path=None):
         if 'array' in types and 'items' in value:
             item_types = _get_types(value['items'])
             # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
-            if 'object' in item_types and any(t for t in item_types if t != 'object'):
+            if any(item_type != 'object' for item_type in item_types):
                 rules.add('wholeListMerge')
             if 'object' in item_types and 'properties' in value['items']:
                 # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
@@ -223,8 +223,7 @@ def process_flattened(flattened):
                 # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                 # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
                 id_value = flattened.get(tuple(key[:end]) + ('id',))
-                # If the objects contain no top-level `id` values, the whole list merge strategy is used.
-                # http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
+                # If the object contain no top-level `id` value, we invent one.
                 if id_value is None:
                     id_value = part
                 part = IdValue(id_value)
