@@ -6,18 +6,26 @@
     "tag": [
       "tender"
     ],
-    "versionIdObject": {
+    "implicitVersionIdObject": {
       "id": 1
     },
-    "noVersionIdObject": {
+    "explicitVersionIdObject": {
       "id": 1
     },
-    "versionIdArray": [
+    "ignoreVersionIdObject": {
+      "id": 1
+    },
+    "implicitVersionIdArray": [
       {
         "id": 1
       }
     ],
-    "noVersionIdArray": [
+    "explicitVersionIdArray": [
+      {
+        "id": 1
+      }
+    ],
+    "ignoreVersionIdArray": [
       {
         "id": 1
       }

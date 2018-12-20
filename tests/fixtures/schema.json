@@ -12,7 +12,15 @@
       "type": "string",
       "omitWhenMerged": true
     },
-    "versionIdObject": {
+    "implicitVersionIdObject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "explicitVersionIdObject": {
       "type": "object",
       "properties": {
         "id": {
@@ -21,15 +29,39 @@
         }
       }
     },
-    "noVersionIdObject": {
+    "ignoreVersionIdObject": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "versionId": false
         }
       }
     },
-    "versionIdArray": {
+    "implicitVersionIdArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "explicitVersionIdArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "versionId": false
+          }
+        }
+      }
+    },
+    "ignoreVersionIdArray": {
       "type": "array",
       "items": {
         "type": "object",
@@ -37,17 +69,6 @@
           "id": {
             "type": "integer",
             "versionId": true
-          }
-        }
-      }
-    },
-    "noVersionIdArray": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
           }
         }
       }

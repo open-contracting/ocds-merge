@@ -143,9 +143,7 @@ def test_get_latest_release_schema_url():
 def test_get_merge_rules():
     assert get_merge_rules(schema_url) == {
         ('awards', 'items', 'additionalClassifications'): {'wholeListMerge'},
-        ('awards', 'items', 'unit', 'id'): {'versionId'},
         ('contracts', 'items', 'additionalClassifications'): {'wholeListMerge'},
-        ('contracts', 'items', 'unit', 'id'): {'versionId'},
         ('contracts', 'relatedProcesses', 'relationship'): {'wholeListMerge'},
         ('date',): {'omitWhenMerged'},
         ('id',): {'omitWhenMerged'},
@@ -154,9 +152,7 @@ def test_get_merge_rules():
         ('relatedProcesses', 'relationship'): {'wholeListMerge'},
         ('tag',): {'wholeListMerge'},
         ('tender', 'additionalProcurementCategories'): {'wholeListMerge'},
-        ('tender', 'id'): {'versionId'},
         ('tender', 'items', 'additionalClassifications'): {'wholeListMerge'},
-        ('tender', 'items', 'unit', 'id'): {'versionId'},
         ('tender', 'submissionMethod'): {'wholeListMerge'},
 
         # Deprecated

@@ -8,6 +8,7 @@
 * If a field sets `omitWhenMerged`, `wholeListMerge` is ignored on its sub-properties.
 * If an array sets `wholeListMerge`, `omitWhenMerged` is ignored on its sub-properties.
 * If an array doesn't set `wholeListMerge` and objects have the same `id` in one release, only the last object is retained.
+* `versionId` is ignored, as it merely assists in identifying which `id` fields are not on objects in arrays.
 
 ### Added
 
@@ -21,10 +22,9 @@
 
 ### Fixed
 
-* If `omitWhenMerged`, `versionId`, `wholeListMerge` were `false`, they were treated as `true`.
+* If `omitWhenMerged` or `wholeListMerge` were `false`, they were treated as `true`.
 * If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
 * If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release.
-* If `versionId` were set on the `id` field of an object in an array, the `id` field wouldn't be versioned.
 * If the objects in an array had no `id` field according to the schema, the identifier merge strategy would be used instead of the whole list merge strategy.
 * If an array were mixing objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
 * If the items in an array were non-objects, the list would not be treated as a single value. [#14](https://github.com/open-contracting/ocds-merge/pull/14)

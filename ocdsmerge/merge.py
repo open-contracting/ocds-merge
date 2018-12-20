@@ -74,11 +74,9 @@ def _get_merge_rules(properties, path=None):
                     yield (new_path, {'wholeListMerge'})
                 else:
                     yield from _get_merge_rules(value['items']['properties'], path=new_path)
-        # `versionId` only belongs on `id` fields of objects in arrays, which are otherwise unversioned. That said,
-        # adding it to the `id` fields of objects not in arrays has no side effect, as it's the default behavior.
+
+        # `versionId` merely assists in identifying `id` fields that are not on objects in arrays.
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
-        elif key == 'id' and value.get('versionId'):
-            yield (new_path, {'versionId'})
 
 
 def get_merge_rules(schema=None):
@@ -188,7 +186,7 @@ def unflatten(processed, merge_rules):
 
             # If this is a path to a node we visited before, change into it. If it's an `id` field, it's already been
             # set to its original value. However, if it sets `versionId`, pass-thru to set it to its versioned value.
-            if node is not None and 'versionId' not in node_merge_rules:
+            if node is not None:
                 current_node = node
                 continue
 

@@ -1,6 +1,6 @@
 {
   "ocid": "ocds-213czf-1",
-  "versionIdObject": {
+  "implicitVersionIdObject": {
     "id": [
       {
         "releaseID": "1",
@@ -12,7 +12,7 @@
       }
     ]
   },
-  "noVersionIdObject": {
+  "explicitVersionIdObject": {
     "id": [
       {
         "releaseID": "1",
@@ -24,21 +24,29 @@
       }
     ]
   },
-  "versionIdArray": [
+  "ignoreVersionIdObject": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2000-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": 1
+      }
+    ]
+  },
+  "implicitVersionIdArray": [
     {
-      "id": [
-        {
-          "releaseID": "1",
-          "releaseDate": "2000-01-01T00:00:00Z",
-          "releaseTag": [
-            "tender"
-          ],
-          "value": 1
-        }
-      ]
+      "id": 1
     }
   ],
-  "noVersionIdArray": [
+  "explicitVersionIdArray": [
+    {
+      "id": 1
+    }
+  ],
+  "ignoreVersionIdArray": [
     {
       "id": 1
     }
