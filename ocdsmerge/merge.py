@@ -1,5 +1,6 @@
 import re
 from collections import OrderedDict
+from functools import lru_cache
 
 import jsonref
 import requests
@@ -16,6 +17,7 @@ class IdValue(str):
         str.__init__(value)
 
 
+@lru_cache()
 def get_latest_version():
     """
     Returns the tag of the latest version of OCDS.
@@ -23,6 +25,7 @@ def get_latest_version():
     return re.findall(r'\d+__\d+__\d+', requests.get('http://standard.open-contracting.org/schema/').text)[-1]
 
 
+@lru_cache()
 def get_latest_release_schema_url():
     """
     Returns the URL of the release schema in the latest version of OCDS.
@@ -79,6 +82,14 @@ def _get_merge_rules(properties, path=None):
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
 
 
+@lru_cache()
+def _get_merge_rules_from_url_or_path(schema):
+    if schema.startswith('http'):
+        return jsonref.load_uri(schema)
+    with open(schema) as f:
+        return jsonref.load(f)
+
+
 def get_merge_rules(schema=None):
     """
     Returns merge rules as key-value pairs, in which the key is a JSON path as a tuple, and the value is a list of
@@ -87,11 +98,8 @@ def get_merge_rules(schema=None):
     schema = schema or get_latest_release_schema_url()
     if isinstance(schema, dict):
         deref_schema = jsonref.JsonRef.replace_refs(schema)
-    elif schema.startswith('http'):
-        deref_schema = jsonref.load_uri(schema)
     else:
-        with open(schema) as f:
-            deref_schema = jsonref.load(f)
+        deref_schema = _get_merge_rules_from_url_or_path(schema)
     return dict(_get_merge_rules(deref_schema['properties']))
 
 
@@ -182,7 +190,6 @@ def unflatten(processed, merge_rules):
 
             # Otherwise, this is a path to a property of an object.
             node = current_node.get(part)
-            node_merge_rules = merge_rules.get(tuple(part for part in key[:end] if not isinstance(part, IdValue)), [])
 
             # If this is a path to a node we visited before, change into it. If it's an `id` field, it's already been
             # set to its original value. However, if it sets `versionId`, pass-thru to set it to its versioned value.
@@ -245,7 +252,6 @@ def merge(releases, schema=None, merge_rules=None):
         release = release.copy()
 
         ocid = release['ocid']
-        releaseID = release['id']
         date = release['date']
         release.pop('tag', None)  # becomes ["compiled"]
 
@@ -271,13 +277,13 @@ def merge_versioned(releases, schema=None, merge_rules=None):
     for release in sorted(releases, key=lambda release: release['date']):
         release = release.copy()
 
+        # Don't version the OCID.
         ocid = release.pop('ocid')
+        merged[('ocid',)] = ocid
+
         releaseID = release['id']
         date = release['date']
         tag = release.pop('tag', None)
-
-        # Don't version the OCID.
-        merged[('ocid',)] = ocid
 
         flat = flatten(release, merge_rules)
         processed = process_flattened(flat)
