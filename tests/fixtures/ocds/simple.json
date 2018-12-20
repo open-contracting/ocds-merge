@@ -6,9 +6,10 @@
     "tag": [
       "tender"
     ],
+    "initiationType": "tender",
     "tender": {
       "id": "A",
-      "procurementMethod": "Selective"
+      "procurementMethod": "selective"
     }
   },
   {
@@ -18,9 +19,10 @@
     "tag": [
       "tender"
     ],
+    "initiationType": "tender",
     "tender": {
       "id": "A",
-      "procurementMethod": "Open"
+      "procurementMethod": "open"
     }
   }
 ]

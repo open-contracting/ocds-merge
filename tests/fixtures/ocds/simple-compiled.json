@@ -5,8 +5,9 @@
   "id": "ocds-213czf-A-2014-01-02T00:00:00Z",
   "date": "2014-01-02T00:00:00Z",
   "ocid": "ocds-213czf-A",
+  "initiationType": "tender",
   "tender": {
     "id": "A",
-    "procurementMethod": "Open"
+    "procurementMethod": "open"
   }
 }

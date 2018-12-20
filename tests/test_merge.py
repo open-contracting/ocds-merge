@@ -1,30 +1,59 @@
+"""
+It's possible to regenerate fixtures with commands like:
+
+cat tests/fixtures/ocds/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    > tests/fixtures/ocds/contextual-compiled.json
+cat tests/fixtures/ocds/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    --versioned > tests/fixtures/ocds/contextual-versioned.json
+"""
+
 import json
 import os
 import re
+import warnings
 from collections import OrderedDict
 from copy import deepcopy
 from glob import glob
 
 import pytest
+import requests
+from jsonschema import FormatChecker
+from jsonschema.validators import Draft4Validator as validator
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
 from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten, process_flattened
 
 schema_url = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
+versioned_release_schema_url = 'http://standard.open-contracting.org/schema/1__1__2/versioned-release-validation-schema.json'  # noqa
 
 with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
     simple_schema = json.load(f)
 
-argvalues = []
-for directory, schemas in (('ocds', (None, schema_url)), ('schema', (simple_schema,))):
-    for schema in schemas:
-        for suffix in ('compiled', 'versioned'):
-            filenames = glob(os.path.join('tests', 'fixtures', directory, '*-{}.json'.format(suffix)))
-            # assert len(filenames), '{} fixtures not found'.format(suffix)
-            argvalues += [(filename, schema) for filename in filenames]
+test_merge_argvalues = []
+for directory, schema in (('ocds', None), ('ocds', schema_url), ('schema', simple_schema)):
+    for suffix in ('compiled', 'versioned'):
+        filenames = glob(os.path.join('tests', 'fixtures', directory, '*-{}.json'.format(suffix)))
+        assert len(filenames), '{} fixtures not found'.format(suffix)
+        test_merge_argvalues += [(filename, schema) for filename in filenames]
+
+test_valid_argvalues = []
+filenames = glob(os.path.join('tests', 'fixtures', 'ocds', '*.json'))
+assert len(filenames), 'ocds fixtures not found'
+for versioned, url in ((False, schema_url), (True, versioned_release_schema_url)):
+    schema = requests.get(url).json()
+    for filename in filenames:
+        if not versioned ^ filename.endswith('-versioned.json'):
+            test_valid_argvalues.append((filename, schema))
 
 
-@pytest.mark.parametrize('filename,schema', argvalues)
+def custom_warning_formatter(message, category, filename, lineno, line=None):
+    return str(message).replace(os.getcwd() + os.sep, '')
+
+
+warnings.formatwarning = custom_warning_formatter
+
+
+@pytest.mark.parametrize('filename,schema', test_merge_argvalues)
 def test_merge(filename, schema):
     if filename.endswith('-compiled.json'):
         method = merge
@@ -201,3 +230,24 @@ def test_process_flattened():
         ('a', 'identifier', 'id'): 'identifier',
         ('a', '1', 'key'): 'value',
     }
+
+
+@pytest.mark.parametrize('filename,schema', test_valid_argvalues)
+def test_valid(filename, schema):
+    if 'contextual' in filename:
+        pytest.xfail('will fail due to bug in versioned release schema')
+
+    errors = 0
+
+    with open(filename) as f:
+        data = json.load(f)
+    if filename.endswith('-versioned.json') or filename.endswith('-compiled.json'):
+        data = [data]
+
+    for datum in data:
+        for error in validator(schema, format_checker=FormatChecker()).iter_errors(datum):
+            errors += 1
+            warnings.warn(json.dumps(error.instance, indent=2, separators=(',', ': ')))
+            warnings.warn('{} ({})\n'.format(error.message, '/'.join(error.absolute_schema_path)))
+
+    assert errors == 0, '{} is invalid. See warnings below.'.format(filename)

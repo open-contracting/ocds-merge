@@ -20,6 +20,7 @@ setup(
     extras_require={
         'test': [
             'coveralls',
+            'jsonschema',
             'pytest',
             'pytest-cov',
         ],

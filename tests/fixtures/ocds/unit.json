@@ -6,6 +6,7 @@
     "tag": [
       "tender"
     ],
+    "initiationType": "tender",
     "tender": {
       "id": "A",
       "items": [
@@ -27,6 +28,7 @@
     "tag": [
       "tender"
     ],
+    "initiationType": "tender",
     "tender": {
       "id": "A",
       "items": [

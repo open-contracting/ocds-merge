@@ -52,9 +52,10 @@ Here is a simple example.
        "id": "1",
        "date": "2014-01-01",
        "tag": ["tender"],
+       "initiationType": "tender",
        "tender": {
            "id": "A",
-           "procurementMethod": "Selective"
+           "procurementMethod": "selective"
        }
    },
    {
@@ -62,9 +63,10 @@ Here is a simple example.
        "id": "2",
        "date": "2014-01-02",
        "tag": ["tender"],
+       "initiationType": "tender",
        "tender": {
            "id": "A",
-           "procurementMethod": "Open"
+           "procurementMethod": "open"
        }
    }
    ]
