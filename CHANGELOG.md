@@ -16,6 +16,7 @@
 
 ### Changed
 
+* Set the `id` of the compiled release to a concatenation of the `ocid` and the latest release's `date`, instead of to the latest release's `id`.
 * Maintain the same order as the input data, as much as possible.
 
 ### Fixed

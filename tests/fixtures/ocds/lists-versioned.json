@@ -1,12 +1,12 @@
 {
-  "ocid": "A",
+  "ocid": "ocds-213czf-A",
   "parties": [
     {
       "id": "consequat reprehenderit",
       "additionalIdentifiers": [
         {
           "releaseID": "1",
-          "releaseDate": "2014-01-01",
+          "releaseDate": "2014-01-01T00:00:00Z",
           "releaseTag": [
             "award"
           ],
@@ -24,8 +24,8 @@
           ]
         },
         {
-          "releaseID": "1",
-          "releaseDate": "2014-01-02",
+          "releaseID": "2",
+          "releaseDate": "2014-01-02T00:00:00Z",
           "releaseTag": [
             "award"
           ],
@@ -45,15 +45,15 @@
       "name": [
         {
           "releaseID": "1",
-          "releaseDate": "2014-01-01",
+          "releaseDate": "2014-01-01T00:00:00Z",
           "releaseTag": [
             "award"
           ],
           "value": "sit Lorem irure proident"
         },
         {
-          "releaseID": "1",
-          "releaseDate": "2014-01-02",
+          "releaseID": "2",
+          "releaseDate": "2014-01-02T00:00:00Z",
           "releaseTag": [
             "award"
           ],

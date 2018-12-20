@@ -1,5 +1,5 @@
 {
-  "ocid": "A",
+  "ocid": "ocds-213czf-A",
   "tender": {
     "items": [
       {
@@ -7,7 +7,7 @@
         "description": [
           {
             "releaseID": "1",
-            "releaseDate": "2014-01-01",
+            "releaseDate": "2014-01-01T00:00:00Z",
             "releaseTag": [
               "tender"
             ],
@@ -17,7 +17,7 @@
         "quantity": [
           {
             "releaseID": "1",
-            "releaseDate": "2014-01-01",
+            "releaseDate": "2014-01-01T00:00:00Z",
             "releaseTag": [
               "tender"
             ],
@@ -25,7 +25,7 @@
           },
           {
             "releaseID": "2",
-            "releaseDate": "2014-01-02",
+            "releaseDate": "2014-01-02T00:00:00Z",
             "releaseTag": [
               "tender"
             ],
@@ -38,7 +38,7 @@
         "description": [
           {
             "releaseID": "1",
-            "releaseDate": "2014-01-01",
+            "releaseDate": "2014-01-01T00:00:00Z",
             "releaseTag": [
               "tender"
             ],
@@ -48,7 +48,7 @@
         "quantity": [
           {
             "releaseID": "1",
-            "releaseDate": "2014-01-01",
+            "releaseDate": "2014-01-01T00:00:00Z",
             "releaseTag": [
               "tender"
             ],
@@ -61,7 +61,7 @@
         "description": [
           {
             "releaseID": "2",
-            "releaseDate": "2014-01-02",
+            "releaseDate": "2014-01-02T00:00:00Z",
             "releaseTag": [
               "tender"
             ],
@@ -71,7 +71,7 @@
         "quantity": [
           {
             "releaseID": "2",
-            "releaseDate": "2014-01-02",
+            "releaseDate": "2014-01-02T00:00:00Z",
             "releaseTag": [
               "tender"
             ],

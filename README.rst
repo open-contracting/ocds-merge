@@ -48,7 +48,7 @@ Here is a simple example.
 
    releases = [
    {
-       "ocid": "A",
+       "ocid": "ocds-213czf-A",
        "id": "1",
        "date": "2014-01-01",
        "tag": ["tender"],
@@ -58,7 +58,7 @@ Here is a simple example.
        }
    },
    {
-       "ocid": "A",
+       "ocid": "ocds-213czf-A",
        "id": "2",
        "date": "2014-01-02",
        "tag": ["tender"],

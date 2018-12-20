@@ -44,6 +44,7 @@ def test_merge(filename, schema):
 
 def test_merge_when_array_is_mixed():
     data = [{
+        "ocid": "ocds-213czf-A",
         "id": "1",
         "date": "2000-01-01T00:00:00Z",
         "mixedArray": [
@@ -51,6 +52,7 @@ def test_merge_when_array_is_mixed():
             "foo"
         ]
     }, {
+        "ocid": "ocds-213czf-A",
         "id": "2",
         "date": "2000-01-02T00:00:00Z",
         "mixedArray": [
@@ -60,8 +62,9 @@ def test_merge_when_array_is_mixed():
     }]
 
     output = {
-        'id': '2',
+        'id': 'ocds-213czf-A-2000-01-02T00:00:00Z',
         'date': '2000-01-02T00:00:00Z',
+        'ocid': 'ocds-213czf-A',
         'tag': ['compiled'],
         'mixedArray': [
             {'id': 2},
@@ -84,6 +87,7 @@ def test_merge_when_array_is_mixed():
 
 def test_merge_when_array_is_mixed_without_schema():
     data = [{
+        'ocid': 'ocds-213czf-A',
         "id": "1",
         "date": "2000-01-01T00:00:00Z",
         "mixedArray": [
@@ -91,6 +95,7 @@ def test_merge_when_array_is_mixed_without_schema():
             "foo"
         ]
     }, {
+        'ocid': 'ocds-213czf-A',
         "id": "2",
         "date": "2000-01-02T00:00:00Z",
         "mixedArray": [
@@ -100,8 +105,9 @@ def test_merge_when_array_is_mixed_without_schema():
     }]
 
     output = {
-        'id': '2',
+        'id': 'ocds-213czf-A-2000-01-02T00:00:00Z',
         'date': '2000-01-02T00:00:00Z',
+        'ocid': 'ocds-213czf-A',
         'tag': ['compiled'],
         'mixedArray': [
             {'id': 2},

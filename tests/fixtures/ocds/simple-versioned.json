@@ -1,10 +1,10 @@
 {
-  "ocid": "A",
+  "ocid": "ocds-213czf-A",
   "tender": {
     "id": [
       {
         "releaseID": "1",
-        "releaseDate": "2014-01-01",
+        "releaseDate": "2014-01-01T00:00:00Z",
         "releaseTag": [
           "tender"
         ],
@@ -14,7 +14,7 @@
     "procurementMethod": [
       {
         "releaseID": "1",
-        "releaseDate": "2014-01-01",
+        "releaseDate": "2014-01-01T00:00:00Z",
         "releaseTag": [
           "tender"
         ],
@@ -22,7 +22,7 @@
       },
       {
         "releaseID": "2",
-        "releaseDate": "2014-01-02",
+        "releaseDate": "2014-01-02T00:00:00Z",
         "releaseTag": [
           "tender"
         ],
