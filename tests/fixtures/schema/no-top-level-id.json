@@ -9,7 +9,8 @@
         "key": "a"
       },
       {
-        "key": 1
+        "key": 1,
+        "another": "x"
       },
       {
         "key": 2

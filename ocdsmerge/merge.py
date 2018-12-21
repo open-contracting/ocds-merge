@@ -21,6 +21,16 @@ class IdValue(str):
         self._original_value = original_value
 
 
+class IdDict(OrderedDict):
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @identifier.setter
+    def identifier(self, identifier):
+        self._identifier = identifier
+
+
 @lru_cache()
 def get_latest_version():
     """
@@ -182,12 +192,13 @@ def unflatten(processed, merge_rules):
             if isinstance(part, IdValue):
                 # If the `id` of an object in the array matches, change into it.
                 for node in current_node:
-                    if isinstance(node, dict) and node.get('id') == part.identifier:
+                    if isinstance(node, IdDict) and node.identifier == part.identifier:
                         current_node = node
                         break
                 # Otherwise, append a new object, and change into it.
                 else:
-                    new_node = OrderedDict()
+                    new_node = IdDict()
+                    new_node.identifier = part.identifier
                     # If the original object had an `id` value, set it.
                     if part.original_value is not None:
                         new_node['id'] = part.original_value
@@ -230,24 +241,32 @@ def process_flattened(flattened):
     # Keep arrays in order.
     processed = OrderedDict()
 
+    # Cache identifiers, to avoid minting a new ID for each field of the same object.
+    identifiers = {}
+
     for key in flattened:
         new_key = []
         for end, part in enumerate(key, 1):
             # If this is a path to an item in an array.
             if isinstance(part, int):
-                # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
-                # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
-                id_value = flattened.get(key[:end] + ('id',))
-
-                # If the object contained no top-level `id` value, set a unique value.
-                if id_value is None:
-                    identifier = uuid.uuid4()
+                if key[:end] in identifiers:
+                    part = identifiers[key[:end]]
                 else:
-                    identifier = id_value
+                    # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
+                    # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
+                    id_value = flattened.get(key[:end] + ('id',))
 
-                part = IdValue(identifier)
-                # Save the original value. If the value is an integer, this avoids coercing the value to a string.
-                part.original_value = id_value
+                    # If the object contained no top-level `id` value, set a unique value.
+                    if id_value is None:
+                        identifier = uuid.uuid4()
+                    else:
+                        identifier = id_value
+
+                    # Save the original value. (If the value is an integer, this avoids coercing it to a string.)
+                    part = IdValue(identifier)
+                    part.original_value = id_value
+
+                    identifiers[key[:end]] = part
             new_key.append(part)
         processed[tuple(new_key)] = flattened[key]
 

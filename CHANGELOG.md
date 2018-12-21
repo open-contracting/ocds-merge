@@ -26,7 +26,7 @@ The following conditions don't occur in OCDS schema, or in extensions authored b
 
 * Sets the `id` of the compiled release to a concatenation of the `ocid` and the latest release's `date`, instead of to the latest release's `id`. [8c89e43](https://github.com/open-contracting/ocds-merge/commit/8c89e43871d24881316aee22ce5b13f7dbb4ccd9)
 * Maintains the same order as the input data, as much as possible. [#9](https://github.com/open-contracting/ocds-merge/pull/9) [da648b0](https://github.com/open-contracting/ocds-merge/commit/da648b03ddffdb996b273d18776031c8eed3c4b8)
-* Supports OCDS 1.0 `ocdsOmit` and `ocdsVersion` merge strategies.
+* Supports OCDS 1.0 `ocdsOmit` and `ocdsVersion` merge strategies. [e67353d](https://github.com/open-contracting/ocds-merge/commit/e67353d07e4a4f80c4c4f2edb9c782977b68ab7f)
 
 ### Fixed
 
