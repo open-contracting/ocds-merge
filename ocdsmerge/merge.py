@@ -62,11 +62,11 @@ def _get_merge_rules(properties, path=None):
 
         # `omitWhenMerged` supersedes all other rules.
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#omit-when-merged
-        if value.get('omitWhenMerged'):
+        if value.get('omitWhenMerged') or value.get('mergeStrategy') == 'ocdsOmit':
             yield (new_path, {'omitWhenMerged'})
         # `wholeListMerge` supersedes any nested rules.
         # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
-        elif 'array' in types and value.get('wholeListMerge'):
+        elif 'array' in types and (value.get('wholeListMerge') or value.get('mergeStrategy') == 'ocdsVersion'):
             yield (new_path, {'wholeListMerge'})
         elif 'object' in types and 'properties' in value:
             yield from _get_merge_rules(value['properties'], path=new_path)
@@ -237,7 +237,7 @@ def process_flattened(flattened):
             if isinstance(part, int):
                 # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                 # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
-                id_value = flattened.get(tuple(key[:end]) + ('id',))
+                id_value = flattened.get(key[:end] + ('id',))
 
                 # If the object contained no top-level `id` value, set a unique value.
                 if id_value is None:
@@ -275,6 +275,10 @@ def merge(releases, schema=None, merge_rules=None):
         # Add an `id` and `date`.
         merged[('id',)] = '{}-{}'.format(ocid, date)
         merged[('date',)] = date
+
+        # 1.0: `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
+        merged[('ocid',)] = ocid
+
         merged.update(processed)
 
     return unflatten(merged, merge_rules)

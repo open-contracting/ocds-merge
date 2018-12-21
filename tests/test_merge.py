@@ -1,10 +1,13 @@
 """
 It's possible to regenerate fixtures with commands like:
 
-cat tests/fixtures/ocds/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
-    > tests/fixtures/ocds/contextual-compiled.json
-cat tests/fixtures/ocds/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
-    --versioned > tests/fixtures/ocds/contextual-versioned.json
+cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    > tests/fixtures/1.1/contextual-compiled.json
+cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    --versioned > tests/fixtures/1.1/contextual-versioned.json
+cat tests/fixtures/1.0/suppliers.json  | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    --versioned --schema http://standard.open-contracting.org/schema/1__0__3/release-schema.json \
+    > tests/fixtures/1.0/suppliers-versioned.json
 """
 
 import json
@@ -23,27 +26,35 @@ from jsonschema.validators import Draft4Validator as validator
 from ocdsmerge import merge, merge_versioned, get_merge_rules
 from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten, process_flattened
 
-schema_url = 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
-versioned_release_schema_url = 'http://standard.open-contracting.org/schema/1__1__2/versioned-release-validation-schema.json'  # noqa
+versions = {
+    '1.0': '1__0__3',
+    '1.1': '1__1__2',
+}
+
+schema_url = 'http://standard.open-contracting.org/schema/{}/release-schema.json'
+versioned_release_schema_url = 'http://standard.open-contracting.org/schema/{}/versioned-release-validation-schema.json'  # noqa
 
 with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
     simple_schema = json.load(f)
 
 test_merge_argvalues = []
-for directory, schema in (('ocds', None), ('ocds', schema_url), ('schema', simple_schema)):
+for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
+    if isinstance(schema, str):
+        schema = schema.format(versions[minor_version])
     for suffix in ('compiled', 'versioned'):
-        filenames = glob(os.path.join('tests', 'fixtures', directory, '*-{}.json'.format(suffix)))
+        filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*-{}.json'.format(suffix)))
         assert len(filenames), '{} fixtures not found'.format(suffix)
         test_merge_argvalues += [(filename, schema) for filename in filenames]
 
 test_valid_argvalues = []
-filenames = glob(os.path.join('tests', 'fixtures', 'ocds', '*.json'))
-assert len(filenames), 'ocds fixtures not found'
-for versioned, url in ((False, schema_url), (True, versioned_release_schema_url)):
-    schema = requests.get(url).json()
-    for filename in filenames:
-        if not versioned ^ filename.endswith('-versioned.json'):
-            test_valid_argvalues.append((filename, schema))
+for minor_version, patch_version in versions.items():
+    filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*.json'))
+    assert len(filenames), 'ocds fixtures not found'
+    for versioned, url in ((False, schema_url), (True, versioned_release_schema_url)):
+        schema = requests.get(url.format(patch_version)).json()
+        for filename in filenames:
+            if not versioned ^ filename.endswith('-versioned.json'):
+                test_valid_argvalues.append((filename, schema))
 
 
 def custom_warning_formatter(message, category, filename, lineno, line=None):
@@ -167,8 +178,8 @@ def test_get_latest_release_schema_url():
     assert get_latest_release_schema_url() >= 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
 
 
-def test_get_merge_rules():
-    assert get_merge_rules(schema_url) == {
+def test_get_merge_rules_1_1():
+    assert get_merge_rules(schema_url.format(versions['1.1'])) == {
         ('awards', 'items', 'additionalClassifications'): {'wholeListMerge'},
         ('contracts', 'items', 'additionalClassifications'): {'wholeListMerge'},
         ('contracts', 'relatedProcesses', 'relationship'): {'wholeListMerge'},
@@ -195,6 +206,26 @@ def test_get_merge_rules():
         ('tender', 'amendments', 'changes'): {'wholeListMerge'},
         ('tender', 'procuringEntity', 'additionalIdentifiers'): {'wholeListMerge'},
         ('tender', 'tenderers', 'additionalIdentifiers'): {'wholeListMerge'},
+    }
+
+
+def test_get_merge_rules_1_0():
+    assert get_merge_rules(schema_url.format(versions['1.0'])) == {
+        ('awards', 'amendment', 'changes'): {'wholeListMerge'},
+        ('awards', 'items', 'additionalClassifications'): {'wholeListMerge'},
+        ('awards', 'suppliers'): {'wholeListMerge'},
+        ('buyer', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('contracts', 'amendment', 'changes'): {'wholeListMerge'},
+        ('contracts', 'items', 'additionalClassifications'): {'wholeListMerge'},
+        ('date',): {'omitWhenMerged'},
+        ('id',): {'omitWhenMerged'},
+        ('ocid',): {'omitWhenMerged'},
+        ('tag',): {'omitWhenMerged'},
+        ('tender', 'amendment', 'changes'): {'wholeListMerge'},
+        ('tender', 'items', 'additionalClassifications'): {'wholeListMerge'},
+        ('tender', 'procuringEntity', 'additionalIdentifiers'): {'wholeListMerge'},
+        ('tender', 'submissionMethod'): {'wholeListMerge'},
+        ('tender', 'tenderers'): {'wholeListMerge'},
     }
 
 
