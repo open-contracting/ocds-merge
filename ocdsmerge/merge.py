@@ -192,7 +192,7 @@ def unflatten(processed, merge_rules):
             node = current_node.get(part)
 
             # If this is a path to a node we visited before, change into it. If it's an `id` field, it's already been
-            # set to its original value. However, if it sets `versionId`, pass-thru to set it to its versioned value.
+            # set to its original value.
             if node is not None:
                 current_node = node
                 continue
@@ -208,6 +208,7 @@ def unflatten(processed, merge_rules):
             # If the path is to a new object, start a new object, and change into it.
             else:
                 new_node = OrderedDict()
+
             current_node[part] = new_node
             current_node = new_node
 
