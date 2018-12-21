@@ -1,0 +1,29 @@
+{
+  "tag": [
+    "compiled"
+  ],
+  "id": "ocds-213czf-A-2014-01-02T00:00:00Z",
+  "date": "2014-01-02T00:00:00Z",
+  "ocid": "ocds-213czf-A",
+  "initiationType": "tender",
+  "tender": {
+    "id": "A",
+    "items": [
+      {
+        "id": "1",
+        "description": "Item 1",
+        "quantity": 2
+      },
+      {
+        "id": "2",
+        "description": "Item 2",
+        "quantity": 1
+      },
+      {
+        "id": "3",
+        "description": "Item 3",
+        "quantity": 1
+      }
+    ]
+  }
+}

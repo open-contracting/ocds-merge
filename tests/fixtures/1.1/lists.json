@@ -1,0 +1,55 @@
+[
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "1",
+    "date": "2014-01-01T00:00:00Z",
+    "tag": [
+      "award"
+    ],
+    "initiationType": "tender",
+    "parties": [
+      {
+        "id": "consequat reprehenderit",
+        "additionalIdentifiers": [
+          {
+            "id": "1",
+            "scheme": "aliquip dolor exercitation do",
+            "uri": "http://lk.com"
+          },
+          {
+            "id": "2",
+            "scheme": "foo",
+            "uri": "http://foo.com"
+          }
+        ],
+        "name": "sit Lorem irure proident"
+      }
+    ]
+  },
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "2",
+    "date": "2014-01-02T00:00:00Z",
+    "tag": [
+      "award"
+    ],
+    "initiationType": "tender",
+    "parties": [
+      {
+        "id": "consequat reprehenderit",
+        "additionalIdentifiers": [
+          {
+            "id": "1",
+            "scheme": "bar"
+          },
+          {
+            "id": "3",
+            "scheme": "aliquip dolor exercitation do",
+            "uri": "http://lk.com"
+          }
+        ],
+        "name": "new name"
+      }
+    ]
+  }
+]

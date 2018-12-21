@@ -1,0 +1,17 @@
+{
+  "tag": [
+    "compiled"
+  ],
+  "id": "ocds-213czf-1-2000-01-02T00:00:00Z",
+  "date": "2000-01-02T00:00:00Z",
+  "ocid": "ocds-213czf-1",
+  "keepWhenMerged": "value",
+  "identifierMerge": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}

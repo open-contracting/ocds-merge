@@ -1,0 +1,50 @@
+[
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "1",
+    "date": "2014-01-01T00:00:00Z",
+    "tag": [
+      "tender"
+    ],
+    "initiationType": "tender",
+    "tender": {
+      "id": "A",
+      "items": [
+        {
+          "id": "1",
+          "description": "Item 1",
+          "quantity": 1
+        },
+        {
+          "id": "2",
+          "description": "Item 2",
+          "quantity": 1
+        }
+      ]
+    }
+  },
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "2",
+    "date": "2014-01-02T00:00:00Z",
+    "tag": [
+      "tender"
+    ],
+    "initiationType": "tender",
+    "tender": {
+      "id": "A",
+      "items": [
+        {
+          "id": "1",
+          "description": "Item 1",
+          "quantity": 2
+        },
+        {
+          "id": "3",
+          "description": "Item 3",
+          "quantity": 1
+        }
+      ]
+    }
+  }
+]

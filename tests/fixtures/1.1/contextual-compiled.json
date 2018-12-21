@@ -1,0 +1,48 @@
+{
+  "tag": [
+    "compiled"
+  ],
+  "id": "ocds-213czf-A-2014-01-01T00:00:00Z",
+  "date": "2014-01-01T00:00:00Z",
+  "ocid": "ocds-213czf-A",
+  "initiationType": "tender",
+  "parties": [
+    {
+      "id": "1",
+      "identifier": {
+        "id": "1"
+      },
+      "additionalIdentifiers": [
+        {
+          "id": "1"
+        }
+      ]
+    }
+  ],
+  "tender": {
+    "id": "A",
+    "items": [
+      {
+        "id": "1",
+        "classification": {
+          "id": "1"
+        },
+        "additionalClassifications": [
+          {
+            "id": "1"
+          }
+        ]
+      }
+    ],
+    "procuringEntity": {
+      "id": "1",
+      "name": "Acme Inc."
+    },
+    "tenderers": [
+      {
+        "id": "1",
+        "name": "Acme Inc."
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "tag": [
+    "compiled"
+  ],
+  "id": "ocds-213czf-1-2000-01-02T00:00:00Z",
+  "date": "2000-01-02T00:00:00Z",
+  "ocid": "ocds-213czf-1",
+  "identifierMerge": [
+    {
+      "id": 1,
+      "subarray": [
+        {
+          "id": 10
+        },
+        {
+          "id": 11
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "subarray": [
+        {
+          "id": 12
+        }
+      ]
+    }
+  ]
+}

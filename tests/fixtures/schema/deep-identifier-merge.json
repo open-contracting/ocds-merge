@@ -1,0 +1,40 @@
+[
+  {
+    "ocid": "ocds-213czf-1",
+    "id": "1",
+    "date": "2000-01-01T00:00:00Z",
+    "identifierMerge": [
+      {
+        "id": 1,
+        "subarray": [
+          {
+            "id": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "ocid": "ocds-213czf-1",
+    "id": "2",
+    "date": "2000-01-02T00:00:00Z",
+    "identifierMerge": [
+      {
+        "id": 1,
+        "subarray": [
+          {
+            "id": 11
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "subarray": [
+          {
+            "id": 12
+          }
+        ]
+      }
+    ]
+  }
+]

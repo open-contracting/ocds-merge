@@ -1,0 +1,39 @@
+[
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "1",
+    "date": "2014-01-01T00:00:00Z",
+    "tag": [
+      "award"
+    ],
+    "initiationType": "tender",
+    "parties": [
+      {
+        "id": "consequat reprehenderit",
+        "name": "sit Lorem irure proident",
+        "roles": [
+          "buyer",
+          "supplier"
+        ]
+      }
+    ]
+  },
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "2",
+    "date": "2014-01-02T00:00:00Z",
+    "tag": [
+      "award"
+    ],
+    "initiationType": "tender",
+    "parties": [
+      {
+        "id": "consequat reprehenderit",
+        "name": "new name",
+        "roles": [
+          "tenderer"
+        ]
+      }
+    ]
+  }
+]

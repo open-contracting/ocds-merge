@@ -1,0 +1,68 @@
+{
+  "ocid": "ocds-213czf-1",
+  "implicitVersionIdObject": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2000-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": 1
+      }
+    ]
+  },
+  "explicitVersionIdObject": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2000-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": 1
+      }
+    ]
+  },
+  "ignoreVersionIdObject": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2000-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": 1
+      }
+    ]
+  },
+  "implicitVersionIdArray": [
+    {
+      "id": 1
+    }
+  ],
+  "explicitVersionIdArray": [
+    {
+      "id": 1
+    }
+  ],
+  "ignoreVersionIdArray": [
+    {
+      "id": 1
+    }
+  ],
+  "wholeListMergeVersionId": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2000-01-01T00:00:00Z",
+      "releaseTag": [
+        "tender"
+      ],
+      "value": [
+        {
+          "id": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "tender"
+      ],
+      "value": "tender"
+    }
+  ],
+  "parties": [
+    {
+      "id": "1",
+      "identifier": {
+        "id": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": "1"
+          }
+        ]
+      },
+      "additionalIdentifiers": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "tender"
+          ],
+          "value": [
+            {
+              "id": "1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tender": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2014-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": "A"
+      }
+    ],
+    "items": [
+      {
+        "id": "1",
+        "classification": {
+          "id": [
+            {
+              "releaseID": "1",
+              "releaseDate": "2014-01-01T00:00:00Z",
+              "releaseTag": [
+                "tender"
+              ],
+              "value": "1"
+            }
+          ]
+        },
+        "additionalClassifications": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": [
+              {
+                "id": "1"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "procuringEntity": {
+      "id": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "tender"
+          ],
+          "value": "1"
+        }
+      ],
+      "name": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "tender"
+          ],
+          "value": "Acme Inc."
+        }
+      ]
+    },
+    "tenderers": [
+      {
+        "id": "1",
+        "name": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": "Acme Inc."
+          }
+        ]
+      }
+    ]
+  }
+}

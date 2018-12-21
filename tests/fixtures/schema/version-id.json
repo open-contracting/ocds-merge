@@ -1,0 +1,39 @@
+[
+  {
+    "ocid": "ocds-213czf-1",
+    "id": "1",
+    "date": "2000-01-01T00:00:00Z",
+    "tag": [
+      "tender"
+    ],
+    "implicitVersionIdObject": {
+      "id": 1
+    },
+    "explicitVersionIdObject": {
+      "id": 1
+    },
+    "ignoreVersionIdObject": {
+      "id": 1
+    },
+    "implicitVersionIdArray": [
+      {
+        "id": 1
+      }
+    ],
+    "explicitVersionIdArray": [
+      {
+        "id": 1
+      }
+    ],
+    "ignoreVersionIdArray": [
+      {
+        "id": 1
+      }
+    ],
+    "wholeListMergeVersionId": [
+      {
+        "id": 1
+      }
+    ]
+  }
+]

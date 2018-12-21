@@ -1,0 +1,104 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "tender"
+      ],
+      "value": "tender"
+    }
+  ],
+  "tender": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2014-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": "A"
+      }
+    ],
+    "items": [
+      {
+        "id": "1",
+        "description": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": "Item 1"
+          }
+        ],
+        "quantity": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": 1
+          },
+          {
+            "releaseID": "2",
+            "releaseDate": "2014-01-02T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "description": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": "Item 2"
+          }
+        ],
+        "quantity": [
+          {
+            "releaseID": "1",
+            "releaseDate": "2014-01-01T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "description": [
+          {
+            "releaseID": "2",
+            "releaseDate": "2014-01-02T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": "Item 3"
+          }
+        ],
+        "quantity": [
+          {
+            "releaseID": "2",
+            "releaseDate": "2014-01-02T00:00:00Z",
+            "releaseTag": [
+              "tender"
+            ],
+            "value": 1
+          }
+        ]
+      }
+    ]
+  }
+}

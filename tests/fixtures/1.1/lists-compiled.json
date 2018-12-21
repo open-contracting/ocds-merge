@@ -1,0 +1,26 @@
+{
+  "tag": [
+    "compiled"
+  ],
+  "id": "ocds-213czf-A-2014-01-02T00:00:00Z",
+  "date": "2014-01-02T00:00:00Z",
+  "ocid": "ocds-213czf-A",
+  "initiationType": "tender",
+  "parties": [
+    {
+      "id": "consequat reprehenderit",
+      "additionalIdentifiers": [
+        {
+          "id": "1",
+          "scheme": "bar"
+        },
+        {
+          "id": "3",
+          "scheme": "aliquip dolor exercitation do",
+          "uri": "http://lk.com"
+        }
+      ],
+      "name": "new name"
+    }
+  ]
+}

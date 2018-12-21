@@ -1,0 +1,59 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "award"
+      ],
+      "value": "tender"
+    }
+  ],
+  "parties": [
+    {
+      "id": "consequat reprehenderit",
+      "name": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": "sit Lorem irure proident"
+        },
+        {
+          "releaseID": "2",
+          "releaseDate": "2014-01-02T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": "new name"
+        }
+      ],
+      "roles": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": [
+            "buyer",
+            "supplier"
+          ]
+        },
+        {
+          "releaseID": "2",
+          "releaseDate": "2014-01-02T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": [
+            "tenderer"
+          ]
+        }
+      ]
+    }
+  ]
+}

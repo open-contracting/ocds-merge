@@ -1,0 +1,75 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "award"
+      ],
+      "value": "tender"
+    }
+  ],
+  "parties": [
+    {
+      "id": "consequat reprehenderit",
+      "additionalIdentifiers": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": [
+            {
+              "id": "1",
+              "scheme": "aliquip dolor exercitation do",
+              "uri": "http://lk.com"
+            },
+            {
+              "id": "2",
+              "scheme": "foo",
+              "uri": "http://foo.com"
+            }
+          ]
+        },
+        {
+          "releaseID": "2",
+          "releaseDate": "2014-01-02T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": [
+            {
+              "id": "1",
+              "scheme": "bar"
+            },
+            {
+              "id": "3",
+              "scheme": "aliquip dolor exercitation do",
+              "uri": "http://lk.com"
+            }
+          ]
+        }
+      ],
+      "name": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": "sit Lorem irure proident"
+        },
+        {
+          "releaseID": "2",
+          "releaseDate": "2014-01-02T00:00:00Z",
+          "releaseTag": [
+            "award"
+          ],
+          "value": "new name"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "tender"
+      ],
+      "value": "tender"
+    }
+  ],
+  "tender": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2014-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": "A"
+      }
+    ],
+    "items": [
+      {
+        "id": "item1",
+        "unit": {
+          "id": [
+            {
+              "releaseID": "1",
+              "releaseDate": "2014-01-01T00:00:00Z",
+              "releaseTag": [
+                "tender"
+              ],
+              "value": "EA"
+            },
+            {
+              "releaseID": "2",
+              "releaseDate": "2014-01-02T00:00:00Z",
+              "releaseTag": [
+                "tender"
+              ],
+              "value": "TNE"
+            }
+          ],
+          "scheme": [
+            {
+              "releaseID": "1",
+              "releaseDate": "2014-01-01T00:00:00Z",
+              "releaseTag": [
+                "tender"
+              ],
+              "value": "UNCEFACT"
+            }
+          ],
+          "name": [
+            {
+              "releaseID": "1",
+              "releaseDate": "2014-01-01T00:00:00Z",
+              "releaseTag": [
+                "tender"
+              ],
+              "value": "Each"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

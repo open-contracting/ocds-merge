@@ -48,23 +48,25 @@ Here is a simple example.
 
    releases = [
    {
-       "ocid": "A",
+       "ocid": "ocds-213czf-A",
        "id": "1",
        "date": "2014-01-01",
        "tag": ["tender"],
+       "initiationType": "tender",
        "tender": {
            "id": "A",
-           "procurementMethod": "Selective"
+           "procurementMethod": "selective"
        }
    },
    {
-       "ocid": "A",
+       "ocid": "ocds-213czf-A",
        "id": "2",
        "date": "2014-01-02",
        "tag": ["tender"],
+       "initiationType": "tender",
        "tender": {
            "id": "A",
-           "procurementMethod": "Open"
+           "procurementMethod": "open"
        }
    }
    ]
