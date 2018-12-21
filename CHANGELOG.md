@@ -12,23 +12,23 @@
 
 ### Added
 
-* Allow specifying cached or customized merge rules.
-* Allow specifying a custom schema as parsed JSON.
+* Allow specifying cached or customized merge rules, with a new `merge_rules` argument to `merge` or `merge_versioned`.
+* Allow specifying a custom schema as parsed JSON, with the existing `schema` argument.
 
 ### Changed
 
 * Set the `id` of the compiled release to a concatenation of the `ocid` and the latest release's `date`, instead of to the latest release's `id`.
+* If the schema isn't provided or is a URL or file path, parse it once and cache it.
 * Maintain the same order as the input data, as much as possible.
 
 ### Fixed
 
-* If `omitWhenMerged` or `wholeListMerge` were `false`, they were treated as `true`.
-* If `omitWhenMerged` were set on an array of non-objects, the list wouldn't be omitted.
-* If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release.
+* If the items in an array were non-objects, the array would not be treated as a single value. [#14](https://github.com/open-contracting/ocds-merge/pull/14)
 * If the objects in an array had no `id` field according to the schema, the identifier merge strategy would be used instead of the whole list merge strategy.
 * If an array were mixing objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy.
-* If the items in an array were non-objects, the list would not be treated as a single value. [#14](https://github.com/open-contracting/ocds-merge/pull/14)
-* If the schema isn't provided or is a URL or file path, it will be parsed once and cached.
+* If `omitWhenMerged` or `wholeListMerge` were `false`, they were treated as `true`.
+* If `omitWhenMerged` were set on an array of non-objects, the array wouldn't be omitted.
+* If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release.
 
 ## 0.4 (2018-01-04)
 
