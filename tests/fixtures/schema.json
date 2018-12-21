@@ -88,12 +88,12 @@
       "omitWhenMerged": true
     },
     "keepWhenMerged": {
-      "description": "Should ignore `omitWhenMerged`",
+      "description": "Should ignore `omitWhenMerged` when false",
       "type": "string",
       "omitWhenMerged": false
     },
     "identifierMerge": {
-      "description": "Should identifier merge and should ignore `wholeListMerge`",
+      "description": "Should identifier merge and should ignore `wholeListMerge` when false",
       "type": "array",
       "items": {
         "type": "object",
@@ -147,9 +147,27 @@
         },
         "b": {
           "type": "string"
+        },
+        "c": {
+          "description": "Should respect `omitWhenMerged`, if `wholeListMerge` is ignored",
+          "type": "string",
+          "omitWhenMerged": true
         }
       },
       "wholeListMerge": true
+    },
+    "arrayWithoutObjectId": {
+      "description": "Should merge whole list and should ignore `wholeListMerge`",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          }
+        }
+      },
+      "wholeListMerge": false
     },
     "wholeListMergeOmitWhenMerged": {
       "description": "`wholeListMerge` should supersede nested `omitWhenMerged`, i.e. field is kept",
@@ -181,19 +199,6 @@
         }
       },
       "wholeListMerge": true
-    },
-    "arrayWithoutObjectId": {
-      "description": "Should merge whole list and should ignore `wholeListMerge`",
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string"
-          }
-        }
-      },
-      "wholeListMerge": false
     },
     "mixedArray": {
       "type": "array",
