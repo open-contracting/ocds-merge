@@ -1,4 +1,5 @@
 import re
+import uuid
 from collections import OrderedDict
 from functools import lru_cache
 
@@ -7,14 +8,17 @@ import requests
 
 
 class IdValue(str):
-    """
-    This is used to differentiate `id` values from other strings in `isinstance` checks.
-    """
-    def __init__(self, value):
-        # Save the original value. For example, if the value is an integer, this attribute helps us to avoid coercing
-        # the value to a string while merging.
-        self.original_value = value
-        str.__init__(value)
+    def __init__(self, identifier):
+        self.identifier = identifier
+        str.__init__(identifier)
+
+    @property
+    def original_value(self):
+        return self._original_value
+
+    @original_value.setter
+    def original_value(self, original_value):
+        self._original_value = original_value
 
 
 @lru_cache()
@@ -178,12 +182,15 @@ def unflatten(processed, merge_rules):
             if isinstance(part, IdValue):
                 # If the `id` of an object in the array matches, change into it.
                 for node in current_node:
-                    if node.get('id') == part.original_value:
+                    if node.get('id') == part.identifier:
                         current_node = node
                         break
                 # Otherwise, append a new object, and change into it.
                 else:
-                    new_node = OrderedDict({'id': part.original_value})
+                    new_node = OrderedDict()
+                    # If the original object had an `id` value, set it.
+                    if part.original_value is not None:
+                        new_node['id'] = part.original_value
                     current_node.append(new_node)
                     current_node = new_node
                 continue
@@ -231,10 +238,16 @@ def process_flattened(flattened):
                 # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                 # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
                 id_value = flattened.get(tuple(key[:end]) + ('id',))
-                # If the object contain no top-level `id` value, we invent one.
+
+                # If the object contained no top-level `id` value, set a unique value.
                 if id_value is None:
-                    id_value = part
-                part = IdValue(id_value)
+                    identifier = uuid.uuid4()
+                else:
+                    identifier = id_value
+
+                part = IdValue(identifier)
+                # Save the original value. If the value is an integer, this avoids coercing the value to a string.
+                part.original_value = id_value
             new_key.append(part)
         processed[tuple(new_key)] = flattened[key]
 

@@ -226,10 +226,17 @@ def test_process_flattened():
         ]
     }
 
-    assert process_flattened(flatten(data)) == {
-        ('a', 'identifier', 'id'): 'identifier',
-        ('a', '1', 'key'): 'value',
-    }
+    actual = process_flattened(flatten(data))
+    keys = list(actual.keys())
+    values = list(actual.values())
+
+    assert len(actual) == 2
+    assert values == ['identifier', 'value']
+    assert keys[0] == ('a', 'identifier', 'id')
+    assert len(keys[1]) == 3
+    assert keys[1][0] == 'a'
+    assert len(keys[1][1]) == 36
+    assert keys[1][2] == 'key'
 
 
 @pytest.mark.parametrize('filename,schema', test_valid_argvalues)

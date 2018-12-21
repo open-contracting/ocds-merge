@@ -24,8 +24,10 @@
 ### Fixed
 
 * If the items in an array were non-objects, the array would not be treated as a single value. [#14](https://github.com/open-contracting/ocds-merge/pull/14)
-* If the objects in an array had no `id` field according to the schema, the identifier merge strategy would be used instead of the whole list merge strategy. [73dd088](https://github.com/open-contracting/ocds-merge/commit/73dd088da9fbfc9035ea94f65ff8244162dc049f)
+* If the objects in an array had no `id` fields according to the schema, the identifier merge strategy would be used instead of the whole list merge strategy. [73dd088](https://github.com/open-contracting/ocds-merge/commit/73dd088da9fbfc9035ea94f65ff8244162dc049f)
+* If the objects in an array had no `id` fields, and were not in the schema, the objects would be merged based on array index.
 * If an array were mixing objects and non-objects, the identifier merge strategy would sometimes be used instead of the whole list merge strategy. [d222e09](https://github.com/open-contracting/ocds-merge/commit/d222e09e63cdf361c9cf072bbe8ca9b89a466e87)
+* If an array were mixing objects with and without `id` fields, the compiled release would merge objects if an array index matched an `id` value.
 * If `omitWhenMerged` or `wholeListMerge` were `false`, they were treated as `true`. [d115fa2](https://github.com/open-contracting/ocds-merge/commit/d115fa2802a8fc341f7265a478dd3c85ec31db63)
 * If `omitWhenMerged` were set on an array of non-objects, the array wouldn't be omitted. [2d39a0f](https://github.com/open-contracting/ocds-merge/commit/2d39a0fe666258761d44aea81861ef42ac01a181)
 * If `wholeListMerge` were set on an object, only the latest version of the object would be retained in the compiled release. [b2a0dc6](https://github.com/open-contracting/ocds-merge/commit/b2a0dc657bb4556c265d796c1afcc160b632cc2a)
