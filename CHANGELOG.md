@@ -5,14 +5,11 @@
 ### Advisories
 
 * Behavior is undefined and inconsistent if an array is not defined in the schema and contains only objects in some releases but not in others. [0a81a43](https://github.com/open-contracting/ocds-merge/commit/0a81a432b09c720ff9d81599a539072325b4fb27)
+* For developers using this library as a reference implementation: `versionId` is ignored by this library, as it merely *assists* in identifying which `id` fields are not on objects in arrays.
 
-The following behaviors were previously undocumented:
+The following behaviors were previously undocumented, though they are implied by the merge rules:
 
 * If an array doesn't set `wholeListMerge` and its objects have the same `id` in the same release, only the last object is retained. [66d2352](https://github.com/open-contracting/ocds-merge/commit/66d2352791457f5f7436ba7049587dec4ebfaa89)
-* `versionId` is ignored by this library, as it merely *assists* in identifying which `id` fields are not on objects in arrays.
-
-The following conditions don't occur in OCDS schema, or in extensions authored by the Open Contracting Partnership, but can occur in extensions authored by others:
-
 * If a field sets `omitWhenMerged`, `wholeListMerge` is ignored on its sub-fields.
 * If an array sets `wholeListMerge`, `omitWhenMerged` is ignored on its sub-fields. [a88b618](https://github.com/open-contracting/ocds-merge/commit/a88b6183d4da6a680d74d8078b969e30126c9ca8)
 
@@ -26,9 +23,10 @@ The following conditions don't occur in OCDS schema, or in extensions authored b
 
 * Sets the `id` of the compiled release to a concatenation of the `ocid` and the latest release's `date`, instead of to the latest release's `id`. [8c89e43](https://github.com/open-contracting/ocds-merge/commit/8c89e43871d24881316aee22ce5b13f7dbb4ccd9)
 * Maintains the same order as the input data, as much as possible. [#9](https://github.com/open-contracting/ocds-merge/pull/9) [da648b0](https://github.com/open-contracting/ocds-merge/commit/da648b03ddffdb996b273d18776031c8eed3c4b8)
-* Supports OCDS 1.0 `ocdsOmit` and `ocdsVersion` merge strategies. [e67353d](https://github.com/open-contracting/ocds-merge/commit/e67353d07e4a4f80c4c4f2edb9c782977b68ab7f)
 
 ### Fixed
+
+* Recognizes OCDS 1.0 `ocdsOmit` and `ocdsVersion` merge strategies. [e67353d](https://github.com/open-contracting/ocds-merge/commit/e67353d07e4a4f80c4c4f2edb9c782977b68ab7f)
 
 The following conditions occur on structurally correct OCDS data:
 
