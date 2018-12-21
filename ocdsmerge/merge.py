@@ -139,7 +139,7 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
     if isinstance(obj, dict):
         iterable = obj.items()
         if not iterable:
-            flattened[path] = {}
+            flattened[path] = OrderedDict()
     else:
         iterable = enumerate(obj)
         if not iterable:
@@ -182,7 +182,7 @@ def unflatten(processed, merge_rules):
             if isinstance(part, IdValue):
                 # If the `id` of an object in the array matches, change into it.
                 for node in current_node:
-                    if node.get('id') == part.identifier:
+                    if isinstance(node, dict) and node.get('id') == part.identifier:
                         current_node = node
                         break
                 # Otherwise, append a new object, and change into it.

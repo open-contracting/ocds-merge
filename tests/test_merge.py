@@ -71,7 +71,8 @@ def test_merge(filename, schema):
     assert releases == original
 
 
-def test_merge_when_array_is_mixed():
+@pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
+def test_merge_when_array_is_mixed(i, j):
     data = [{
         "ocid": "ocds-213czf-A",
         "id": "1",
@@ -90,31 +91,30 @@ def test_merge_when_array_is_mixed():
         ]
     }]
 
-    output = {
-        'id': 'ocds-213czf-A-2000-01-02T00:00:00Z',
-        'date': '2000-01-02T00:00:00Z',
-        'ocid': 'ocds-213czf-A',
-        'tag': ['compiled'],
-        'mixedArray': [
+    output = OrderedDict([
+        ('tag', ['compiled']),
+        ('id', 'ocds-213czf-A-2000-01-02T00:00:00Z'),
+        ('date', '2000-01-02T00:00:00Z'),
+        ('ocid', 'ocds-213czf-A'),
+        ('mixedArray', [
             {'id': 2},
             'bar',
-        ],
-    }
+        ]),
+    ])
 
     assert merge(data, simple_schema) == output
 
-    for i in range(2):
-        for j in range(2):
-            actual = deepcopy(data)
-            expected = deepcopy(output)
-            del actual[i]['mixedArray'][j]
-            if i == 1:
-                del expected['mixedArray'][j]
+    actual = deepcopy(data)
+    expected = deepcopy(output)
+    del actual[i]['mixedArray'][j]
+    if i == 1:
+        del expected['mixedArray'][j]
 
-            assert merge(actual, simple_schema) == expected, 'removed item index {} from release index {}'.format(j, i)
+    assert merge(actual, simple_schema) == expected, 'removed item index {} from release index {}'.format(j, i)
 
 
-def test_merge_when_array_is_mixed_without_schema():
+@pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
+def test_merge_when_array_is_mixed_without_schema(i, j):
     data = [{
         'ocid': 'ocds-213czf-A',
         "id": "1",
@@ -133,32 +133,30 @@ def test_merge_when_array_is_mixed_without_schema():
         ]
     }]
 
-    output = {
-        'id': 'ocds-213czf-A-2000-01-02T00:00:00Z',
-        'date': '2000-01-02T00:00:00Z',
-        'ocid': 'ocds-213czf-A',
-        'tag': ['compiled'],
-        'mixedArray': [
+    output = OrderedDict([
+        ('tag', ['compiled']),
+        ('id', 'ocds-213czf-A-2000-01-02T00:00:00Z'),
+        ('date', '2000-01-02T00:00:00Z'),
+        ('ocid', 'ocds-213czf-A'),
+        ('mixedArray', [
             {'id': 2},
             'bar',
-        ],
-    }
+        ]),
+    ])
 
     assert merge(data, {}) == output
 
-    for i in range(2):
-        for j in range(2):
-            actual = deepcopy(data)
-            expected = deepcopy(output)
-            del actual[i]['mixedArray'][j]
-            if i == 1:
-                del expected['mixedArray'][j]
+    actual = deepcopy(data)
+    expected = deepcopy(output)
+    del actual[i]['mixedArray'][j]
+    if i == 1:
+        del expected['mixedArray'][j]
 
-            if j == 0:
-                assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
-            else:
-                with pytest.raises((AttributeError, AssertionError)):
-                    assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
+    if j == 0:
+        assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
+    else:
+        with pytest.raises(AssertionError):
+            assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
 
 
 def test_get_latest_version():
