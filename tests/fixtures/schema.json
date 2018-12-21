@@ -12,15 +12,8 @@
       "type": "string",
       "omitWhenMerged": true
     },
-    "implicitVersionIdObject": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        }
-      }
-    },
     "explicitVersionIdObject": {
+      "description": "Should version the `id`",
       "type": "object",
       "properties": {
         "id": {
@@ -29,7 +22,17 @@
         }
       }
     },
+    "implicitVersionIdObject": {
+      "description": "Should version the `id`",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
     "ignoreVersionIdObject": {
+      "description": "Should version the `id` and should ignore `versionId`",
       "type": "object",
       "properties": {
         "id": {
@@ -38,18 +41,8 @@
         }
       }
     },
-    "implicitVersionIdArray": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          }
-        }
-      }
-    },
     "explicitVersionIdArray": {
+      "description": "Shouldn't version the `id`",
       "type": "array",
       "items": {
         "type": "object",
@@ -61,7 +54,20 @@
         }
       }
     },
+    "implicitVersionIdArray": {
+      "description": "Shouldn't version the `id`",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        }
+      }
+    },
     "ignoreVersionIdArray": {
+      "description": "Shouldn't version the `id` and should ignore `versionId`",
       "type": "array",
       "items": {
         "type": "object",
@@ -73,20 +79,8 @@
         }
       }
     },
-    "versionIdArrayWholeListMerge": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "versionId": true
-          }
-        }
-      },
-      "wholeListMerge": true
-    },
     "omitWhenMerged": {
+      "description": "Should respect `omitWhenMerged`",
       "type": "array",
       "items": {
         "type": "string"
@@ -94,10 +88,12 @@
       "omitWhenMerged": true
     },
     "keepWhenMerged": {
+      "description": "Should ignore `omitWhenMerged`",
       "type": "string",
       "omitWhenMerged": false
     },
     "identifierMerge": {
+      "description": "Should identifier merge and should ignore `wholeListMerge`",
       "type": "array",
       "items": {
         "type": "object",
@@ -109,6 +105,7 @@
             "type": "string"
           },
           "subarray": {
+            "description": "Should identifier merge, even when nested",
             "type": "array",
             "items": {
               "type": "object",
@@ -117,6 +114,7 @@
                   "type": "integer"
                 },
                 "subsubarray": {
+                  "description": "Should merge whole list, even when nested",
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -132,6 +130,7 @@
             }
           },
           "omitWhenMerged": {
+            "description": "Should respect `omitWhenMerged`, even when nested",
             "type": "string",
             "omitWhenMerged": true
           }
@@ -140,6 +139,7 @@
       "wholeListMerge": false
     },
     "wholeListMergeObject": {
+      "description": "Should ignore `wholeListMerge`",
       "type": "object",
       "properties": {
         "a": {
@@ -151,7 +151,8 @@
       },
       "wholeListMerge": true
     },
-    "shadow": {
+    "wholeListMergeOmitWhenMerged": {
+      "description": "`wholeListMerge` should supersede nested `omitWhenMerged`, i.e. field is kept",
       "type": "array",
       "items": {
         "type": "object",
@@ -167,7 +168,22 @@
       },
       "wholeListMerge": true
     },
+    "wholeListMergeVersionId": {
+      "description": "`wholeListMerge` should supersede nested `versionId`, i.e. field is unversioned",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "versionId": true
+          }
+        }
+      },
+      "wholeListMerge": true
+    },
     "arrayWithoutObjectId": {
+      "description": "Should merge whole list and should ignore `wholeListMerge`",
       "type": "array",
       "items": {
         "type": "object",
@@ -176,7 +192,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "wholeListMerge": false
     },
     "mixedArray": {
       "type": "array",

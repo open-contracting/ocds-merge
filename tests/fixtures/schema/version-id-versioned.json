@@ -51,7 +51,7 @@
       "id": 1
     }
   ],
-  "versionIdArrayWholeListMerge": [
+  "wholeListMergeVersionId": [
     {
       "releaseID": "1",
       "releaseDate": "2000-01-01T00:00:00Z",
