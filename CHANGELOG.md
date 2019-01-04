@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5
+## 0.5 (2019-01-04)
 
 ### Advisories
 
