@@ -15,9 +15,11 @@ The following behaviors were previously undocumented, though they are implied by
 
 ### Added
 
+* Test cases for other implementations. See README.
 * You can specify the merge rules with a new `merge_rules` argument. [#17](https://github.com/open-contracting/ocds-merge/pull/17) [#18](https://github.com/open-contracting/ocds-merge/pull/18)
 * You can specify a custom schema by passing parsed JSON to the existing `schema` argument. [4244b3f](https://github.com/open-contracting/ocds-merge/commit/4244b3f007ef8400617dcd02f9bf9659b06c3248)
 * If the schema isn't provided or is a URL or file path, it is parsed once and cached. [5d2f831](https://github.com/open-contracting/ocds-merge/commit/5d2f83183d43919156962ac909e3a5b231da7c0c)
+* Recognizes OCDS 1.0 `ocdsOmit` and `ocdsVersion` merge strategies. [e67353d](https://github.com/open-contracting/ocds-merge/commit/e67353d07e4a4f80c4c4f2edb9c782977b68ab7f)
 
 ### Changed
 
@@ -25,8 +27,6 @@ The following behaviors were previously undocumented, though they are implied by
 * Maintains the same order as the input data, as much as possible. [#9](https://github.com/open-contracting/ocds-merge/pull/9) [da648b0](https://github.com/open-contracting/ocds-merge/commit/da648b03ddffdb996b273d18776031c8eed3c4b8)
 
 ### Fixed
-
-* Recognizes OCDS 1.0 `ocdsOmit` and `ocdsVersion` merge strategies. [e67353d](https://github.com/open-contracting/ocds-merge/commit/e67353d07e4a4f80c4c4f2edb9c782977b68ab7f)
 
 The following conditions occur on structurally correct OCDS data:
 
