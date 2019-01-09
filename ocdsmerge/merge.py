@@ -32,19 +32,18 @@ class IdDict(OrderedDict):
 
 
 @lru_cache()
-def get_latest_version():
+def get_tags():
     """
-    Returns the tag of the latest version of OCDS.
+    Returns the tags of all versions of OCDS.
     """
-    return re.findall(r'\d+__\d+__\d+', requests.get('http://standard.open-contracting.org/schema/').text)[-1]
+    return re.findall(r'\d+__\d+__\d+', requests.get('http://standard.open-contracting.org/schema/').text)
 
 
-@lru_cache()
-def get_latest_release_schema_url():
+def get_release_schema_url(tag):
     """
-    Returns the URL of the release schema in the latest version of OCDS.
+    Returns the URL of the release schema in the given version of OCDS.
     """
-    return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(get_latest_version())
+    return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(tag)
 
 
 def _get_types(prop):
@@ -109,7 +108,7 @@ def get_merge_rules(schema=None):
     Returns merge rules as key-value pairs, in which the key is a JSON path as a tuple, and the value is a list of
     merge properties whose values are `true`.
     """
-    schema = schema or get_latest_release_schema_url()
+    schema = schema or get_release_schema_url(get_tags()[-1])
     if isinstance(schema, dict):
         deref_schema = jsonref.JsonRef.replace_refs(schema)
     else:

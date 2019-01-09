@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 (2018-01-09)
+
+### Changed
+
+* `get_tags` and `get_release_schema_url` replace `get_latest_version` and `get_latest_release_schema_url`
+
 ## 0.5 (2019-01-04)
 
 ### Advisories

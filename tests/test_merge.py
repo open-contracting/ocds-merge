@@ -24,9 +24,9 @@ from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
-from ocdsmerge.merge import get_latest_version, get_latest_release_schema_url, flatten, process_flattened
+from ocdsmerge.merge import get_tags, get_release_schema_url, flatten, process_flattened
 
-versions = {
+tags = {
     '1.0': '1__0__3',
     '1.1': '1__1__2',
 }
@@ -40,18 +40,18 @@ with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
 test_merge_argvalues = []
 for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
     if isinstance(schema, str):
-        schema = schema.format(versions[minor_version])
+        schema = schema.format(tags[minor_version])
     for suffix in ('compiled', 'versioned'):
         filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*-{}.json'.format(suffix)))
         assert len(filenames), '{} fixtures not found'.format(suffix)
         test_merge_argvalues += [(filename, schema) for filename in filenames]
 
 test_valid_argvalues = []
-for minor_version, patch_version in versions.items():
+for minor_version, patch_tag in tags.items():
     filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*.json'))
     assert len(filenames), 'ocds fixtures not found'
     for versioned, url in ((False, schema_url), (True, versioned_release_schema_url)):
-        schema = requests.get(url.format(patch_version)).json()
+        schema = requests.get(url.format(patch_tag)).json()
         for filename in filenames:
             if not versioned ^ filename.endswith('-versioned.json'):
                 test_valid_argvalues.append((filename, schema))
@@ -170,16 +170,29 @@ def test_merge_when_array_is_mixed_without_schema(i, j):
             assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
 
 
-def test_get_latest_version():
-    assert get_latest_version() >= '1__1__3'
+def test_get_tags():
+    assert get_tags()[:12] == [
+        '0__3__2',
+        '0__3__2',
+        '0__3__3',
+        '0__3__3',
+        '1__0__0',
+        '1__0__0',
+        '1__0__1',
+        '1__0__1',
+        '1__0__2',
+        '1__0__2',
+        '1__0__3',
+        '1__0__3',
+    ]
 
 
-def test_get_latest_release_schema_url():
-    assert get_latest_release_schema_url() >= 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'
+def test_get_release_schema_url():
+    assert get_release_schema_url('1__1__3') >= 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'  # noqa
 
 
 def test_get_merge_rules_1_1():
-    assert get_merge_rules(schema_url.format(versions['1.1'])) == {
+    assert get_merge_rules(schema_url.format(tags['1.1'])) == {
         ('awards', 'items', 'additionalClassifications'): {'wholeListMerge'},
         ('contracts', 'items', 'additionalClassifications'): {'wholeListMerge'},
         ('contracts', 'relatedProcesses', 'relationship'): {'wholeListMerge'},
@@ -210,7 +223,7 @@ def test_get_merge_rules_1_1():
 
 
 def test_get_merge_rules_1_0():
-    assert get_merge_rules(schema_url.format(versions['1.0'])) == {
+    assert get_merge_rules(schema_url.format(tags['1.0'])) == {
         ('awards', 'amendment', 'changes'): {'wholeListMerge'},
         ('awards', 'items', 'additionalClassifications'): {'wholeListMerge'},
         ('awards', 'suppliers'): {'wholeListMerge'},
