@@ -1,0 +1,21 @@
+[
+  {
+    "ocid": "ocds-213czf-1",
+    "id": "1",
+    "date": "2000-01-01T00:00:00Z",
+    "arrayWithoutObjectId": [
+      {
+        "key": 1
+      },
+      {
+        "key": 2
+      }
+    ]
+  },
+  {
+    "ocid": "ocds-213czf-1",
+    "id": "2",
+    "date": "2000-01-02T00:00:00Z",
+    "arrayWithoutObjectId": []
+  }
+]
