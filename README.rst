@@ -94,7 +94,7 @@ The :code:`merge` and :code:`merge_versioned` functions extract merge rules from
 Reference implementation
 ------------------------
 
-This package serves as a reference implementation of OCDS merging. You can read its code in ``merge.py``.
+This package serves as a reference implementation of OCDS merging. You can read its commented code in `merge.py <https://github.com/open-contracting/ocds-merge/blob/master/ocdsmerge/merge.py>`__.
 
 Test cases
 ~~~~~~~~~~
@@ -103,7 +103,7 @@ We provide test cases for other implementations of OCDS merging under the `tests
 
 To prepare your implementation for future versions and third-party extensions, you can test your implementation using the files under the ``schema`` directory and using the schema in the `schema.json <https://github.com/open-contracting/ocds-merge/blob/master/tests/fixtures/schema.json>`__ file.
 
-In future, we can consider providing a more formal test suite, like those for `CSV on the Web <http://w3c.github.io/csvw/tests/>`__.
+In future, we can consider providing a more formal test suite, like those for `CSV on the Web <http://w3c.github.io/csvw/tests/>`__. Please contact data@open-contracting.org if interested.
 
 Copyright (c) 2015 Open Contracting Partnership, released under the BSD license
 
