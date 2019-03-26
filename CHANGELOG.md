@@ -1,10 +1,16 @@
 # Changelog
 
+## 0.5.2
+
+### Fixed
+
+* If a field's value is set to `null`, it is omitted from the compiled release.
+
 ## 0.5.1 (2018-01-09)
 
 ### Changed
 
-* `get_tags` and `get_release_schema_url` replace `get_latest_version` and `get_latest_release_schema_url`
+* `get_tags` and `get_release_schema_url` replace `get_latest_version` and `get_latest_release_schema_url`.
 
 ## 0.5 (2019-01-04)
 

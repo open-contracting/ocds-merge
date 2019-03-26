@@ -1,0 +1,28 @@
+[
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "1",
+    "date": "2014-01-01T00:00:00Z",
+    "tag": [
+      "tender"
+    ],
+    "initiationType": "tender",
+    "tender": {
+      "id": "A",
+      "procurementMethod": "selective"
+    }
+  },
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "2",
+    "date": "2014-01-02T00:00:00Z",
+    "tag": [
+      "tender"
+    ],
+    "initiationType": "tender",
+    "tender": {
+      "id": "A",
+      "procurementMethod": null
+    }
+  }
+]

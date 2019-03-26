@@ -1,0 +1,43 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "tender"
+      ],
+      "value": "tender"
+    }
+  ],
+  "tender": {
+    "id": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2014-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": "A"
+      }
+    ],
+    "procurementMethod": [
+      {
+        "releaseID": "1",
+        "releaseDate": "2014-01-01T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": "selective"
+      },
+      {
+        "releaseID": "2",
+        "releaseDate": "2014-01-02T00:00:00Z",
+        "releaseTag": [
+          "tender"
+        ],
+        "value": null
+      }
+    ]
+  }
+}

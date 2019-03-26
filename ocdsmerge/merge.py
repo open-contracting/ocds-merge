@@ -216,7 +216,9 @@ def unflatten(processed, merge_rules):
 
             # If this is a full path, copy the data.
             if len(key) == end:
-                current_node[part] = processed[key]
+                # Omit null'ed fields.
+                if processed[key] is not None:
+                    current_node[part] = processed[key]
                 continue
 
             # If the path is to a new array, start a new array, and change into it.
