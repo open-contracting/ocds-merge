@@ -285,6 +285,7 @@ def merge(releases, schema=None, merge_rules=None):
 
         ocid = release['ocid']
         date = release['date']
+        # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         release.pop('tag', None)  # becomes ["compiled"]
 
         flat = flatten(release, merge_rules)
@@ -294,7 +295,7 @@ def merge(releases, schema=None, merge_rules=None):
         merged[('id',)] = '{}-{}'.format(ocid, date)
         merged[('date',)] = date
 
-        # 1.0: `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
+        # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
         merged[('ocid',)] = ocid
 
         merged.update(processed)
@@ -319,6 +320,7 @@ def merge_versioned(releases, schema=None, merge_rules=None):
 
         releaseID = release['id']
         date = release['date']
+        # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         tag = release.pop('tag', None)
 
         flat = flatten(release, merge_rules)
