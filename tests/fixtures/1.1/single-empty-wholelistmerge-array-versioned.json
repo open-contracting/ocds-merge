@@ -1,0 +1,28 @@
+{
+  "ocid": "ocds-213czf-A",
+  "initiationType": [
+    {
+      "releaseID": "1",
+      "releaseDate": "2014-01-01T00:00:00Z",
+      "releaseTag": [
+        "tender"
+      ],
+      "value": "tender"
+    }
+  ],
+  "parties": [
+    {
+      "id": "10",
+      "additionalIdentifiers": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "tender"
+          ],
+          "value": []
+        }
+      ]
+    }
+  ]
+}

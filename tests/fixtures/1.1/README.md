@@ -24,6 +24,8 @@ Empty arrays and objects:
 * `update-empty-identifiermerge-array.json`: Update a first release containing an empty array with a second release containing a non-empty array, using the identifier merge strategy
 * `empty-identifiermerge-array.json`: Update a field with an empty array, using the identifier merge strategy
 
+* `single-empty-wholelistmerge-array.json`: Merge a single release containing an empty array, using the whole list merge strategy
+* `update-empty-wholelistmerge-array.json`: Update a first release containing an empty array with a second release containing a non-empty array, using the whole list merge strategy
 * `empty-wholelistmerge-array.json`: Update a field with an empty array, using the whole list merge strategy
 
 * `single-empty-object.json`: Merge a single release containing an empty object
