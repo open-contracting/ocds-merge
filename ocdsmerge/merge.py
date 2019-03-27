@@ -170,8 +170,8 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
         elif (not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or
                 isinstance(value, list) and any(not isinstance(item, dict) for item in value)):
             flattened[new_path] = value
-        # Recurse into objects, and arrays of objects that aren't `wholeListMerge`.
-        else:
+        # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
+        elif value:
             flatten(value, merge_rules, new_path, flattened)
 
     return flattened

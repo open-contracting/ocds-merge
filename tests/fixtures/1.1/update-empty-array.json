@@ -1,0 +1,27 @@
+[
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "1",
+    "date": "2014-01-01T00:00:00Z",
+    "tag": [
+      "award"
+    ],
+    "initiationType": "tender",
+    "awards": []
+  },
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "2",
+    "date": "2014-01-02T00:00:00Z",
+    "tag": [
+      "awardUpdate"
+    ],
+    "initiationType": "tender",
+    "awards": [
+      {
+        "id": "10",
+        "title": "Title"
+      }
+    ]
+  }
+]

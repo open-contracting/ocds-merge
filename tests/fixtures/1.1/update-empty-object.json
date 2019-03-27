@@ -1,0 +1,24 @@
+[
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "1",
+    "date": "2014-01-01T00:00:00Z",
+    "tag": [
+      "planning"
+    ],
+    "initiationType": "tender",
+    "planning": {}
+  },
+  {
+    "ocid": "ocds-213czf-A",
+    "id": "2",
+    "date": "2014-01-02T00:00:00Z",
+    "tag": [
+      "planningUpdate"
+    ],
+    "initiationType": "tender",
+    "planning": {
+      "rationale": "reason"
+    }
+  }
+]
