@@ -20,12 +20,14 @@ Null'ing fields:
 
 Empty arrays and objects:
 
-* `single-empty-array.json`: Merge a single release containing an empty array, using the identifier merge strategy
-* `single-empty-object.json`: Merge a single release containing an empty object
-* `update-empty-array.json`: Update a first release containing an empty array with a second release containing a non-empty array, using the identifier merge strategy
-* `update-empty-object.json`: Update a first release containing an empty object with a second release containing a non-empty object
-* `empty-identifier-array.json`: Update a field with an empty array, using the identifier merge strategy
+* `single-empty-identifiermerge-array.json`: Merge a single release containing an empty array, using the identifier merge strategy
+* `update-empty-identifiermerge-array.json`: Update a first release containing an empty array with a second release containing a non-empty array, using the identifier merge strategy
+* `empty-identifiermerge-array.json`: Update a field with an empty array, using the identifier merge strategy
+
 * `empty-wholelistmerge-array.json`: Update a field with an empty array, using the whole list merge strategy
+
+* `single-empty-object.json`: Merge a single release containing an empty object
+* `update-empty-object.json`: Update a first release containing an empty object with a second release containing a non-empty object
 
 ## Schema
 
