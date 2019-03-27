@@ -41,3 +41,15 @@ Empty arrays and objects, in a single release, first release or second release:
 ## Schema
 
 Read the `description` JSON Schema metadata properties in `schema.json` to understand the purpose of each test file.
+
+* `identifier-merge-collision.json`: An object without an `id` field at an array index that matches the value of the `id` field of another object shouldn't be overwritten
+* `identifier-merge-duplicate-id.json`: If there are many objects with the same value for the `id` field in the same release, the last object should be retained (identifier merge)
+* `no-top-level-id.json`: If an object in an array has no `id` field, it should be retained (identifier merge)
+* `whole-list-merge-duplicate-id.json`: If there are many objects with the same value for the `id` field in the same release, all the objects should be retained (whole list merge)
+* `whole-list-merge-empty.json`: An empty array should replace a previous array (whole list merge)
+
+Prevent regressions to 0.4 errors on edge cases:
+
+* `merge-property-is-false.json`
+* `omit-when-merged-array-of-non-objects.json`
+* `whole-list-merge-object.json`
