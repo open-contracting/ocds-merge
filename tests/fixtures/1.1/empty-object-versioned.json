@@ -11,15 +11,17 @@
     }
   ],
   "planning": {
-    "rationale": [
-      {
-        "releaseID": "1",
-        "releaseDate": "2014-01-01T00:00:00Z",
-        "releaseTag": [
-          "planning"
-        ],
-        "value": "reason"
-      }
-    ]
+    "budget": {
+      "description": [
+        {
+          "releaseID": "1",
+          "releaseDate": "2014-01-01T00:00:00Z",
+          "releaseTag": [
+            "planning"
+          ],
+          "value": "summary"
+        }
+      ]
+    }
   }
 }

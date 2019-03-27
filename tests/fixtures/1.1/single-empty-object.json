@@ -6,6 +6,9 @@
     "tag": [
       "planning"
     ],
-    "initiationType": "tender"
+    "initiationType": "tender",
+    "planning": {
+      "budget": {}
+    }
   }
 ]

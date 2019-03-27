@@ -8,7 +8,9 @@
     ],
     "initiationType": "tender",
     "planning": {
-      "rationale": "reason"
+      "budget": {
+        "description": "summary"
+      }
     }
   },
   {
