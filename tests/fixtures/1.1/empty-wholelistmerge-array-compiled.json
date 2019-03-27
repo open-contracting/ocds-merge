@@ -6,10 +6,10 @@
   "date": "2014-01-02T00:00:00Z",
   "ocid": "ocds-213czf-A",
   "initiationType": "tender",
-  "awards": [
+  "parties": [
     {
       "id": "10",
-      "title": "Title"
+      "additionalIdentifiers": []
     }
   ]
 }
