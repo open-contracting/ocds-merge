@@ -2,6 +2,10 @@
 
 ## 0.5.2
 
+### Changed
+
+* If there is more than one release, but the `date` field is missing or null, the `MissingDateKeyError` and `NullDateValueError` exceptions are raised, respestively, instead of the generic `KeyError` and `TypeError`.
+
 ### Fixed
 
 * If a field's value is set to `null`, it is omitted from the compiled release.
