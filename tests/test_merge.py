@@ -24,7 +24,8 @@ from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
-from ocdsmerge.merge import get_tags, get_release_schema_url, flatten, process_flattened, MissingDateKeyError, NullDateValueError
+from ocdsmerge.merge import (get_tags, get_release_schema_url, flatten, process_flattened, MissingDateKeyError,
+                             NullDateValueError)
 
 tags = {
     '1.0': '1__0__3',
