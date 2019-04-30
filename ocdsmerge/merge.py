@@ -31,6 +31,18 @@ class IdDict(OrderedDict):
         self._identifier = identifier
 
 
+class OCDSMergeError(Exception):
+    """Base class for exceptions from within this package"""
+
+
+class MissingDateKeyError(OCDSMergeError):
+    """Raised when a release is missing a 'date' key"""
+
+
+class NullDateValueError(OCDSMergeError):
+    """Raised when a release has a null 'date' value"""
+
+
 @lru_cache()
 def get_tags():
     """
@@ -274,6 +286,20 @@ def process_flattened(flattened):
     return processed
 
 
+def sorted_releases(releases):
+    """
+    Sorts a list of releases by date.
+    """
+    if len(releases) == 1:
+        return releases
+    try:
+        return sorted(releases, key=lambda release: release['date'])
+    except KeyError:
+        raise MissingDateKeyError
+    except TypeError:
+        raise NullDateValueError
+
+
 def merge(releases, schema=None, merge_rules=None):
     """
     Merges a list of releases into a compiledRelease.
@@ -282,11 +308,12 @@ def merge(releases, schema=None, merge_rules=None):
         merge_rules = get_merge_rules(schema)
 
     merged = OrderedDict({('tag',): ['compiled']})
-    for release in sorted(releases, key=lambda release: release['date']):
+    for release in sorted_releases(releases):
         release = release.copy()
 
-        ocid = release['ocid']
-        date = release['date']
+        # `ocid` and `date` are required fields, but the data can be invalid.
+        ocid = release.get('ocid')
+        date = release.get('date')
         # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         release.pop('tag', None)  # becomes ["compiled"]
 
@@ -313,15 +340,16 @@ def merge_versioned(releases, schema=None, merge_rules=None):
         merge_rules = get_merge_rules(schema)
 
     merged = OrderedDict()
-    for release in sorted(releases, key=lambda release: release['date']):
+    for release in sorted_releases(releases):
         release = release.copy()
 
         # Don't version the OCID.
-        ocid = release.pop('ocid')
+        ocid = release.pop('ocid', None)
         merged[('ocid',)] = ocid
 
-        releaseID = release['id']
-        date = release['date']
+        # `id` and `date` are required fields, but the data can be invalid.
+        releaseID = release.get('id')
+        date = release.get('date')
         # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         tag = release.pop('tag', None)
 

@@ -24,7 +24,8 @@ from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
-from ocdsmerge.merge import get_tags, get_release_schema_url, flatten, process_flattened
+from ocdsmerge.merge import (get_tags, get_release_schema_url, flatten, process_flattened, MissingDateKeyError,
+                             NullDateValueError)
 
 tags = {
     '1.0': '1__0__3',
@@ -62,6 +63,30 @@ def custom_warning_formatter(message, category, filename, lineno, line=None):
 
 
 warnings.formatwarning = custom_warning_formatter
+
+
+@pytest.mark.parametrize('error, data', [(MissingDateKeyError, {}), (NullDateValueError, {'date': None})])
+def test_date_errors(error, data):
+    for method in (merge, merge_versioned):
+        with pytest.raises(error):
+            method([{'date': '2010-01-01'}, data])
+
+    release = deepcopy(data)
+    assert merge([release]) == {
+        'id': 'None-None',
+        'tag': ['compiled'],
+    }
+
+    release = deepcopy(data)
+    release['initiationType'] = 'tender'
+    assert merge_versioned([release]) == {
+        'initiationType': [{
+            'releaseID': None,
+            'releaseDate': None,
+            'releaseTag': None,
+            'value': 'tender',
+        }],
+    }
 
 
 @pytest.mark.parametrize('filename,schema', test_merge_argvalues)
