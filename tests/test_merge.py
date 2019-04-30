@@ -68,19 +68,39 @@ warnings.formatwarning = custom_warning_formatter
 def test_missing_date_key_error():
     with pytest.raises(MissingDateKeyError):
         merge([{}, {}])
+    with pytest.raises(MissingDateKeyError):
+        merge_versioned([{}, {}])
 
 
 def test_missing_date_key_error_with_one_release():
-    merge([{}])
+    assert merge([{}]) == {'id': 'None-None', 'tag': ['compiled']}
+    assert merge_versioned([{'initiationType': 'tender'}]) == {
+        'initiationType': [{
+            'releaseID': None,
+            'releaseDate': None,
+            'releaseTag': None,
+            'value': 'tender',
+        }],
+    }
 
 
 def test_null_date_value_error():
     with pytest.raises(NullDateValueError):
         merge([{'date': '2010-01-01'}, {'date': None}])
+    with pytest.raises(NullDateValueError):
+        merge_versioned([{'date': '2010-01-01'}, {'date': None}])
 
 
 def test_null_date_value_error_with_one_release():
-    merge([{'date': None}])
+    assert merge([{'date': None}]) == {'id': 'None-None', 'tag': ['compiled']}
+    assert merge_versioned([{'date': None, 'initiationType': 'tender'}]) == {
+        'initiationType': [{
+            'releaseID': None,
+            'releaseDate': None,
+            'releaseTag': None,
+            'value': 'tender',
+        }],
+    }
 
 
 @pytest.mark.parametrize('filename,schema', test_merge_argvalues)
