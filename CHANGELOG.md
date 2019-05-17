@@ -11,7 +11,7 @@
 * If a field's value is set to `null`, it is omitted from the compiled release.
 * If a field's value is an empty object or empty array in a release, skip it.
 
-## 0.5.1 (2018-01-09)
+## 0.5.1 (2019-01-09)
 
 ### Changed
 
