@@ -48,14 +48,14 @@ def get_tags():
     """
     Returns the tags of all versions of OCDS.
     """
-    return re.findall(r'\d+__\d+__\d+', requests.get('http://standard.open-contracting.org/schema/').text)
+    return re.findall(r'\d+__\d+__\d+', requests.get('https://standard.open-contracting.org/schema/').text)
 
 
 def get_release_schema_url(tag):
     """
     Returns the URL of the release schema in the given version of OCDS.
     """
-    return 'http://standard.open-contracting.org/schema/{}/release-schema.json'.format(tag)
+    return 'https://standard.open-contracting.org/schema/{}/release-schema.json'.format(tag)
 
 
 def _get_types(prop):
@@ -82,29 +82,29 @@ def _get_merge_rules(properties, path=None):
         types = _get_types(value)
 
         # `omitWhenMerged` supersedes all other rules.
-        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#omit-when-merged
+        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#omit-when-merged
         if value.get('omitWhenMerged') or value.get('mergeStrategy') == 'ocdsOmit':
             yield (new_path, {'omitWhenMerged'})
         # `wholeListMerge` supersedes any nested rules.
-        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
+        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
         elif 'array' in types and (value.get('wholeListMerge') or value.get('mergeStrategy') == 'ocdsVersion'):
             yield (new_path, {'wholeListMerge'})
         elif 'object' in types and 'properties' in value:
             yield from _get_merge_rules(value['properties'], path=new_path)
         elif 'array' in types and 'items' in value:
             item_types = _get_types(value['items'])
-            # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
+            # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
             if any(item_type != 'object' for item_type in item_types):
                 yield (new_path, {'wholeListMerge'})
             elif 'object' in item_types and 'properties' in value['items']:
-                # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
+                # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
                 if 'id' not in value['items']['properties']:
                     yield (new_path, {'wholeListMerge'})
                 else:
                     yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
         # `versionId` merely assists in identifying `id` fields that are not on objects in arrays.
-        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
+        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#versioned-data
 
 
 @lru_cache()
@@ -177,8 +177,8 @@ def flatten(obj, merge_rules=None, path=None, flattened=None):
         # non-objects (even if `wholeListMerge` is `false`), use the whole list merge strategy.
         # Note: Behavior is undefined and inconsistent if the array is not in the schema and contains objects in some
         # cases but not in others.
-        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
-        # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
+        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
+        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
         elif (not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or
                 isinstance(value, list) and any(not isinstance(item, dict) for item in value)):
             flattened[new_path] = value
@@ -199,7 +199,7 @@ def unflatten(processed, merge_rules):
         current_node = unflattened
         for end, part in enumerate(key, 1):
             # If this is a path to an item of an array.
-            # See http://standard.open-contracting.org/1.1-dev/en/schema/merging/#identifier-merge
+            # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#identifier-merge
             if isinstance(part, IdValue):
                 # If the `id` of an object in the array matches, change into it.
                 for node in current_node:
@@ -266,7 +266,7 @@ def process_flattened(flattened):
                     part = identifiers[key[:end]]
                 else:
                     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
-                    # http://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
+                    # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
                     id_value = flattened.get(key[:end] + ('id',))
 
                     # If the object contained no top-level `id` value, set a unique value.

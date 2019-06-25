@@ -6,7 +6,7 @@ cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases 
 cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
     --versioned > tests/fixtures/1.1/contextual-versioned.json
 cat tests/fixtures/1.0/suppliers.json  | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
-    --versioned --schema http://standard.open-contracting.org/schema/1__0__3/release-schema.json \
+    --versioned --schema https://standard.open-contracting.org/schema/1__0__3/release-schema.json \
     > tests/fixtures/1.0/suppliers-versioned.json
 """
 
@@ -32,8 +32,8 @@ tags = {
     '1.1': '1__1__2',
 }
 
-schema_url = 'http://standard.open-contracting.org/schema/{}/release-schema.json'
-versioned_release_schema_url = 'http://standard.open-contracting.org/schema/{}/versioned-release-validation-schema.json'  # noqa
+schema_url = 'https://standard.open-contracting.org/schema/{}/release-schema.json'
+versioned_release_schema_url = 'https://standard.open-contracting.org/schema/{}/versioned-release-validation-schema.json'  # noqa
 
 with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
     simple_schema = json.load(f)
@@ -213,7 +213,7 @@ def test_get_tags():
 
 
 def test_get_release_schema_url():
-    assert get_release_schema_url('1__1__3') >= 'http://standard.open-contracting.org/schema/1__1__3/release-schema.json'  # noqa
+    assert get_release_schema_url('1__1__3') >= 'https://standard.open-contracting.org/schema/1__1__3/release-schema.json'  # noqa
 
 
 def test_get_merge_rules_1_1():

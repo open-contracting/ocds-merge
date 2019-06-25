@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.3
+
+### Changed
+
+* Use `https://` instead of `http://` for `standard.open-contracting.org`
+
 ## 0.5.2 (2019-05-24)
 
 ### Changed

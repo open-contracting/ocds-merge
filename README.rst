@@ -3,7 +3,7 @@ OCDS Merge
 
 |PyPI Version| |Build Status| |Coverage Status| |Python Version|
 
-This Python package helps to create records that conform to the `Open Contracting Data Standard <http://standard.open-contracting.org>`__. Specifically, it provides functions for merging OCDS releases with the same OCID into either a compiled release or a versioned release.
+This Python package helps to create records that conform to the `Open Contracting Data Standard <https://standard.open-contracting.org>`__. Specifically, it provides functions for merging OCDS releases with the same OCID into either a compiled release or a versioned release.
 
 ::
 
@@ -69,7 +69,7 @@ By default, the :code:`merge` and :code:`merge_versioned` functions use the late
 .. code:: python
 
    # URL
-   ocdsmerge.merge(releases, schema='http://standard.open-contracting.org/schema/1__0__3/release-schema.json')
+   ocdsmerge.merge(releases, schema='https://standard.open-contracting.org/schema/1__0__3/release-schema.json')
 
    # Relative file path
    ocdsmerge.merge(releases, schema='release-schema.json')
