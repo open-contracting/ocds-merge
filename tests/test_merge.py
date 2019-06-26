@@ -29,7 +29,7 @@ from ocdsmerge.merge import (get_tags, get_release_schema_url, flatten, process_
 
 tags = {
     '1.0': '1__0__3',
-    '1.1': '1__1__2',
+    '1.1': '1__1__4',
 }
 
 schema_url = 'https://standard.open-contracting.org/schema/{}/release-schema.json'
@@ -226,7 +226,7 @@ def test_get_merge_rules_1_1():
         ('parties', 'additionalIdentifiers'): {'wholeListMerge'},
         ('parties', 'roles'): {'wholeListMerge'},
         ('relatedProcesses', 'relationship'): {'wholeListMerge'},
-        ('tag',): {'wholeListMerge'},
+        ('tag',): {'omitWhenMerged'},
         ('tender', 'additionalProcurementCategories'): {'wholeListMerge'},
         ('tender', 'items', 'additionalClassifications'): {'wholeListMerge'},
         ('tender', 'submissionMethod'): {'wholeListMerge'},
@@ -308,9 +308,6 @@ def test_process_flattened():
 
 @pytest.mark.parametrize('filename,schema', test_valid_argvalues)
 def test_valid(filename, schema):
-    if 'contextual' in filename:
-        pytest.xfail('will fail due to bug in versioned release schema')
-
     errors = 0
 
     with open(filename) as f:
