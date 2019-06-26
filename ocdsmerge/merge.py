@@ -309,27 +309,34 @@ def merge(releases, schema=None, merge_rules=None):
 
     merged = OrderedDict({('tag',): ['compiled']})
     for release in sorted_releases(releases):
-        release = release.copy()
-
-        # `ocid` and `date` are required fields, but the data can be invalid.
-        ocid = release.get('ocid')
-        date = release.get('date')
-        # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
-        release.pop('tag', None)  # becomes ["compiled"]
-
-        flat = flatten(release, merge_rules)
-        processed = process_flattened(flat)
-
-        # Add an `id` and `date`.
-        merged[('id',)] = '{}-{}'.format(ocid, date)
-        merged[('date',)] = date
-
-        # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
-        merged[('ocid',)] = ocid
-
-        merged.update(processed)
+        add_release_to_compiled_release(release, merged, merge_rules)
 
     return unflatten(merged, merge_rules)
+
+
+def add_release_to_compiled_release(release, merged, merge_rules):
+    """
+    Merges one release into a compiledRelease.
+    """
+    release = release.copy()
+
+    # `ocid` and `date` are required fields, but the data can be invalid.
+    ocid = release.get('ocid')
+    date = release.get('date')
+    # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
+    release.pop('tag', None)  # becomes ["compiled"]
+
+    flat = flatten(release, merge_rules)
+    processed = process_flattened(flat)
+
+    # Add an `id` and `date`.
+    merged[('id',)] = '{}-{}'.format(ocid, date)
+    merged[('date',)] = date
+
+    # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
+    merged[('ocid',)] = ocid
+
+    merged.update(processed)
 
 
 def merge_versioned(releases, schema=None, merge_rules=None):
@@ -341,34 +348,41 @@ def merge_versioned(releases, schema=None, merge_rules=None):
 
     merged = OrderedDict()
     for release in sorted_releases(releases):
-        release = release.copy()
-
-        # Don't version the OCID.
-        ocid = release.pop('ocid', None)
-        merged[('ocid',)] = ocid
-
-        # `id` and `date` are required fields, but the data can be invalid.
-        releaseID = release.get('id')
-        date = release.get('date')
-        # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
-        tag = release.pop('tag', None)
-
-        flat = flatten(release, merge_rules)
-        processed = process_flattened(flat)
-
-        for key, value in processed.items():
-            # If value is unchanged, don't add to history.
-            if key in merged and value == merged[key][-1]['value']:
-                continue
-
-            if key not in merged:
-                merged[key] = []
-
-            merged[key].append(OrderedDict([
-                ('releaseID', releaseID),
-                ('releaseDate', date),
-                ('releaseTag', tag),
-                ('value', value),
-            ]))
+        add_release_to_versioned_release(release, merged, merge_rules)
 
     return unflatten(merged, merge_rules)
+
+
+def add_release_to_versioned_release(release, merged, merge_rules):
+    """
+    Merges one release into a versionedRelease.
+    """
+    release = release.copy()
+
+    # Don't version the OCID.
+    ocid = release.pop('ocid', None)
+    merged[('ocid',)] = ocid
+
+    # `id` and `date` are required fields, but the data can be invalid.
+    releaseID = release.get('id')
+    date = release.get('date')
+    # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
+    tag = release.pop('tag', None)
+
+    flat = flatten(release, merge_rules)
+    processed = process_flattened(flat)
+
+    for key, value in processed.items():
+        # If value is unchanged, don't add to history.
+        if key in merged and value == merged[key][-1]['value']:
+            continue
+
+        if key not in merged:
+            merged[key] = []
+
+        merged[key].append(OrderedDict([
+            ('releaseID', releaseID),
+            ('releaseDate', date),
+            ('releaseTag', tag),
+            ('value', value),
+        ]))
