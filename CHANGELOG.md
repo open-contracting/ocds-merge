@@ -1,10 +1,14 @@
 # Changelog
 
-## 0.5.3
+## 0.5.3 (2019-06-26)
 
 ### Changed
 
-* Use `https://` instead of `http://` for `standard.open-contracting.org`
+* Use `https://` instead of `http://` for `standard.open-contracting.org`.
+
+### Added
+
+* Extract the inner loops of `merge` and `merge_versioned` to `add_release_to_compiled_release` and `add_release_to_versioned_release`, respectively.
 
 ## 0.5.2 (2019-05-24)
 
