@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='ocdsmerge',
-    version='0.5.3',
+    version='0.5.4',
     author='Open Contracting Partnership',
     author_email='data@open-contracting.org',
     url='https://github.com/open-contracting/ocds-merge',
@@ -23,6 +23,7 @@ setup(
             'jsonschema',
             'pytest',
             'pytest-cov',
+            'pytest-vcr',
         ],
     },
     classifiers=[

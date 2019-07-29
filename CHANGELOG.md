@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.4 (2019-07-29)
+
+* Add `MANIFEST.in`.
+* Fix tests to run offline.
+
 ## 0.5.3 (2019-06-26)
 
 ### Changed

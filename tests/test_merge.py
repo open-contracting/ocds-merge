@@ -34,6 +34,8 @@ tags = {
 
 schema_url = 'https://standard.open-contracting.org/schema/{}/release-schema.json'
 versioned_release_schema_url = 'https://standard.open-contracting.org/schema/{}/versioned-release-validation-schema.json'  # noqa
+schema_path = 'release-schema-{}.json'
+versioned_release_schema_path = 'versioned-release-validation-schema-{}.json'
 
 with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
     simple_schema = json.load(f)
@@ -51,8 +53,9 @@ test_valid_argvalues = []
 for minor_version, patch_tag in tags.items():
     filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*.json'))
     assert len(filenames), 'ocds fixtures not found'
-    for versioned, url in ((False, schema_url), (True, versioned_release_schema_url)):
-        schema = requests.get(url.format(patch_tag)).json()
+    for versioned, path in ((False, schema_path), (True, versioned_release_schema_path)):
+        with open(os.path.join('tests', 'fixtures', path.format(patch_tag))) as f:
+            schema = json.load(f)
         for filename in filenames:
             if not versioned ^ filename.endswith('-versioned.json'):
                 test_valid_argvalues.append((filename, schema))
@@ -65,6 +68,7 @@ def custom_warning_formatter(message, category, filename, lineno, line=None):
 warnings.formatwarning = custom_warning_formatter
 
 
+@pytest.mark.vcr()
 @pytest.mark.parametrize('error, data', [(MissingDateKeyError, {}), (NullDateValueError, {'date': None})])
 def test_date_errors(error, data):
     for method in (merge, merge_versioned):
@@ -89,6 +93,7 @@ def test_date_errors(error, data):
     }
 
 
+@pytest.mark.vcr()
 @pytest.mark.parametrize('filename,schema', test_merge_argvalues)
 def test_merge(filename, schema):
     if filename.endswith('-compiled.json'):
