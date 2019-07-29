@@ -19,7 +19,6 @@ from copy import deepcopy
 from glob import glob
 
 import pytest
-import requests
 from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
