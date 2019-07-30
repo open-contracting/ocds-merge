@@ -1,12 +1,16 @@
 # Changelog
 
+## 0.5.6 (2019-07-30)
+
+* Fix package: Remove `tests` from build.
+
 ## 0.5.5 (2019-07-29)
 
-* Add VCR cassettes to `MANIFEST.in`.
+* Fix package: Add VCR cassettes to `MANIFEST.in`.
 
 ## 0.5.4 (2019-07-29)
 
-* Add `MANIFEST.in` and fix tests to run offline.
+* Fix package: Add `MANIFEST.in` and allow tests to run offline.
 
 ## 0.5.3 (2019-06-26)
 
