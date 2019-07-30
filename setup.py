@@ -11,7 +11,7 @@ setup(
     url='https://github.com/open-contracting/ocds-merge',
     description='A library and reference implementation for merging OCDS releases',
     license='BSD',
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'tests.*']),
     long_description=long_description,
     install_requires=[
         'jsonref',
