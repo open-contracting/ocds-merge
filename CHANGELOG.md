@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.7 (2019-08-09)
+
+* Fix package: Rename VCR cassettes for Windows users.
+
 ## 0.5.6 (2019-07-30)
 
 * Fix package: Remove `tests` from build.
