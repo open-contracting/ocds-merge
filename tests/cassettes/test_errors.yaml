@@ -27,6 +27,8 @@ interactions:
         hNKqNUG/IPo+gGzTNe0evLlb3efq/i0smHxgEoiCUpGcEklNUbC8o3dCSRIrniemkAnMhFTguo4G
         3BXU/9jeOvQFY3tv+QHttKUN9wwAAA==
     headers:
+      Access-Control-Allow-Origin:
+      - '*'
       Connection:
       - Keep-Alive
       Content-Encoding:
@@ -36,7 +38,7 @@ interactions:
       Content-Type:
       - text/html;charset=UTF-8
       Date:
-      - Fri, 09 Aug 2019 19:04:31 GMT
+      - Mon, 21 Oct 2019 17:33:46 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
@@ -1221,6 +1223,8 @@ interactions:
     headers:
       Accept-Ranges:
       - bytes
+      Access-Control-Allow-Origin:
+      - '*'
       Connection:
       - Keep-Alive
       Content-Length:
@@ -1228,7 +1232,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 09 Aug 2019 19:04:32 GMT
+      - Mon, 21 Oct 2019 17:33:46 GMT
       ETag:
       - '"157ac-58c37464b8e80"'
       Keep-Alive:
