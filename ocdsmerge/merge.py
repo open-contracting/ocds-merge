@@ -35,12 +35,20 @@ class OCDSMergeError(Exception):
     """Base class for exceptions from within this package"""
 
 
+class NonObjectReleaseError(OCDSMergeError):
+    """Raised when a release is not an object"""
+
+
 class MissingDateKeyError(OCDSMergeError):
     """Raised when a release is missing a 'date' key"""
 
 
 class NullDateValueError(OCDSMergeError):
     """Raised when a release has a null 'date' value"""
+
+
+class NonStringDateValueError(OCDSMergeError):
+    """Raised when a release has a non-string 'date' value"""
 
 
 @lru_cache()
@@ -290,14 +298,30 @@ def sorted_releases(releases):
     """
     Sorts a list of releases by date.
     """
-    if len(releases) == 1:
+    if len(releases) == 1 and isinstance(releases[0], dict):
         return releases
     try:
         return sorted(releases, key=lambda release: release['date'])
     except KeyError:
-        raise MissingDateKeyError
-    except TypeError:
-        raise NullDateValueError
+        raise MissingDateKeyError('The `date` field of at least one release is missing.')
+    except TypeError as e:
+        if ' not supported between instances of ' in e.args[0]:
+            if 'NoneType' in e.args[0]:
+                raise NullDateValueError('The `date` field of at least one release is null.')
+            else:
+                raise NonStringDateValueError('The `date` field of at least one release is not a string.')
+        elif e.args[0] == 'string indices must be integers':
+            raise NonObjectReleaseError('At least one release is a string, not a dict. Use `json.loads` to parse the string as JSON.')  # noqa
+        elif e.args[0] == 'byte indices must be integers or slices, not str':
+            raise NonObjectReleaseError('At least one release is a byte-string, not a dict. Use `json.loads` to parse the byte-string as JSON.')  # noqa
+        elif e.args[0] == 'list indices must be integers or slices, not str':
+            raise NonObjectReleaseError('At least one release is a list, not a dict.')
+        elif e.args[0] == 'tuple indices must be integers or slices, not str':
+            raise NonObjectReleaseError('At least one release is a tuple, not a dict.')
+        elif e.args[0] == "'set' object is not subscriptable":
+            raise NonObjectReleaseError('At least one release is a set, not a dict.')
+        else:
+            raise
 
 
 def merge(releases, schema=None, merge_rules=None):

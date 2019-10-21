@@ -23,8 +23,8 @@ from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
-from ocdsmerge.merge import (get_tags, get_release_schema_url, flatten, process_flattened, MissingDateKeyError,
-                             NullDateValueError)
+from ocdsmerge.merge import (get_tags, get_release_schema_url, flatten, process_flattened, NonObjectReleaseError,
+                             MissingDateKeyError, NullDateValueError, NonStringDateValueError)
 
 tags = {
     '1.0': '1__0__3',
@@ -68,28 +68,54 @@ warnings.formatwarning = custom_warning_formatter
 
 
 @pytest.mark.vcr()
-@pytest.mark.parametrize('error, data', [(MissingDateKeyError, {}), (NullDateValueError, {'date': None})])
-def test_date_errors(error, data):
+@pytest.mark.parametrize('error, data', [
+    (MissingDateKeyError, {}),
+    (NullDateValueError, {'date': None}),
+    (NonStringDateValueError, {'date': {}}),
+    (NonObjectReleaseError, '{}'),
+    (NonObjectReleaseError, b'{}'),
+    (NonObjectReleaseError, []),
+    (NonObjectReleaseError, tuple()),
+    (NonObjectReleaseError, set()),
+])
+def test_errors(error, data):
     for method in (merge, merge_versioned):
         with pytest.raises(error):
             method([{'date': '2010-01-01'}, data])
 
-    release = deepcopy(data)
-    assert merge([release]) == {
-        'id': 'None-None',
-        'tag': ['compiled'],
-    }
+    if not isinstance(data, dict):
+        with pytest.raises(error):
+            merge([data])
+    else:
+        release = deepcopy(data)
 
-    release = deepcopy(data)
-    release['initiationType'] = 'tender'
-    assert merge_versioned([release]) == {
-        'initiationType': [{
-            'releaseID': None,
-            'releaseDate': None,
-            'releaseTag': None,
-            'value': 'tender',
-        }],
-    }
+        expected = {
+            'id': 'None-{}'.format(data.get('date')),
+            'tag': ['compiled'],
+        }
+
+        if data.get('date') is not None:
+            expected['date'] = data['date']
+
+        assert merge([release]) == expected
+
+    if not isinstance(data, dict):
+        with pytest.raises(error):
+            merge([data])
+    else:
+        release = deepcopy(data)
+        release['initiationType'] = 'tender'
+
+        expected = {
+            'initiationType': [{
+                'releaseID': None,
+                'releaseDate': data.get('date'),
+                'releaseTag': None,
+                'value': 'tender',
+            }],
+        }
+
+        assert merge_versioned([release]) == expected
 
 
 @pytest.mark.vcr()

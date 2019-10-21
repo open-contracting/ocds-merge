@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.8 (2019-10-21)
+
+### Changed
+
+* Added exception messages to all exceptions.
+
+### Fixed
+
+* If there is more than one release, but a `date` field is neither a string nor null, the `NonStringDateValueError` exception is raised, instead of `NullDateValueError`.
+* If a release is not an object, the `NonObjectReleaseError` exception is raised, instead of `NullDateValueError`.
+* If there is a `TypeError` for any other reason, it is raised as-is, instead of `NullDateValueError`.
+
 ## 0.5.7 (2019-08-09)
 
 * Fix package: Rename VCR cassettes for Windows users.
@@ -30,7 +42,7 @@
 
 ### Changed
 
-* If there is more than one release, but the `date` field is missing or null, the `MissingDateKeyError` and `NullDateValueError` exceptions are raised, respestively, instead of the generic `KeyError` and `TypeError`.
+* If there is more than one release, but a `date` field is either missing or null, the `MissingDateKeyError` and `NullDateValueError` exceptions are raised, respestively, instead of the generic `KeyError` and `TypeError`.
 
 ### Fixed
 
