@@ -23,8 +23,8 @@ from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
 from ocdsmerge import merge, merge_versioned, get_merge_rules
-from ocdsmerge.merge import (get_tags, get_release_schema_url, flatten, process_flattened, NonObjectReleaseError,
-                             MissingDateKeyError, NullDateValueError, NonStringDateValueError)
+from ocdsmerge.merge import (flatten, process_flattened, NonObjectReleaseError, MissingDateKeyError,
+                             NullDateValueError, NonStringDateValueError)
 
 tags = {
     '1.0': '1__0__3',
@@ -223,27 +223,6 @@ def test_merge_when_array_is_mixed_without_schema(i, j):
     else:
         with pytest.raises(AssertionError):
             assert merge(actual, {}) == expected, 'removed item index {} from release index {}'.format(j, i)
-
-
-def test_get_tags():
-    assert get_tags()[:12] == [
-        '0__3__2',
-        '0__3__2',
-        '0__3__3',
-        '0__3__3',
-        '1__0__0',
-        '1__0__0',
-        '1__0__1',
-        '1__0__1',
-        '1__0__2',
-        '1__0__2',
-        '1__0__3',
-        '1__0__3',
-    ]
-
-
-def test_get_release_schema_url():
-    assert get_release_schema_url('1__1__3') >= 'https://standard.open-contracting.org/schema/1__1__3/release-schema.json'  # noqa
 
 
 def test_get_merge_rules_1_1():

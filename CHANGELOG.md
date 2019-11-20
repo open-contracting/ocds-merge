@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.9 (2019-11-20)
+
+### Fixed
+
+* `get_tags` no longer returns duplicate tags.
+
 ## 0.5.8 (2019-10-21)
 
 ### Changed

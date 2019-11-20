@@ -56,7 +56,8 @@ def get_tags():
     """
     Returns the tags of all versions of OCDS.
     """
-    return re.findall(r'\d+__\d+__\d+', requests.get('https://standard.open-contracting.org/schema/').text)
+    url = 'https://standard.open-contracting.org/schema/'
+    return re.findall(r'"(\d+__\d+__\d+)/', requests.get(url).text)
 
 
 def get_release_schema_url(tag):
