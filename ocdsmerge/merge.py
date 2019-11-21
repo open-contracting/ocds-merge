@@ -3,13 +3,20 @@ import uuid
 import warnings
 from collections import OrderedDict
 from functools import lru_cache
+from enum import Enum, unique
 
 import jsonref
 import requests
 
-WARN_ON_COLLISION = 'warn'
-RAISE_ON_COLLISION = 'raise'
-IGNORE_ON_COLLISION = 'ignore'
+
+@unique
+class CollisionBehavior(Enum):
+    IGNORE = 'ignore'
+    RAISE = 'raise'
+    WARN = 'warn'
+
+
+globals().update(CollisionBehavior.__members__)
 
 
 class IdValue(str):
@@ -272,7 +279,7 @@ def unflatten(processed, merge_rules):
     return unflattened
 
 
-def process_flattened(flattened, collision_behavior=WARN_ON_COLLISION):
+def process_flattened(flattened, collision_behavior=None):
     """
     Replace numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
     in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
@@ -322,9 +329,9 @@ def process_flattened(flattened, collision_behavior=WARN_ON_COLLISION):
                     elif identifiers[scope][part] != index:
                         message = 'Multiple objects have the `id` value {!r} in the `{}` array'.format(
                             part, '.'.join(map(str, scope)))
-                        if collision_behavior == RAISE_ON_COLLISION:
+                        if collision_behavior == CollisionBehavior.RAISE:
                             raise DuplicateIdValueError(message)
-                        elif collision_behavior != IGNORE_ON_COLLISION:
+                        elif collision_behavior != CollisionBehavior.IGNORE:
                             warnings.warn(message, category=DuplicateIdValueWarning)
             new_key.append(part)
         processed[tuple(new_key)] = flattened[key]

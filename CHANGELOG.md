@@ -6,9 +6,9 @@
 
 * Warn if multiple objects have the same `id` value
   * Add a `collision_behavior` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set to:
-    * `ocdsmerge.WARN_ON_COLLISION`: issue a `DuplicateIdValueWarning` [warning](https://docs.pytest.org/en/latest/warnings.html) (default)
-    * `ocdsmerge.RAISE_ON_COLLISION`: raise a `DuplicateIdValueError` exception
-    * `ocdsmerge.IGNORE_ON_COLLISION`: silently ignore the collision
+    * `ocdsmerge.WARN`: issue a `DuplicateIdValueWarning` [warning](https://docs.pytest.org/en/latest/warnings.html) (default)
+    * `ocdsmerge.RAISE`: raise a `DuplicateIdValueError` exception
+    * `ocdsmerge.IGNORE`: silently ignore the collision
 
 ## 0.5.9 (2019-11-20)
 
