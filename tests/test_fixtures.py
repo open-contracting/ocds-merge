@@ -1,3 +1,15 @@
+"""
+It's possible to regenerate fixtures with commands like:
+
+cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    > tests/fixtures/1.1/contextual-compiled.json
+cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    --versioned > tests/fixtures/1.1/contextual-versioned.json
+cat tests/fixtures/1.0/suppliers.json  | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
+    --versioned --schema https://standard.open-contracting.org/schema/1__0__3/release-schema.json \
+    > tests/fixtures/1.0/suppliers-versioned.json
+"""
+
 import json
 import os
 import warnings
@@ -7,18 +19,17 @@ import pytest
 from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
-from tests import tags
+from tests import path, read, tags
 
 schema_path = 'release-schema-{}.json'
 versioned_release_schema_path = 'versioned-release-validation-schema-{}.json'
 
 test_valid_argvalues = []
 for minor_version, patch_tag in tags.items():
-    filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*.json'))
+    filenames = glob(path(minor_version, '*.json'))
     assert len(filenames), 'ocds fixtures not found'
-    for versioned, path in ((False, schema_path), (True, versioned_release_schema_path)):
-        with open(os.path.join('tests', 'fixtures', path.format(patch_tag))) as f:
-            schema = json.load(f)
+    for versioned, schema_path in ((False, schema_path), (True, versioned_release_schema_path)):
+        schema = json.loads(read(schema_path.format(patch_tag)))
         for filename in filenames:
             if not versioned ^ filename.endswith('-versioned.json'):
                 test_valid_argvalues.append((filename, schema))

@@ -1,5 +1,4 @@
 from ocdsmerge import get_merge_rules
-
 from tests import tags, schema_url
 
 

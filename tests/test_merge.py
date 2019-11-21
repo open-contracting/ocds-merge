@@ -1,17 +1,4 @@
-"""
-It's possible to regenerate fixtures with commands like:
-
-cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
-    > tests/fixtures/1.1/contextual-compiled.json
-cat tests/fixtures/1.1/contextual.json | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
-    --versioned > tests/fixtures/1.1/contextual-versioned.json
-cat tests/fixtures/1.0/suppliers.json  | jq -crM .[] | ocdskit package-releases | ocdskit --pretty compile \
-    --versioned --schema https://standard.open-contracting.org/schema/1__0__3/release-schema.json \
-    > tests/fixtures/1.0/suppliers-versioned.json
-"""
-
 import json
-import os
 import re
 from collections import OrderedDict
 from copy import deepcopy
@@ -21,19 +8,17 @@ import pytest
 
 from ocdsmerge import merge, merge_versioned
 from ocdsmerge.merge import NonObjectReleaseError, MissingDateKeyError, NullDateValueError, NonStringDateValueError
+from tests import path, read, tags, schema_url
 
-from tests import tags, schema_url
 
-
-with open(os.path.join('tests', 'fixtures', 'schema.json')) as f:
-    simple_schema = json.load(f)
+simple_schema = json.loads(read('schema.json'))
 
 test_merge_argvalues = []
 for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
     if isinstance(schema, str):
         schema = schema.format(tags[minor_version])
     for suffix in ('compiled', 'versioned'):
-        filenames = glob(os.path.join('tests', 'fixtures', minor_version, '*-{}.json'.format(suffix)))
+        filenames = glob(path(os.path.join(minor_version, '*-{}.json'.format(suffix))))
         assert len(filenames), '{} fixtures not found'.format(suffix)
         test_merge_argvalues += [(filename, schema) for filename in filenames]
 
