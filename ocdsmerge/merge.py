@@ -1,10 +1,15 @@
 import re
 import uuid
+import warnings
 from collections import OrderedDict
 from functools import lru_cache
 
 import jsonref
 import requests
+
+WARN_ON_COLLISION = 'warn'
+RAISE_ON_COLLISION = 'raise'
+IGNORE_ON_COLLISION = 'ignore'
 
 
 class IdValue(str):
@@ -49,6 +54,18 @@ class NullDateValueError(OCDSMergeError):
 
 class NonStringDateValueError(OCDSMergeError):
     """Raised when a release has a non-string 'date' value"""
+
+
+class DuplicateIdValueError(OCDSMergeError):
+    """Raised when at least two objects in the same array have the same value for the 'id' field"""
+
+
+class OCDSMergeWarning(UserWarning):
+    """Base class for warnings from within this package"""
+
+
+class DuplicateIdValueWarning(OCDSMergeWarning):
+    """Used when at least two objects in the same array have the same value for the 'id' field"""
 
 
 @lru_cache()
@@ -255,7 +272,7 @@ def unflatten(processed, merge_rules):
     return unflattened
 
 
-def process_flattened(flattened):
+def process_flattened(flattened, collision_behavior=WARN_ON_COLLISION):
     """
     Replace numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
     in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
@@ -264,6 +281,9 @@ def process_flattened(flattened):
     processed = OrderedDict()
 
     # Cache identifiers, to avoid minting a new ID for each field of the same object.
+    # e.g. {('awards', 0): '1', ('awards', 1): '2'}
+    # This also tracks all identifiers of objects in each array, to warn about collisions.
+    # e.g. {('awards',): {'1': 0, '2': 1}}
     identifiers = {}
 
     for key in flattened:
@@ -271,12 +291,15 @@ def process_flattened(flattened):
         for end, part in enumerate(key, 1):
             # If this is a path to an item in an array.
             if isinstance(part, int):
-                if key[:end] in identifiers:
-                    part = identifiers[key[:end]]
+                path = key[:end]
+                if path in identifiers:
+                    part = identifiers[path]
                 else:
+                    index = part
+
                     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
-                    id_value = flattened.get(key[:end] + ('id',))
+                    id_value = flattened.get(path + ('id',))
 
                     # If the object contained no top-level `id` value, set a unique value.
                     if id_value is None:
@@ -288,7 +311,21 @@ def process_flattened(flattened):
                     part = IdValue(identifier)
                     part.original_value = id_value
 
-                    identifiers[key[:end]] = part
+                    identifiers[path] = part
+
+                    # Check whether the value is repeated in other objects in the array.
+                    scope = path[:-1]
+                    if scope not in identifiers:
+                        identifiers[scope] = {}
+                    if part not in identifiers[scope]:
+                        identifiers[scope][part] = index
+                    elif identifiers[scope][part] != index:
+                        message = 'Multiple objects have the `id` value {!r} in the `{}` array'.format(
+                            part, '.'.join(map(str, scope)))
+                        if collision_behavior == RAISE_ON_COLLISION:
+                            raise DuplicateIdValueError(message)
+                        elif collision_behavior != IGNORE_ON_COLLISION:
+                            warnings.warn(message, category=DuplicateIdValueWarning)
             new_key.append(part)
         processed[tuple(new_key)] = flattened[key]
 
@@ -325,7 +362,7 @@ def sorted_releases(releases):
             raise
 
 
-def merge(releases, schema=None, merge_rules=None):
+def merge(releases, schema=None, merge_rules=None, collision_behavior=None):
     """
     Merges a list of releases into a compiledRelease.
     """
@@ -334,12 +371,12 @@ def merge(releases, schema=None, merge_rules=None):
 
     merged = OrderedDict({('tag',): ['compiled']})
     for release in sorted_releases(releases):
-        add_release_to_compiled_release(release, merged, merge_rules)
+        add_release_to_compiled_release(release, merged, merge_rules, collision_behavior)
 
     return unflatten(merged, merge_rules)
 
 
-def add_release_to_compiled_release(release, merged, merge_rules):
+def add_release_to_compiled_release(release, merged, merge_rules, collision_behavior=None):
     """
     Merges one release into a compiledRelease.
     """
@@ -352,7 +389,7 @@ def add_release_to_compiled_release(release, merged, merge_rules):
     release.pop('tag', None)  # becomes ["compiled"]
 
     flat = flatten(release, merge_rules)
-    processed = process_flattened(flat)
+    processed = process_flattened(flat, collision_behavior)
 
     # Add an `id` and `date`.
     merged[('id',)] = '{}-{}'.format(ocid, date)
@@ -364,7 +401,7 @@ def add_release_to_compiled_release(release, merged, merge_rules):
     merged.update(processed)
 
 
-def merge_versioned(releases, schema=None, merge_rules=None):
+def merge_versioned(releases, schema=None, merge_rules=None, collision_behavior=None):
     """
     Merges a list of releases into a versionedRelease.
     """
@@ -373,12 +410,12 @@ def merge_versioned(releases, schema=None, merge_rules=None):
 
     merged = OrderedDict()
     for release in sorted_releases(releases):
-        add_release_to_versioned_release(release, merged, merge_rules)
+        add_release_to_versioned_release(release, merged, merge_rules, collision_behavior)
 
     return unflatten(merged, merge_rules)
 
 
-def add_release_to_versioned_release(release, merged, merge_rules):
+def add_release_to_versioned_release(release, merged, merge_rules, collision_behavior=None):
     """
     Merges one release into a versionedRelease.
     """
@@ -395,7 +432,7 @@ def add_release_to_versioned_release(release, merged, merge_rules):
     tag = release.pop('tag', None)
 
     flat = flatten(release, merge_rules)
-    processed = process_flattened(flat)
+    processed = process_flattened(flat, collision_behavior)
 
     for key, value in processed.items():
         # If value is unchanged, don't add to history.
