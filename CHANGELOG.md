@@ -1,10 +1,19 @@
 # Changelog
 
+## 0.5.10.post1 (2019-11-21)
+
+### Changed
+
+* The collision behavior is restored to silently ignore the collision, by default.
+  * `ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their `id` value.
+  * `ocdsmerge.APPEND`: retain all objects in arrays.
+  * Remove the `ocdsmerge.IGNORE` flag.
+
 ## 0.5.10 (2019-11-21)
 
-## Changed
+### Changed
 
-* Warn if multiple objects have the same `id` value
+* Warn if multiple objects in an array have the same `id` value.
   * Add a `collision_behavior` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set to:
     * `ocdsmerge.WARN`: issue a `DuplicateIdValueWarning` [warning](https://docs.pytest.org/en/latest/warnings.html) (default)
     * `ocdsmerge.RAISE`: raise a `DuplicateIdValueError` exception

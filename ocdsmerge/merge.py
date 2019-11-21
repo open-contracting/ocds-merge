@@ -3,17 +3,19 @@ import uuid
 import warnings
 from collections import OrderedDict
 from functools import lru_cache
-from enum import Enum, unique
+from enum import Flag, auto
 
 import jsonref
 import requests
 
 
-@unique
-class CollisionBehavior(Enum):
-    IGNORE = 'ignore'
-    RAISE = 'raise'
-    WARN = 'warn'
+class CollisionBehavior(Flag):
+    # Reporting flags.
+    RAISE = auto()
+    WARN = auto()
+    # Merging flags.
+    APPEND = auto()
+    MERGE_BY_POSITION = auto()
 
 
 globals().update(CollisionBehavior.__members__)
@@ -302,8 +304,6 @@ def process_flattened(flattened, collision_behavior=None):
                 if path in identifiers:
                     part = identifiers[path]
                 else:
-                    index = part
-
                     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
                     id_value = flattened.get(path + ('id',))
@@ -314,25 +314,36 @@ def process_flattened(flattened, collision_behavior=None):
                     else:
                         identifier = id_value
 
-                    # Save the original value. (If the value is an integer, this avoids coercing it to a string.)
-                    part = IdValue(identifier)
-                    part.original_value = id_value
+                    # Keep the integer index for the collision behavior.
+                    index = part
+                    # Keep the default `part`, so that we can issue warnings or raise errors later.
+                    default = IdValue(identifier)
 
-                    identifiers[path] = part
+                    part = default
+                    if collision_behavior:
+                        if collision_behavior & CollisionBehavior.APPEND:
+                            part = IdValue(uuid.uuid4())
+                        elif collision_behavior & CollisionBehavior.MERGE_BY_POSITION:
+                            part = IdValue(index)
+
+                    # Save the original value. (If the value is an integer, this avoids coercing it to a string.)
+                    part.original_value = id_value
 
                     # Check whether the value is repeated in other objects in the array.
                     scope = path[:-1]
                     if scope not in identifiers:
                         identifiers[scope] = {}
-                    if part not in identifiers[scope]:
-                        identifiers[scope][part] = index
-                    elif identifiers[scope][part] != index:
+                    if default not in identifiers[scope]:
+                        identifiers[scope][default] = index
+                    elif identifiers[scope][default] != index and collision_behavior:
                         message = 'Multiple objects have the `id` value {!r} in the `{}` array'.format(
-                            part, '.'.join(map(str, scope)))
-                        if collision_behavior == CollisionBehavior.RAISE:
+                            default, '.'.join(map(str, scope)))
+                        if collision_behavior & CollisionBehavior.RAISE:
                             raise DuplicateIdValueError(message)
-                        elif collision_behavior != CollisionBehavior.IGNORE:
+                        elif collision_behavior & CollisionBehavior.WARN:
                             warnings.warn(message, category=DuplicateIdValueWarning)
+
+                    identifiers[path] = part
             new_key.append(part)
         processed[tuple(new_key)] = flattened[key]
 

@@ -3,7 +3,7 @@ OCDS Merge
 
 |PyPI Version| |Build Status| |Coverage Status| |Python Version|
 
-This Python package helps to create records that conform to the `Open Contracting Data Standard <https://standard.open-contracting.org>`__. Specifically, it provides functions for merging OCDS releases with the same OCID into either a compiled release or a versioned release.
+This Python package helps to create records that conform to the `Open Contracting Data Standard <https://standard.open-contracting.org>`__. Specifically, it provides functions for merging OCDS releases with the same OCID into either a compiled release or a versioned release, as described in the `OCDS documentation <https://standard.open-contracting.org/latest/en/schema/merging/>`__.
 
 ::
 
@@ -53,18 +53,18 @@ You can then create an OCDS record using the :code:`compiledRelease` and :code:`
 Important caveats
 ~~~~~~~~~~~~~~~~~
 
-* You must ensure that the OCDS releases that you provide as input have the same OCID.
-* If you are using an older version of the OCDS release schema, you must specify the older schema as a URL, file path, or Python dictionary (see below).
-* If you are using OCDS extensions, you should patch the OCDS release schema (for instance, using `json-merge-patch <https://pypi.org/project/json-merge-patch/>`__) and specify the patched schema as a URL, file path, or Python dictionary.
+-  You must ensure that the OCDS releases that you provide as input have the same OCID.
+-  If you are using an older version of the OCDS release schema, you must specify the older schema as a URL, file path, or Python dictionary (see below).
+-  If you are using OCDS extensions, you should patch the OCDS release schema (for instance, using `json-merge-patch <https://pypi.org/project/json-merge-patch/>`__) and specify the patched schema as a URL, file path, or Python dictionary.
 
 Using different release schema
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, the :code:`merge` and :code:`merge_versioned` functions use the latest version of the OCDS release schema, which they download once. However, you may want to use an older version, an extended schema, or a local schema to avoid remote requests. To do so, use the optional :code:`schema` argument, which can be:
 
-* A URL to a release schema, as a string starting with ``http``
-* A file path to a release schema, as a string
-* a release schema, as a Python dictionary
+-  A URL to a release schema, as a string starting with ``http``
+-  A file path to a release schema, as a string
+-  a release schema, as a Python dictionary
 
 .. code:: python
 
@@ -90,6 +90,29 @@ The :code:`merge` and :code:`merge_versioned` functions extract merge rules from
    merge_rules = ocdsmerge.get_merge_rules('release-schema.json')
 
    ocdsmerge.merge(releases, merge_rules=merge_rules)
+
+Working with degenerate data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The merge routine merges objects in arrays based on their ``id`` values, as described in the `OCDS documentation <https://standard.open-contracting.org/latest/en/schema/merging/>`__.
+
+However, if, in a single release, multiple objects in an array have the same ``id`` value, only the last object is retained, by default. (To be clear, such data is not structurally correct.)
+
+This behavior can be monitored or changed by setting the :code:`collision_behavior` argument to the :code:`merge` or :code:`merge_versioned` function. It can be set to do the following, whenever a collision occurs:
+
+-  :code:`ocdsmerge.WARN`: issue a :code:`DuplicateIdValueWarning` `warning <https://docs.pytest.org/en/latest/warnings.html>`__
+-  :code:`ocdsmerge.RAISE`: raise a :code:`DuplicateIdValueError` exception
+-  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their ``id`` value.
+-  :code:`ocdsmerge.APPEND`: retain all objects in arrays.
+
+These flags can be combined, for example:
+
+.. code:: pthon
+
+   merge(releases, collision_behavior=ocdsmerge.WARN | ocdsmerge.MERGE_BY_POSITION)
+
+:code:`ERROR` takes precedence over :code:`WARN`, and :code:`APPEND` takes precedence over :code:`MERGE_BY_POSITION`.
+
 
 Reference implementation
 ------------------------
