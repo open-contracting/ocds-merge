@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='ocdsmerge',
-    version='0.5.10',
+    version='0.5.10.post1',
     author='Open Contracting Partnership',
     author_email='data@open-contracting.org',
     url='https://github.com/open-contracting/ocds-merge',
