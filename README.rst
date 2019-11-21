@@ -102,8 +102,8 @@ This behavior can be monitored or changed by setting the :code:`collision_behavi
 
 -  :code:`ocdsmerge.WARN`: issue a :code:`DuplicateIdValueWarning` `warning <https://docs.pytest.org/en/latest/warnings.html>`__
 -  :code:`ocdsmerge.RAISE`: raise a :code:`DuplicateIdValueError` exception
--  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their ``id`` value.
--  :code:`ocdsmerge.APPEND`: retain all objects in arrays.
+-  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their ``id`` value
+-  :code:`ocdsmerge.APPEND`: retain all objects in arrays
 
 These flags can be combined, for example:
 
