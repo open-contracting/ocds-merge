@@ -19,7 +19,7 @@ import pytest
 from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
-from tests import path, read, tags
+from tests import path, load, tags
 
 schema_path = 'release-schema-{}.json'
 versioned_release_schema_path = 'versioned-release-validation-schema-{}.json'
@@ -29,7 +29,7 @@ for minor_version, patch_tag in tags.items():
     filenames = glob(path(minor_version, '*.json'))
     assert len(filenames), 'ocds fixtures not found'
     for versioned, schema_path in ((False, schema_path), (True, versioned_release_schema_path)):
-        schema = json.loads(read(schema_path.format(patch_tag)))
+        schema = load(schema_path.format(patch_tag))
         for filename in filenames:
             if not versioned ^ filename.endswith('-versioned.json'):
                 test_valid_argvalues.append((filename, schema))

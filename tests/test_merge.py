@@ -1,4 +1,5 @@
 import json
+import os.path
 import re
 from collections import OrderedDict
 from copy import deepcopy
@@ -8,10 +9,10 @@ import pytest
 
 from ocdsmerge import merge, merge_versioned
 from ocdsmerge.merge import NonObjectReleaseError, MissingDateKeyError, NullDateValueError, NonStringDateValueError
-from tests import path, read, tags, schema_url
+from tests import path, load, tags, schema_url
 
 
-simple_schema = json.loads(read('schema.json'))
+simple_schema = load('schema.json')
 
 test_merge_argvalues = []
 for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):

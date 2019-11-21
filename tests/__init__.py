@@ -1,3 +1,4 @@
+import json
 import os.path
 
 tags = {
@@ -15,3 +16,7 @@ def path(filename):
 def read(filename, mode='rt', encoding=None, **kwargs):
     with open(path(filename), mode, encoding=encoding, **kwargs) as f:
         return f.read()
+
+
+def load(*args, **kwargs):
+    return json.loads(read(*args, **kwargs))
