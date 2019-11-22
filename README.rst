@@ -94,32 +94,41 @@ The :code:`merge` and :code:`merge_versioned` functions extract merge rules from
 Working with degenerate data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The merge routine merges objects in arrays based on their ``id`` values, as described in the `OCDS documentation <https://standard.open-contracting.org/latest/en/schema/merging/>`__.
+The merge routine merges multiple individual releases into either a compiled release or a versioned release. Across the individual releases, it merges objects in arrays based on their ``id`` values, as described in the `OCDS documentation <https://standard.open-contracting.org/latest/en/schema/merging/>`__. This allows a publisher to, for example, disclose an upcoming milestone in one release, and set the date on which it was met in another release.
 
-However, if, in a single release, multiple objects in an array have the same ``id`` value, only the last object is retained, by default. (To be clear, such data is not structurally correct.)
+However, if objects that correspond to different things re-use ``id`` values, then only the last object is retained in the merged release, by default. (To be clear, such data is not structurally correct.) For example, if a publisher creates a release for each award notice in a procurement procedure, and restarts the numbering of award objects in each release from '1', then the later releases will overwrite the award objects of the earlier releases.
 
-This behavior can be monitored by setting the :code:`collision_behavior` argument of the :code:`merge` or :code:`merge_versioned` function. It can be set to do the following, whenever a collision occurs:
+Similarly, if, in a single release, objects in the same array share an ``id`` value, then only the last object is retained.
+
+To monitor whether, in a single release, objects in the same array share an ``id`` value, set the :code:`collision_behavior` argument of the :code:`merge` or :code:`merge_versioned` function to either:
 
 -  :code:`ocdsmerge.WARN`: issue a :code:`DuplicateIdValueWarning` `warning <https://docs.pytest.org/en/latest/warnings.html>`__
 -  :code:`ocdsmerge.RAISE`: raise a :code:`DuplicateIdValueError` exception
+
+For example:
 
 .. code:: python
 
    merge(releases, collision_behavior=ocdsmerge.WARN)
 
-The behavior can also be changed by setting the :code:`rule_overrides` argument on a per-field basis:
+If you know in advance that the individual releases have structure errors as described above, you can change the behavior of the merge routine by setting the :code:`rule_overrides` argument on a per-field basis:
 
--  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in the array based on their array index, instead of their ``id`` value
+-  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in the given array based on their array index, instead of their ``id`` value.
 
    - This is appropriate if the publisher always re-publishes all prior objects in a given array, and puts them in a consistent order.
 
--  :code:`ocdsmerge.APPEND`: retain all objects in the array
+-  :code:`ocdsmerge.APPEND`: retain all objects in the given array, instead of merging any.
 
    - This is appropriate if the publisher never updates or re-publishes a prior object in a given array.
 
+The field paths are specified as tuples. For example:
+
 .. code:: python
 
-   merge(releases, rule_overrides={('awards', 'suppliers'): ocdsmerge.APPEND})
+   merge(releases, rule_overrides={
+       ('awards',): ocdsmerge.APPEND,
+       ('contracts', 'implementation', 'milestones'): ocdsmerge.MERGE_BY_POSITION,
+   })
 
 Reference implementation
 ------------------------
