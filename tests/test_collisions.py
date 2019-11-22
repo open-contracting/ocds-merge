@@ -28,16 +28,9 @@ def test_raise():
     assert str(excinfo.value) == "Multiple objects have the `id` value '1' in the `identifierMerge` array"
 
 
-def test_raise_precedence():
-    with pytest.raises(DuplicateIdValueError) as excinfo:
-        merge(releases, collision_behavior=RAISE | WARN)
-
-    assert str(excinfo.value) == "Multiple objects have the `id` value '1' in the `identifierMerge` array"
-
-
 def test_merge_by_position():
     with pytest.warns(None) as record:
-        compiled_release = merge(releases + releases, collision_behavior=MERGE_BY_POSITION)
+        compiled_release = merge(releases + releases, rule_overrides={('array',): MERGE_BY_POSITION})
         assert not record, 'unexpected warning: {}'.format(record[0].message)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-by-position.json'))
@@ -45,15 +38,7 @@ def test_merge_by_position():
 
 def test_append():
     with pytest.warns(None) as record:
-        compiled_release = merge(releases + releases, collision_behavior=APPEND)
-        assert not record, 'unexpected warning: {}'.format(record[0].message)
-
-    assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-append.json'))
-
-
-def test_merge_precedence():
-    with pytest.warns(None) as record:
-        compiled_release = merge(releases + releases, collision_behavior=APPEND | MERGE_BY_POSITION)
+        compiled_release = merge(releases + releases, rule_overrides={('array',): APPEND})
         assert not record, 'unexpected warning: {}'.format(record[0].message)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-append.json'))
@@ -61,6 +46,7 @@ def test_merge_precedence():
 
 def test_mixed():
     with pytest.warns(DuplicateIdValueWarning):
-        compiled_release = merge(releases + releases, collision_behavior=MERGE_BY_POSITION | WARN)
+        compiled_release = merge(releases + releases, collision_behavior=WARN,
+                                 rule_overrides={('array',): MERGE_BY_POSITION})
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-by-position.json'))

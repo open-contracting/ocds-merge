@@ -12,6 +12,16 @@
         "id": 1,
         "key": "second"
       }
+    ],
+    "array": [
+      {
+        "id": 1,
+        "key": "first"
+      },
+      {
+        "id": 1,
+        "key": "second"
+      }
     ]
   }
 ]

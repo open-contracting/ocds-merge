@@ -4,14 +4,22 @@
 
 * Add a `Merger` class, to make it easier to efficiently merge multiple OCIDs.
 
+## 0.5.10.post2 (2019-11-22)
+
+* Add a `rule_overrides` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set on a per-field basis to:
+  * `ocdsmerge.MERGE_BY_POSITION`: merge objects in the array based on their array index, instead of their `id` value.
+  * `ocdsmerge.APPEND`: retain all objects in the array.
+* Remove these flags as possible values of `collision_behavior`.
+
 ## 0.5.10.post1 (2019-11-21)
 
 ### Changed
 
 * The collision behavior is restored to silently ignore the collision, by default.
+* Add these flags as possible values of `collision_behavior`:
   * `ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their `id` value.
   * `ocdsmerge.APPEND`: retain all objects in arrays.
-  * Remove the `ocdsmerge.IGNORE` flag.
+* Remove the `ocdsmerge.IGNORE` flag.
 
 ## 0.5.10 (2019-11-21)
 

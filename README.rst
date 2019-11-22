@@ -98,21 +98,28 @@ The merge routine merges objects in arrays based on their ``id`` values, as desc
 
 However, if, in a single release, multiple objects in an array have the same ``id`` value, only the last object is retained, by default. (To be clear, such data is not structurally correct.)
 
-This behavior can be monitored or changed by setting the :code:`collision_behavior` argument to the :code:`merge` or :code:`merge_versioned` function. It can be set to do the following, whenever a collision occurs:
+This behavior can be monitored by setting the :code:`collision_behavior` argument of the :code:`merge` or :code:`merge_versioned` function. It can be set to do the following, whenever a collision occurs:
 
 -  :code:`ocdsmerge.WARN`: issue a :code:`DuplicateIdValueWarning` `warning <https://docs.pytest.org/en/latest/warnings.html>`__
 -  :code:`ocdsmerge.RAISE`: raise a :code:`DuplicateIdValueError` exception
--  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their ``id`` value
--  :code:`ocdsmerge.APPEND`: retain all objects in arrays
 
-These flags can be combined, for example:
+.. code:: python
 
-.. code:: pthon
+   merge(releases, collision_behavior=ocdsmerge.WARN)
 
-   merge(releases, collision_behavior=ocdsmerge.WARN | ocdsmerge.MERGE_BY_POSITION)
+The behavior can also be changed by setting the :code:`rule_overrides` argument on a per-field basis:
 
-:code:`ERROR` takes precedence over :code:`WARN`, and :code:`APPEND` takes precedence over :code:`MERGE_BY_POSITION`.
+-  :code:`ocdsmerge.MERGE_BY_POSITION`: merge objects in the array based on their array index, instead of their ``id`` value
 
+   - This is appropriate if the publisher always re-publishes all prior objects in a given array, and puts them in a consistent order.
+
+-  :code:`ocdsmerge.APPEND`: retain all objects in the array
+
+   - This is appropriate if the publisher never updates or re-publishes a prior object in a given array.
+
+.. code:: python
+
+   merge(releases, rule_overrides={('awards', 'suppliers'): ocdsmerge.APPEND})
 
 Reference implementation
 ------------------------

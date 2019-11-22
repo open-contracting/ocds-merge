@@ -3,22 +3,26 @@ import uuid
 import warnings
 from collections import OrderedDict
 from functools import lru_cache
-from enum import Flag, auto
+from enum import Enum, auto, unique
 
 import jsonref
 import requests
 
 
-class CollisionBehavior(Flag):
-    # Reporting flags.
+@unique
+class CollisionBehavior(Enum):
     RAISE = auto()
     WARN = auto()
-    # Merging flags.
+
+
+@unique
+class MergeStrategy(Enum):
     APPEND = auto()
     MERGE_BY_POSITION = auto()
 
 
 globals().update(CollisionBehavior.__members__)
+globals().update(MergeStrategy.__members__)
 
 
 class IdValue(str):
@@ -281,11 +285,14 @@ def unflatten(processed, merge_rules):
     return unflattened
 
 
-def process_flattened(flattened, collision_behavior=None):
+def process_flattened(flattened, collision_behavior=None, rule_overrides=None):
     """
     Replace numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
     in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
     """
+    if rule_overrides is None:
+        rule_overrides = {}
+
     # Keep arrays in order.
     processed = OrderedDict()
 
@@ -304,6 +311,8 @@ def process_flattened(flattened, collision_behavior=None):
                 if path in identifiers:
                     part = identifiers[path]
                 else:
+                    scope = path[:-1]
+
                     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
                     id_value = flattened.get(path + ('id',))
@@ -320,17 +329,16 @@ def process_flattened(flattened, collision_behavior=None):
                     default = IdValue(identifier)
 
                     part = default
-                    if collision_behavior:
-                        if collision_behavior & CollisionBehavior.APPEND:
-                            part = IdValue(uuid.uuid4())
-                        elif collision_behavior & CollisionBehavior.MERGE_BY_POSITION:
-                            part = IdValue(index)
+                    rule = rule_overrides.get(scope)
+                    if rule == MergeStrategy.APPEND:
+                        part = IdValue(uuid.uuid4())
+                    elif rule == MergeStrategy.MERGE_BY_POSITION:
+                        part = IdValue(index)
 
                     # Save the original value. (If the value is an integer, this avoids coercing it to a string.)
                     part.original_value = id_value
 
                     # Check whether the value is repeated in other objects in the array.
-                    scope = path[:-1]
                     if scope not in identifiers:
                         identifiers[scope] = {}
                     if default not in identifiers[scope]:
@@ -338,9 +346,9 @@ def process_flattened(flattened, collision_behavior=None):
                     elif identifiers[scope][default] != index and collision_behavior:
                         message = 'Multiple objects have the `id` value {!r} in the `{}` array'.format(
                             default, '.'.join(map(str, scope)))
-                        if collision_behavior & CollisionBehavior.RAISE:
+                        if collision_behavior == CollisionBehavior.RAISE:
                             raise DuplicateIdValueError(message)
-                        elif collision_behavior & CollisionBehavior.WARN:
+                        elif collision_behavior == CollisionBehavior.WARN:
                             warnings.warn(message, category=DuplicateIdValueWarning)
 
                     identifiers[path] = part
@@ -381,15 +389,18 @@ def sorted_releases(releases):
 
 
 class Merger:
-    def __init__(self, schema=None, merge_rules=None, collision_behavior=None):
+    def __init__(self, schema=None, merge_rules=None, collision_behavior=None, rule_overrides=None):
         self.schema = schema
         self.merge_rules = merge_rules
         self.collision_behavior = collision_behavior
+        self.rule_overrides = rule_overrides
 
         if not schema:
             self.schema = get_release_schema_url(get_tags()[-1])
         if not merge_rules:
             self.merge_rules = get_merge_rules(schema)
+        if not rule_overrides:
+            self.rule_overrides = {}
 
     def create_compiled_release(self, releases):
         """
@@ -407,28 +418,28 @@ class Merger:
 
     def _create_merged_release(self, merge_method, releases, merged):
         for release in sorted_releases(releases):
-            merge_method(release, merged, self.merge_rules, self.collision_behavior)
+            merge_method(release, merged, self.merge_rules, self.collision_behavior, self.rule_overrides)
 
         return unflatten(merged, self.merge_rules)
 
 
-def merge(releases, schema=None, merge_rules=None, collision_behavior=None):
+def merge(releases, schema=None, merge_rules=None, collision_behavior=None, rule_overrides=None):
     """
     Merges a list of releases into a compiledRelease.
     """
-    merger = Merger(schema, merge_rules, collision_behavior)
+    merger = Merger(schema, merge_rules, collision_behavior, rule_overrides)
     return merger.create_compiled_release(releases)
 
 
-def merge_versioned(releases, schema=None, merge_rules=None, collision_behavior=None):
+def merge_versioned(releases, schema=None, merge_rules=None, collision_behavior=None, rule_overrides=None):
     """
     Merges a list of releases into a versionedRelease.
     """
-    merger = Merger(schema, merge_rules, collision_behavior)
+    merger = Merger(schema, merge_rules, collision_behavior, rule_overrides)
     return merger.create_versioned_release(releases)
 
 
-def add_release_to_compiled_release(release, merged, merge_rules, collision_behavior=None):
+def add_release_to_compiled_release(release, merged, merge_rules, collision_behavior=None, rule_overrides=None):
     """
     Merges one release into a compiledRelease.
     """
@@ -441,7 +452,7 @@ def add_release_to_compiled_release(release, merged, merge_rules, collision_beha
     release.pop('tag', None)  # becomes ["compiled"]
 
     flat = flatten(release, merge_rules)
-    processed = process_flattened(flat, collision_behavior)
+    processed = process_flattened(flat, collision_behavior, rule_overrides)
 
     # Add an `id` and `date`.
     merged[('id',)] = '{}-{}'.format(ocid, date)
@@ -453,7 +464,7 @@ def add_release_to_compiled_release(release, merged, merge_rules, collision_beha
     merged.update(processed)
 
 
-def add_release_to_versioned_release(release, merged, merge_rules, collision_behavior=None):
+def add_release_to_versioned_release(release, merged, merge_rules, collision_behavior=None, rule_overrides=None):
     """
     Merges one release into a versionedRelease.
     """
@@ -470,7 +481,7 @@ def add_release_to_versioned_release(release, merged, merge_rules, collision_beh
     tag = release.pop('tag', None)
 
     flat = flatten(release, merge_rules)
-    processed = process_flattened(flat, collision_behavior)
+    processed = process_flattened(flat, collision_behavior, rule_overrides)
 
     for key, value in processed.items():
         # If value is unchanged, don't add to history.
