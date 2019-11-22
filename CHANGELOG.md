@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.11 (Unreleased)
+
+* Add a `Merger` class, to make it easier to efficiently merge multiple OCIDs.
+
 ## 0.5.10.post1 (2019-11-21)
 
 ### Changed

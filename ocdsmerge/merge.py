@@ -380,18 +380,52 @@ def sorted_releases(releases):
             raise
 
 
+class Merger:
+    def __init__(self, schema=None, merge_rules=None, collision_behavior=None):
+        self.schema = schema
+        self.merge_rules = merge_rules
+        self.collision_behavior = collision_behavior
+
+        if not schema:
+            self.schema = get_release_schema_url(get_tags()[-1])
+        if not merge_rules:
+            self.merge_rules = get_merge_rules(schema)
+
+    def create_compiled_release(self, releases):
+        """
+        Merges a list of releases into a compiledRelease.
+        """
+        merged = OrderedDict({('tag',): ['compiled']})
+        return self._create_merged_release(add_release_to_compiled_release, releases, merged)
+
+    def create_versioned_release(self, releases):
+        """
+        Merges a list of releases into a versionedRelease.
+        """
+        merged = OrderedDict()
+        return self._create_merged_release(add_release_to_versioned_release, releases, merged)
+
+    def _create_merged_release(self, merge_method, releases, merged):
+        for release in sorted_releases(releases):
+            merge_method(release, merged, self.merge_rules, self.collision_behavior)
+
+        return unflatten(merged, self.merge_rules)
+
+
 def merge(releases, schema=None, merge_rules=None, collision_behavior=None):
     """
     Merges a list of releases into a compiledRelease.
     """
-    if not merge_rules:
-        merge_rules = get_merge_rules(schema)
+    merger = Merger(schema, merge_rules, collision_behavior)
+    return merger.create_compiled_release(releases)
 
-    merged = OrderedDict({('tag',): ['compiled']})
-    for release in sorted_releases(releases):
-        add_release_to_compiled_release(release, merged, merge_rules, collision_behavior)
 
-    return unflatten(merged, merge_rules)
+def merge_versioned(releases, schema=None, merge_rules=None, collision_behavior=None):
+    """
+    Merges a list of releases into a versionedRelease.
+    """
+    merger = Merger(schema, merge_rules, collision_behavior)
+    return merger.create_versioned_release(releases)
 
 
 def add_release_to_compiled_release(release, merged, merge_rules, collision_behavior=None):
@@ -417,20 +451,6 @@ def add_release_to_compiled_release(release, merged, merge_rules, collision_beha
     merged[('ocid',)] = ocid
 
     merged.update(processed)
-
-
-def merge_versioned(releases, schema=None, merge_rules=None, collision_behavior=None):
-    """
-    Merges a list of releases into a versionedRelease.
-    """
-    if not merge_rules:
-        merge_rules = get_merge_rules(schema)
-
-    merged = OrderedDict()
-    for release in sorted_releases(releases):
-        add_release_to_versioned_release(release, merged, merge_rules, collision_behavior)
-
-    return unflatten(merged, merge_rules)
 
 
 def add_release_to_versioned_release(release, merged, merge_rules, collision_behavior=None):
