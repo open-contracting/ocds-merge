@@ -1,1 +1,1 @@
-from .merge import merge, merge_versioned, get_merge_rules, RAISE, WARN, APPEND, MERGE_BY_POSITION  # noqa
+from .merge import APPEND, MERGE_BY_POSITION, RAISE, WARN, get_merge_rules, merge, merge_versioned  # noqa

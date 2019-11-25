@@ -8,9 +8,8 @@ from glob import glob
 import pytest
 
 from ocdsmerge import merge, merge_versioned
-from ocdsmerge.merge import NonObjectReleaseError, MissingDateKeyError, NullDateValueError, NonStringDateValueError
-from tests import path, load, tags, schema_url
-
+from ocdsmerge.merge import MissingDateKeyError, NonObjectReleaseError, NonStringDateValueError, NullDateValueError
+from tests import load, path, schema_url, tags
 
 simple_schema = load('schema.json')
 

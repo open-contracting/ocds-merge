@@ -2,10 +2,9 @@ import os
 
 import pytest
 
-from ocdsmerge import merge, WARN, RAISE, APPEND, MERGE_BY_POSITION
+from ocdsmerge import APPEND, MERGE_BY_POSITION, RAISE, WARN, merge
 from ocdsmerge.merge import DuplicateIdValueError, DuplicateIdValueWarning
 from tests import load
-
 
 releases = load(os.path.join('schema', 'identifier-merge-duplicate-id.json'))
 

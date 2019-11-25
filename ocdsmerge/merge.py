@@ -2,8 +2,8 @@ import re
 import uuid
 import warnings
 from collections import OrderedDict
-from functools import lru_cache
 from enum import Enum, auto, unique
+from functools import lru_cache
 
 import jsonref
 import requests

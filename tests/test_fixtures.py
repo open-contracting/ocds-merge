@@ -19,7 +19,7 @@ import pytest
 from jsonschema import FormatChecker
 from jsonschema.validators import Draft4Validator as validator
 
-from tests import path, load, tags
+from tests import load, path, tags
 
 release_schema_path = 'release-schema-{}.json'
 versioned_release_schema_path = 'versioned-release-validation-schema-{}.json'

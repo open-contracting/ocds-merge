@@ -1,4 +1,4 @@
-from ocdsmerge.merge import get_release_schema_url, get_tags, flatten, process_flattened
+from ocdsmerge.merge import flatten, get_release_schema_url, get_tags, process_flattened
 
 
 def test_get_release_schema_url():
