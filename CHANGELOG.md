@@ -4,6 +4,12 @@
 
 * Add a `Merger` class, to make it easier to efficiently merge multiple OCIDs.
 
+## 0.5.10.post3 (2019-11-28)
+
+* The collision behavior is changed to always warn.
+* Remove the `collision_behavior` argument. Use a [warning filter](https://docs.pytest.org/en/latest/warnings.html) instead.
+* Add `path` and `id` properties to `DuplicateIdValueWarning` to store the `path` at which, and the `id` on which, the collision occurred.
+
 ## 0.5.10.post2 (2019-11-22)
 
 * Add a `rule_overrides` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set on a per-field basis to:
@@ -15,7 +21,7 @@
 
 ### Changed
 
-* The collision behavior is restored to silently ignore the collision, by default.
+* The collision behavior is changed to silently ignore the collision, by default.
 * Add these flags as possible values of `collision_behavior`:
   * `ocdsmerge.MERGE_BY_POSITION`: merge objects in arrays based on their array index, instead of their `id` value.
   * `ocdsmerge.APPEND`: retain all objects in arrays.

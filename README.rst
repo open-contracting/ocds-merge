@@ -96,20 +96,28 @@ Working with degenerate data
 
 The merge routine merges multiple individual releases into either a compiled release or a versioned release. Across the individual releases, it merges objects in arrays based on their ``id`` values, as described in the `OCDS documentation <https://standard.open-contracting.org/latest/en/schema/merging/>`__. This allows a publisher to, for example, disclose an upcoming milestone in one release, and set the date on which it was met in another release.
 
-However, if objects that correspond to different things re-use ``id`` values, then only the last object is retained in the merged release, by default. (To be clear, such data is not structurally correct.) For example, if a publisher creates a release for each award notice in a procurement procedure, and restarts the numbering of award objects in each release from '1', then the later releases will overwrite the award objects of the earlier releases.
+However, if objects that correspond to different things re-use ``id`` values, then only the last object is retained in the merged release, by default. (To be clear, such data has structural errors.) For example, if a publisher creates a release for each award notice in a procurement procedure, and restarts the numbering of award objects in each release from '1', then the later releases will overwrite the award objects of the earlier releases.
 
 Similarly, if, in a single release, objects in the same array share an ``id`` value, then only the last object is retained.
 
-To monitor whether, in a single release, objects in the same array share an ``id`` value, set the :code:`collision_behavior` argument of the :code:`merge` or :code:`merge_versioned` function to either:
-
--  :code:`ocdsmerge.WARN`: issue a :code:`DuplicateIdValueWarning` `warning <https://docs.pytest.org/en/latest/warnings.html>`__
--  :code:`ocdsmerge.RAISE`: raise a :code:`DuplicateIdValueError` exception
-
-For example:
+If, in a single release, objects in the same array share an ``id`` value, the :code:`merge` and :code:`merge_versioned` functions issue a :code:`DuplicateIdValueWarning` warning. You can turn the warning into an exception or ignore the warning using a `warning filter <https://docs.pytest.org/en/latest/warnings.html>`__. For example:
 
 .. code:: python
 
-   merge(releases, collision_behavior=ocdsmerge.WARN)
+   import warnings
+
+   import ocdsmerge
+   from ocdsmerge.merge import DuplicateIdValueWarning
+
+   # Raise an error, instead.
+   with warnings.catch_warnings():
+       warnings.filterwarnings('error', category=DuplicateIdValueWarning)
+       ocdsmerge.merge(releases)
+
+   # Ignore the warning, instead.
+   with warnings.catch_warnings():
+       warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
+       ocdsmerge.merge(releases)
 
 If you know in advance that the individual releases have structure errors as described above, you can change the behavior of the merge routine by setting the :code:`rule_overrides` argument on a per-field basis:
 
@@ -125,7 +133,7 @@ The field paths are specified as tuples. For example:
 
 .. code:: python
 
-   merge(releases, rule_overrides={
+   ocdsmerge.merge(releases, rule_overrides={
        ('awards',): ocdsmerge.APPEND,
        ('contracts', 'implementation', 'milestones'): ocdsmerge.MERGE_BY_POSITION,
    })
