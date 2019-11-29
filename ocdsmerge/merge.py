@@ -53,19 +53,26 @@ class OCDSMergeError(Exception):
     """Base class for exceptions from within this package"""
 
 
-class NonObjectReleaseError(OCDSMergeError):
+class MissingDateKeyError(OCDSMergeError, KeyError):
+    """Raised when a release is missing a 'date' key"""
+
+    def __init__(self, key, message):
+        self.key = key
+        self.message = message
+
+    def __str__(self):
+        return str(self.message)
+
+
+class NonObjectReleaseError(OCDSMergeError, TypeError):
     """Raised when a release is not an object"""
 
 
-class MissingDateKeyError(OCDSMergeError):
-    """Raised when a release is missing a 'date' key"""
-
-
-class NullDateValueError(OCDSMergeError):
+class NullDateValueError(OCDSMergeError, TypeError):
     """Raised when a release has a null 'date' value"""
 
 
-class NonStringDateValueError(OCDSMergeError):
+class NonStringDateValueError(OCDSMergeError, TypeError):
     """Raised when a release has a non-string 'date' value"""
 
 

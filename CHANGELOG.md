@@ -1,12 +1,22 @@
 # Changelog
 
+## 0.5.11 (2019-11-28)
+
+### Changed
+
+* `MissingDateKeyError` inherits from `KeyError`, and `NonObjectReleaseError`, `NullDateValueError` and `NonStringDateValueError` inherit from `TypeError`, to allow exception handling of versions less than 0.5.2 to remain unchanged.
+
 ## 0.5.10.post3 (2019-11-28)
+
+### Changed
 
 * The collision behavior is changed to always warn.
 * Remove the `collision_behavior` argument. Use a [warning filter](https://docs.pytest.org/en/latest/warnings.html) instead.
 * Add `path` and `id` properties to `DuplicateIdValueWarning` to store the `path` at which, and the `id` on which, the collision occurred.
 
 ## 0.5.10.post2 (2019-11-22)
+
+### Changed
 
 * Add a `rule_overrides` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set on a per-field basis to:
   * `ocdsmerge.MERGE_BY_POSITION`: merge objects in the array based on their array index, instead of their `id` value.
@@ -28,10 +38,10 @@
 ### Changed
 
 * Warn if multiple objects in an array have the same `id` value.
-  * Add a `collision_behavior` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set to:
-    * `ocdsmerge.WARN`: issue a `DuplicateIdValueWarning` [warning](https://docs.pytest.org/en/latest/warnings.html) (default)
-    * `ocdsmerge.RAISE`: raise a `DuplicateIdValueError` exception
-    * `ocdsmerge.IGNORE`: silently ignore the collision
+* Add a `collision_behavior` argument to `merge`, `merge_versioned`, `add_release_to_compiled_release` and `add_release_to_versioned_release`, which can be set to:
+  * `ocdsmerge.WARN`: issue a `DuplicateIdValueWarning` [warning](https://docs.pytest.org/en/latest/warnings.html) (default)
+  * `ocdsmerge.RAISE`: raise a `DuplicateIdValueError` exception
+  * `ocdsmerge.IGNORE`: silently ignore the collision
 
 ## 0.5.9 (2019-11-20)
 
@@ -81,7 +91,7 @@
 
 ### Changed
 
-* If there is more than one release, but a `date` field is either missing or null, the `MissingDateKeyError` and `NullDateValueError` exceptions are raised, respestively, instead of the generic `KeyError` and `TypeError`.
+* If there is more than one release, but a `date` field is either missing or null, the `MissingDateKeyError` and `NullDateValueError` exceptions are raised, respectively, instead of the generic `KeyError` and `TypeError`.
 
 ### Fixed
 
