@@ -1,9 +1,5 @@
 # Changelog
 
-## 0.5.11 (Unreleased)
-
-* Add a `Merger` class, to make it easier to efficiently merge multiple OCIDs.
-
 ## 0.5.10.post3 (2019-11-28)
 
 * The collision behavior is changed to always warn.
