@@ -100,7 +100,7 @@ However, if objects that correspond to different things re-use ``id`` values, th
 
 Similarly, if, in a single release, objects in the same array share an ``id`` value, then only the last object is retained.
 
-If, in a single release, objects in the same array share an ``id`` value, the :code:`merge` and :code:`merge_versioned` functions issue a :code:`DuplicateIdValueWarning` warning. You can turn the warning into an exception or ignore the warning using a `warning filter <https://docs.pytest.org/en/latest/warnings.html>`__. For example:
+If, in a single release, objects in the same array share an ``id`` value, the :code:`merge` and :code:`merge_versioned` functions issue a :code:`DuplicateIdValueWarning` warning. You can turn the warning into an exception or ignore the warning using a `warning filter <https://docs.python.org/3.8/library/warnings.html>`__. For example:
 
 .. code:: python
 

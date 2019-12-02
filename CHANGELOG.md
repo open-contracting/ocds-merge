@@ -11,7 +11,7 @@
 ### Changed
 
 * The collision behavior is changed to always warn.
-* Remove the `collision_behavior` argument. Use a [warning filter](https://docs.pytest.org/en/latest/warnings.html) instead.
+* Remove the `collision_behavior` argument. Use a [warning filter](https://docs.python.org/3.8/library/warnings.html) instead.
 * Add `path` and `id` properties to `DuplicateIdValueWarning` to store the `path` at which, and the `id` on which, the collision occurred.
 
 ## 0.5.10.post2 (2019-11-22)
