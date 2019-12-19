@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.12 (2019-12-29)
+
+### Fixed
+
+* `MissingDateKeyError` is now initialized correctly.
+
 ## 0.5.11 (2019-11-28)
 
 ### Changed

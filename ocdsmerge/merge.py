@@ -374,7 +374,7 @@ def sorted_releases(releases):
     try:
         return sorted(releases, key=lambda release: release['date'])
     except KeyError:
-        raise MissingDateKeyError('The `date` field of at least one release is missing.')
+        raise MissingDateKeyError('date', 'The `date` field of at least one release is missing.')
     except TypeError as e:
         if ' not supported between instances of ' in e.args[0]:
             if 'NoneType' in e.args[0]:
