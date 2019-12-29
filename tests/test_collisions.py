@@ -3,11 +3,12 @@ import warnings
 
 import pytest
 
-from ocdsmerge import APPEND, MERGE_BY_POSITION, merge
-from ocdsmerge.merge import DuplicateIdValueWarning
+from ocdsmerge import APPEND, MERGE_BY_POSITION, Merger
+from ocdsmerge.errors import DuplicateIdValueWarning
 from tests import load
 
 releases = load(os.path.join('schema', 'identifier-merge-duplicate-id.json'))
+merger = Merger()
 
 
 def test_warn():
@@ -15,7 +16,7 @@ def test_warn():
     string = "Multiple objects have the `id` value '1' in the `{}` array"
 
     with pytest.warns(DuplicateIdValueWarning) as records:
-        merge(releases)
+        merger.create_compiled_release(releases)
 
     assert len(records) == 2
 
@@ -32,7 +33,7 @@ def test_raise():
     with pytest.raises(DuplicateIdValueWarning) as excinfo:
         with warnings.catch_warnings():
             warnings.filterwarnings('error', category=DuplicateIdValueWarning)
-            merge(releases)
+            merger.create_compiled_release(releases)
 
     message = "Multiple objects have the `id` value '1' in the `identifierMerge` array"
 
@@ -46,20 +47,24 @@ def test_ignore():
     with pytest.warns(None) as records:
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
-            merge(releases)
+            merger.create_compiled_release(releases)
 
     assert not records, 'unexpected warning: {}'.format(records[0].message)
 
 
 def test_merge_by_position():
+    merger = Merger(rule_overrides={('array',): MERGE_BY_POSITION})
+
     with pytest.warns(DuplicateIdValueWarning):
-        compiled_release = merge(releases + releases, rule_overrides={('array',): MERGE_BY_POSITION})
+        compiled_release = merger.create_compiled_release(releases + releases)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-by-position.json'))
 
 
 def test_append():
+    merger = Merger(rule_overrides={('array',): APPEND})
+
     with pytest.warns(DuplicateIdValueWarning):
-        compiled_release = merge(releases + releases, rule_overrides={('array',): APPEND})
+        compiled_release = merger.create_compiled_release(releases + releases)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-append.json'))
