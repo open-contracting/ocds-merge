@@ -13,7 +13,7 @@ merger = Merger()
 
 def test_warn():
     fields = ['identifierMerge', 'array']
-    string = "Multiple objects have the `id` value '1' in the `{}` array"
+    string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
 
     with pytest.warns(DuplicateIdValueWarning) as records:
         merger.create_compiled_release(releases)
@@ -23,7 +23,7 @@ def test_warn():
     for i, record in enumerate(records):
         message = string.format(fields[i])
 
-        assert record.message.path == (fields[i],)
+        assert record.message.path == ('nested', fields[i],)
         assert record.message.id == '1'
         assert record.message.message == message
         assert str(record.message) == message
@@ -35,9 +35,9 @@ def test_raise():
             warnings.filterwarnings('error', category=DuplicateIdValueWarning)
             merger.create_compiled_release(releases)
 
-    message = "Multiple objects have the `id` value '1' in the `identifierMerge` array"
+    message = "Multiple objects have the `id` value '1' in the `nested.identifierMerge` array"
 
-    assert excinfo.value.path == ('identifierMerge',)
+    assert excinfo.value.path == ('nested', 'identifierMerge',)
     assert excinfo.value.id == '1'
     assert excinfo.value.message == message
     assert str(excinfo.value) == message
@@ -53,7 +53,7 @@ def test_ignore():
 
 
 def test_merge_by_position():
-    merger = Merger(rule_overrides={('array',): MERGE_BY_POSITION})
+    merger = Merger(rule_overrides={('nested', 'array',): MERGE_BY_POSITION})
 
     with pytest.warns(DuplicateIdValueWarning):
         compiled_release = merger.create_compiled_release(releases + releases)
@@ -62,7 +62,7 @@ def test_merge_by_position():
 
 
 def test_append():
-    merger = Merger(rule_overrides={('array',): APPEND})
+    merger = Merger(rule_overrides={('nested', 'array',): APPEND})
 
     with pytest.warns(DuplicateIdValueWarning):
         compiled_release = merger.create_compiled_release(releases + releases)

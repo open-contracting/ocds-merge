@@ -38,6 +38,10 @@ class IdDict(dict):
         self._identifier = identifier
 
 
+def _path_without_array_indexes(path):
+    return tuple(part for part in path if not isinstance(part, int))
+
+
 def flatten(obj, merge_rules, path=None, flattened=None):
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
@@ -77,7 +81,7 @@ def flatten(obj, merge_rules, path=None, flattened=None):
     for key, value in iterable:
         new_path = path + (key,)
         # Remove array indices to find the merge rule for this JSON path in the data.
-        new_path_merge_rules = merge_rules.get(tuple(part for part in new_path if not isinstance(part, int)), [])
+        new_path_merge_rules = merge_rules.get(_path_without_array_indexes(new_path), [])
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
@@ -136,7 +140,8 @@ def process_flattened(flattened, rule_overrides):
                     index = part
                     default = IdValue(identifier)
 
-                    rule = rule_overrides.get(scope)
+                    rule_path = _path_without_array_indexes(scope)
+                    rule = rule_overrides.get(rule_path)
                     if rule == MergeStrategy.APPEND:
                         part = IdValue(uuid.uuid4())
                     elif rule == MergeStrategy.MERGE_BY_POSITION:
@@ -153,8 +158,8 @@ def process_flattened(flattened, rule_overrides):
                     if default not in identifiers[scope]:
                         identifiers[scope][default] = index
                     elif identifiers[scope][default] != index:
-                        warnings.warn(DuplicateIdValueWarning(scope, default, 'Multiple objects have the `id` value '
-                                      '{!r} in the `{}` array'.format(default, '.'.join(map(str, scope)))))
+                        warnings.warn(DuplicateIdValueWarning(rule_path, default, 'Multiple objects have the `id` '
+                                      'value {!r} in the `{}` array'.format(default, '.'.join(map(str, rule_path)))))
 
                     identifiers[path] = part
             new_key.append(part)

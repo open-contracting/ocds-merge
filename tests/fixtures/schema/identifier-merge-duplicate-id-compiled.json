@@ -5,16 +5,21 @@
   "id": "ocds-213czf-1-2000-01-01T00:00:00Z",
   "date": "2000-01-01T00:00:00Z",
   "ocid": "ocds-213czf-1",
-  "identifierMerge": [
+  "nested": [
     {
-      "id": 1,
-      "key": "second"
-    }
-  ],
-  "array": [
-    {
-      "id": 1,
-      "key": "second"
+      "id": "1",
+      "identifierMerge": [
+        {
+          "id": 1,
+          "key": "second"
+        }
+      ],
+      "array": [
+        {
+          "id": 1,
+          "key": "second"
+        }
+      ]
     }
   ]
 }
