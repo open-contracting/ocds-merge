@@ -101,14 +101,13 @@ def flatten(obj, merge_rules, rule_overrides, path=None, rule_path=None, flatten
             flattened[path] = []
 
     # This tracks the identifiers of objects in an array, to warn about collisions.
-    # e.g. {('awards',): {'1': 0, '2': 1}}
     identifiers = {}
 
     for key, value in iterable:
         if type(key) is int:
             new_key, default_key = _id_value(key, value, rule_overrides.get(rule_path))
 
-            # Check whether the value is repeated in other objects in the array.
+            # Check whether the identifier is used by other objects in the array.
             default_path = path + (default_key,)
             if default_path not in identifiers:
                 identifiers[default_path] = key
@@ -122,7 +121,6 @@ def flatten(obj, merge_rules, rule_overrides, path=None, rule_path=None, flatten
             new_rule_path = rule_path + (key,)
             new_path = path + (key,)
 
-        # Remove array indices to find the merge rule for this JSON path in the data.
         new_path_merge_rules = merge_rules.get(new_rule_path, set())
 
         if 'omitWhenMerged' in new_path_merge_rules:
