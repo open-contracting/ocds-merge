@@ -4,7 +4,7 @@ This Python package creates records that conform to the `Open Contracting Data S
 
 Instead of using this library directly, it is easier to create merged releases using either:
 
--  `OCDS Kit <https://ocdskit.readthedocs.io/>`__'s `compile <https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile>` command-line tool
+-  `OCDS Kit <https://ocdskit.readthedocs.io/>`__'s `compile <https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile>`__ command-line tool
 -  OCDS Kit's `compile_release_packages <https://ocdskit.readthedocs.io/en/latest/api/combine.html#ocdskit.combine.compile_release_packages>`__ Python function
 -  `OCDS Toucan <https://toucan.open-contracting.org/>`__'s `compile releases <https://toucan.open-contracting.org/compile/>`__ web application
 
