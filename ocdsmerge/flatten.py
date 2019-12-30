@@ -6,6 +6,7 @@ from ocdsmerge.errors import DuplicateIdValueWarning
 
 VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
 
+
 @unique
 class MergeStrategy(Enum):
     APPEND = auto()
