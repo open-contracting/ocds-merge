@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.6.0 (Unreleased)
+0.6.0 (2019-12-29)
 ------------------
 
 Changed
@@ -14,7 +14,7 @@ Fixed
 
 -  ``rule_overrides`` keys omit array indexes.
 
-0.5.12 (2019-12-29)
+0.5.12 (2019-12-19)
 -------------------
 
 Fixed
