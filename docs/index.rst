@@ -18,6 +18,7 @@ If the data you are working with has bad ``id`` values, use the features for :do
    create-merged-releases.rst
    update-merged-releases.rst
    handle-bad-data.rst
+   api/index.rst
    changelog.rst
 
 Reference implementation

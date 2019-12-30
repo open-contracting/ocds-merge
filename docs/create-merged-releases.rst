@@ -3,16 +3,16 @@ Create Merged Releases
 
 The code samples below assume you're using OCDS 1.1.4; if you're using another version, replace :code:`'1__1__4'`.
 
-_patch-schema:
+.. _patch-schema:
 
 1. Patch the schema
 -------------------
 
-If you aren't using any `extensions <https://standard.open-contracting.org/latest/en/extensions/>`__, then you can skip this step.
+(If you aren't using any `extensions <https://standard.open-contracting.org/latest/en/extensions/>`__, then you can skip this step.)
 
 The `merge routine <https://standard.open-contracting.org/latest/en/schema/merging/>`__ is guided by the `release schema <https://standard.open-contracting.org/latest/en/schema/release/>`__ and any extensions to it.
 
-Patch the schema with extensions, using the `ProfileBuilder <https://ocdsextensionregistry.readthedocs.io/en/latest/api/profile_builder.html#profile-builder>`__ class of the `OCDS Extension Registry <https://ocdsextensionregistry.readthedocs.io/>`__ library.
+Patch the schema with extensions, using `ProfileBuilder <https://ocdsextensionregistry.readthedocs.io/en/latest/api/profile_builder.html#profile-builder>`__ from the `OCDS Extension Registry <https://ocdsextensionregistry.readthedocs.io/>`__ library.
 
 If you already know every extension used in a dataset (these might be listed in a `publication policy <https://standard.open-contracting.org/latest/en/implementation/publication_policy/>`__), patch the schema like so:
 
@@ -48,7 +48,7 @@ If you have a release package, and if it contains *every* release of *every* OCI
 
 Otherwise, you will need to collect all extensions across all release packages, and then patch the schema.
 
-_initialize-merger:
+.. _initialize-merger:
 
 2. Initialize the merger
 ------------------------
@@ -59,7 +59,7 @@ First, import this library, if you haven't already:
 
    import ocdsmerge
 
-Then, initialize a reusable :class:`Merger` instance. You will repeatedly use this instance to create merged releases.
+Then, initialize a :class:`Merger` instance. You will use this instance repeatedly to create merged releases.
 
 If you patched the schema, run:
 
@@ -145,7 +145,7 @@ Finally, create merged releases:
 
 You can then create an OCDS record using :code:`compiled_release` and :code:`versioned_release`.
 
-_save-rules:
+.. _save-rules:
 
 5. Save the merge rules
 -----------------------

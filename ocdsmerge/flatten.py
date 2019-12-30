@@ -59,23 +59,27 @@ def flatten(obj, merge_rules, path=None, flattened=None):
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
-    {
-        "a": "I am a",
-        "b": ["A", "list"],
-        "c": [
-            {"ca": "I am ca"},
-            {"cb": "I am cb"}
-        ]
-    }
+    .. code:: json
+
+       {
+           "a": "I am a",
+           "b": ["A", "list"],
+           "c": [
+               {"ca": "I am ca"},
+               {"cb": "I am cb"}
+           ]
+       }
 
     flattens to:
 
-    {
-        ('a',): 'I am a',
-        ('b',): ['A', 'list'],
-        ('c', 0, 'ca'): 'I am ca',
-        ('c', 1, 'cb'): 'I am cb',
-    }
+    .. code:: python
+
+       {
+           ('a',): 'I am a',
+           ('b',): ['A', 'list'],
+           ('c', 0, 'ca'): 'I am ca',
+           ('c', 1, 'cb'): 'I am cb',
+       }
     """
     if path is None:
         path = ()
