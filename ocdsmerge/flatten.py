@@ -135,7 +135,7 @@ def flatten(obj, merge_rules, rule_overrides, path=None, rule_path=None, flatten
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
         elif not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or \
                 type(value) is list and any(not isinstance(item, dict) for item in value) or \
-                len(value) and all(is_versioned_value(item) for item in value):
+                value and all(is_versioned_value(item) for item in value):
             flattened[new_path] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
