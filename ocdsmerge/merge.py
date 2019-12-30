@@ -138,7 +138,7 @@ class VersionedRelease(MergedRelease):
 
         for key, value in processed.items():
             # If key is not versioned, continue. If the value is unchanged, don't add it to the history.
-            if key in self.data and (not isinstance(self.data[key], list) or value == self.data[key][-1]['value']):
+            if key in self.data and (type(self.data[key]) is not list or value == self.data[key][-1]['value']):
                 continue
 
             if key not in self.data:

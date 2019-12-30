@@ -52,7 +52,7 @@ def is_versioned_value(value):
 
 
 def _path_without_array_indexes(path):
-    return tuple(part for part in path if not isinstance(part, int))
+    return tuple(part for part in path if type(part) is not int)
 
 
 def flatten(obj, merge_rules, path=None, flattened=None):
@@ -137,7 +137,7 @@ def process_flattened(flattened, rule_overrides):
         new_key = []
         for end, part in enumerate(key, 1):
             # If this is a path to an item in an array.
-            if isinstance(part, int):
+            if type(part) is int:
                 path = key[:end]
                 if path in identifiers:
                     part = identifiers[path]
@@ -150,7 +150,7 @@ def process_flattened(flattened, rule_overrides):
 
                     # If the object contained no top-level `id` value, set a unique value.
                     if id_value is None:
-                        identifier = uuid.uuid4()
+                        identifier = str(uuid.uuid4())  # uuid's equality test is very slow
                     else:
                         identifier = id_value
 
@@ -192,26 +192,37 @@ def unflatten(processed):
     """
     unflattened = {}
 
+    identifiers = {}
+
     for key in processed:
         current_node = unflattened
         for end, part in enumerate(key, 1):
             # If this is a path to an item of an array.
             # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#identifier-merge
-            if isinstance(part, IdValue):
+            if type(part) is IdValue:
+                path = key[:end]
+
                 # If the `id` of an object in the array matches, change into it.
-                for node in current_node:
-                    if isinstance(node, IdDict) and node.identifier == part.identifier:
-                        current_node = node
-                        break
+                if path in identifiers and part.identifier in identifiers[path]:
+                    current_node = identifiers[path][part.identifier]
+
                 # Otherwise, append a new object, and change into it.
                 else:
                     new_node = IdDict()
                     new_node.identifier = part.identifier
+
                     # If the original object had an `id` value, set it.
                     if part.original_value is not None:
                         new_node['id'] = part.original_value
+
+                    # Cache which identifiers appear in which arrays.
+                    if path not in identifiers:
+                        identifiers[path] = {}
+                    identifiers[path][new_node.identifier] = new_node
+
                     current_node.append(new_node)
                     current_node = new_node
+
                 continue
 
             # Otherwise, this is a path to a property of an object.
@@ -231,7 +242,7 @@ def unflatten(processed):
                 continue
 
             # If the path is to a new array, start a new array, and change into it.
-            if isinstance(key[end], IdValue):
+            if type(key[end]) is IdValue:
                 new_node = []
             # If the path is to a new object, start a new object, and change into it.
             else:
