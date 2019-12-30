@@ -1,4 +1,4 @@
-from ocdsmerge.flatten import flatten, process_flattened, unflatten
+from ocdsmerge.flatten import flatten, unflatten
 from ocdsmerge.rules import get_merge_rules
 from ocdsmerge.util import sorted_releases
 
@@ -63,7 +63,7 @@ class MergedRelease:
         if data is None:
             self.data = {}
         else:
-            self.data = process_flattened(flatten(data, self.merge_rules), self.rule_overrides)
+            self.data = flatten(data, self.merge_rules, self.rule_overrides)
 
     def asdict(self):
         """
@@ -103,8 +103,7 @@ class CompiledRelease(MergedRelease):
         # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         release.pop('tag', None)  # becomes ["compiled"]
 
-        flat = flatten(release, self.merge_rules)
-        processed = process_flattened(flat, self.rule_overrides)
+        flat = flatten(release, self.merge_rules, self.rule_overrides)
 
         # Add an `id` and `date`.
         self.data[('id',)] = '{}-{}'.format(ocid, date)
@@ -113,7 +112,7 @@ class CompiledRelease(MergedRelease):
         # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
         self.data[('ocid',)] = ocid
 
-        self.data.update(processed)
+        self.data.update(flat)
 
 
 class VersionedRelease(MergedRelease):
@@ -133,10 +132,9 @@ class VersionedRelease(MergedRelease):
         # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         tag = release.pop('tag', None)
 
-        flat = flatten(release, self.merge_rules)
-        processed = process_flattened(flat, self.rule_overrides)
+        flat = flatten(release, self.merge_rules, self.rule_overrides)
 
-        for key, value in processed.items():
+        for key, value in flat.items():
             # If key is not versioned, continue. If the value is unchanged, don't add it to the history.
             if key in self.data and (type(self.data[key]) is not list or value == self.data[key][-1]['value']):
                 continue

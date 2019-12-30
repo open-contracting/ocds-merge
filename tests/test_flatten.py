@@ -1,25 +1,27 @@
-from ocdsmerge.flatten import flatten, process_flattened
+from ocdsmerge.flatten import flatten
 
 
-def test_flatten():  # from documentation
+def test_flatten_1():  # from documentation
     data = {
         "c": "I am a",
         "b": ["A", "list"],
         "a": [
-            {"cb": "I am ca"},
-            {"ca": "I am cb"}
+            {"id": 1, "cb": "I am ca"},
+            {"id": 2, "ca": "I am cb"}
         ]
     }
 
-    assert flatten(data, {}) == {
+    assert flatten(data, {}, {}) == {
         ('c',): 'I am a',
         ('b',): ['A', 'list'],
-        ('a', 0, 'cb'): 'I am ca',
-        ('a', 1, 'ca'): 'I am cb',
+        ('a', '1', 'cb'): 'I am ca',
+        ('a', '1', 'id'): 1,
+        ('a', '2', 'ca'): 'I am cb',
+        ('a', '2', 'id'): 2,
     }
 
 
-def test_process_flattened():
+def test_flatten_2():
     data = {
         "a": [
             {"id": "identifier"},
@@ -27,7 +29,7 @@ def test_process_flattened():
         ]
     }
 
-    actual = process_flattened(flatten(data, {}), {})
+    actual = flatten(data, {}, {})
     keys = list(actual.keys())
     values = list(actual.values())
 
