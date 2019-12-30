@@ -59,7 +59,7 @@ First, import this library, if you haven't already:
 
    import ocdsmerge
 
-Then, initialize a :class:`Merger` instance. You will use this instance repeatedly to create merged releases.
+Then, initialize a :class:`Merger<ocdsmerge.merge.Merger>` instance. You will use this instance repeatedly to create merged releases.
 
 If you patched the schema, run:
 
@@ -97,7 +97,7 @@ Otherwise, to default to the release schema from the latest version of OCDS, run
 
 This library will then determine the merge rules from the provided schema.
 
-If you later initialize another :class:`Merger` instance with the same URL or file path, this library will have cached the merge rules from the first initialization, to avoid unnecessary processing.
+If you later initialize another :class:`Merger<ocdsmerge.merge.Merger>` instance with the same URL or file path, this library will have cached the merge rules from the first initialization, to avoid unnecessary processing.
 
 3. Collect the releases
 -----------------------

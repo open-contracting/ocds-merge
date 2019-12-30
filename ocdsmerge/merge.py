@@ -72,10 +72,16 @@ class MergedRelease:
         return unflatten(self.data)
 
     def extend(self, releases):
+        """
+        Sorts and merges many releases into the merged release.
+        """
         for release in sorted_releases(releases):
             self.append(release)
 
     def append(self, releases):
+        """
+        Merges one release into the merged release.
+        """
         raise NotImplementedError('subclasses must implement append()')
 
 

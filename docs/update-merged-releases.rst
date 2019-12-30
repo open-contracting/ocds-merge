@@ -9,7 +9,7 @@ If you already have a `record <https://standard.open-contracting.org/latest/en/g
 1. Load the merge rules
 -----------------------
 
-When creating merged releases from scratch, you had to :ref:`initialize<initialize-merger>` a :class:`Merger` instance, which determined merge rules from a given schema.
+When creating merged releases from scratch, you had to :ref:`initialize<initialize-merger>` a :class:`Merger<ocdsmerge.merge.Merger>` instance, which determined merge rules from a given schema.
 
 You can :ref:`patch the schema<patch-schema>` and :ref:`initialize the merger<initialize-merger>` as before, or, if you :ref:`saved the merge rules<save-rules>`, you can initialize the merger with them, instead. For example:
 
@@ -25,7 +25,7 @@ This guarantees that the merged release will be updated following the same rules
 2. Initialize the merger
 ------------------------
 
-To create merged releases from scratch, a :class:`Merger` instance was used. To update merged releases, instead, use a :class:`CompiledRelease` or :class:`VersionedRelease` instance, which accepts an existing merged release as input. For example:
+To create merged releases from scratch, a :class:`Merger<ocdsmerge.merge.Merger>` instance was used. To update merged releases, instead, use a :class:`CompiledRelease<ocdsmerge.merge.CompiledRelease>` or :class:`VersionedRelease<ocdsmerge.merge.VersionedRelease>` instance, which accepts an existing merged release as input. For example:
 
 .. code:: python
 
