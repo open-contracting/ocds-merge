@@ -53,7 +53,7 @@ def is_versioned_value(value):
     return len(value) == 4 and VERSIONED_VALUE_KEYS.issuperset(value)
 
 
-def flatten(obj, merge_rules, rule_overrides, path=None, rule_path=None, flattened=None):
+def flatten(obj, merge_rules, rule_overrides, path=(), rule_path=(), flattened=None):
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
@@ -84,12 +84,8 @@ def flatten(obj, merge_rules, rule_overrides, path=None, rule_path=None, flatten
            ('a', '2', 'id'): 2,
        }
     """
-    if path is None:
-        path = ()
     if flattened is None:
         flattened = {}
-    if rule_path is None:
-        rule_path = ()
 
     if isinstance(obj, dict):
         iterable = obj.items()
