@@ -8,15 +8,15 @@ from ocdsmerge.errors import DuplicateIdValueWarning
 from tests import load
 
 releases = load(os.path.join('schema', 'identifier-merge-duplicate-id.json'))
-merger = Merger()
 
 
-def test_warn():
+@pytest.mark.vcr()
+def test_warn(empty_merger):
     fields = ['identifierMerge', 'array']
     string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
 
     with pytest.warns(DuplicateIdValueWarning) as records:
-        merger.create_compiled_release(releases)
+        empty_merger.create_compiled_release(releases)
 
     assert len(records) == 2
 
@@ -29,11 +29,12 @@ def test_warn():
         assert str(record.message) == message
 
 
-def test_raise():
+@pytest.mark.vcr()
+def test_raise(empty_merger):
     with pytest.raises(DuplicateIdValueWarning) as excinfo:
         with warnings.catch_warnings():
             warnings.filterwarnings('error', category=DuplicateIdValueWarning)
-            merger.create_compiled_release(releases)
+            empty_merger.create_compiled_release(releases)
 
     message = "Multiple objects have the `id` value '1' in the `nested.identifierMerge` array"
 
@@ -43,15 +44,17 @@ def test_raise():
     assert str(excinfo.value) == message
 
 
-def test_ignore():
+@pytest.mark.vcr()
+def test_ignore(empty_merger):
     with pytest.warns(None) as records:
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
-            merger.create_compiled_release(releases)
+            empty_merger.create_compiled_release(releases)
 
     assert not records, 'unexpected warning: {}'.format(records[0].message)
 
 
+@pytest.mark.vcr()
 def test_merge_by_position():
     merger = Merger(rule_overrides={('nested', 'array',): MERGE_BY_POSITION})
 
@@ -61,6 +64,7 @@ def test_merge_by_position():
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-by-position.json'))
 
 
+@pytest.mark.vcr()
 def test_append():
     merger = Merger(rule_overrides={('nested', 'array',): APPEND})
 

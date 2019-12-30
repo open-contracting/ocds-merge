@@ -11,8 +11,6 @@ from ocdsmerge.errors import MissingDateKeyError, NonObjectReleaseError, NonStri
 from tests import load, path, schema_url, tags
 
 simple_schema = load('schema.json')
-simple_merger = Merger(simple_schema)
-empty_merger = Merger({})
 
 test_merge_argvalues = []
 for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
@@ -35,7 +33,7 @@ for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema
     (NonObjectReleaseError, tuple()),
     (NonObjectReleaseError, set()),
 ])
-def test_errors(error, data):
+def test_errors(error, data, empty_merger):
     for infix in ('compiled', 'versioned'):
         with pytest.raises(error):
             getattr(empty_merger, 'create_{}_release'.format(infix))([{'date': '2010-01-01'}, data])
@@ -99,7 +97,7 @@ def test_merge(filename, schema):
 
 @pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
-def test_extend(infix, cls):
+def test_extend(infix, cls, empty_merger):
     releases = load(os.path.join('1.1', 'lists.json'))
 
     merged_release = getattr(empty_merger, 'create_{}_release'.format(infix))(releases[:1])
@@ -114,7 +112,7 @@ def test_extend(infix, cls):
 
 @pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
-def test_append(infix, cls):
+def test_append(infix, cls, empty_merger):
     releases = load(os.path.join('1.1', 'lists.json'))
 
     merged_release = getattr(empty_merger, 'create_{}_release'.format(infix))(releases[:1])
@@ -128,7 +126,7 @@ def test_append(infix, cls):
 
 
 @pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
-def test_merge_when_array_is_mixed(i, j):
+def test_merge_when_array_is_mixed(i, j, simple_merger):
     data = [{
         "ocid": "ocds-213czf-A",
         "id": "1",
@@ -171,7 +169,7 @@ def test_merge_when_array_is_mixed(i, j):
 
 
 @pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
-def test_merge_when_array_is_mixed_without_schema(i, j):
+def test_merge_when_array_is_mixed_without_schema(i, j, empty_merger):
     data = [{
         'ocid': 'ocds-213czf-A',
         "id": "1",
