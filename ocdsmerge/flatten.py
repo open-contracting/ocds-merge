@@ -51,11 +51,7 @@ def is_versioned_value(value):
     return {'releaseID', 'releaseDate', 'releaseTag', 'value'} == set(value)
 
 
-def _path_without_array_indexes(path):
-    return tuple(part for part in path if type(part) is not int)
-
-
-def flatten(obj, merge_rules, path=None, flattened=None):
+def flatten(obj, merge_rules, path=None, flattened=None, merge_rule_path=None):
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
@@ -85,6 +81,8 @@ def flatten(obj, merge_rules, path=None, flattened=None):
         path = ()
     if flattened is None:
         flattened = {}
+    if merge_rule_path is None:
+        merge_rule_path = ()
 
     if isinstance(obj, dict):
         iterable = obj.items()
@@ -97,8 +95,13 @@ def flatten(obj, merge_rules, path=None, flattened=None):
 
     for key, value in iterable:
         new_path = path + (key,)
+        if type(key) is int:
+            new_merge_rule_path = merge_rule_path
+        else:
+            new_merge_rule_path = merge_rule_path + (key,)
+
         # Remove array indices to find the merge rule for this JSON path in the data.
-        new_path_merge_rules = merge_rules.get(_path_without_array_indexes(new_path), [])
+        new_path_merge_rules = merge_rules.get(new_merge_rule_path, set())
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
@@ -109,12 +112,12 @@ def flatten(obj, merge_rules, path=None, flattened=None):
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
         elif not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or \
-                isinstance(value, list) and any(not isinstance(item, dict) for item in value) or \
+                type(value) is list and any(not isinstance(item, dict) for item in value) or \
                 len(value) and all(is_versioned_value(item) for item in value):
             flattened[new_path] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
-            flatten(value, merge_rules, new_path, flattened)
+            flatten(value, merge_rules, new_path, flattened, new_merge_rule_path)
 
     return flattened
 
@@ -146,19 +149,20 @@ def process_flattened(flattened, rule_overrides):
 
                     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
                     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
-                    id_value = flattened.get(path + ('id',))
-
-                    # If the object contained no top-level `id` value, set a unique value.
-                    if id_value is None:
-                        identifier = str(uuid.uuid4())  # uuid's equality test is very slow
-                    else:
+                    id_key = path + ('id',)
+                    if id_key in flattened:
+                        id_value = flattened[id_key]
                         identifier = id_value
+                    # If the object contained no top-level `id` value, set a unique value.
+                    else:
+                        id_value = None
+                        identifier = str(uuid.uuid4())  # uuid's equality test is very slow
 
                     # Keep the integer index and default `part` for the warning.
                     index = part
                     default = IdValue(identifier)
 
-                    rule_path = _path_without_array_indexes(scope)
+                    rule_path = tuple(p for p in scope if type(p) is not int)
                     rule = rule_overrides.get(rule_path)
                     if rule == MergeStrategy.APPEND:
                         part = IdValue(uuid.uuid4())
