@@ -15,6 +15,9 @@ globals().update(MergeStrategy.__members__)
 
 
 class IdValue(str):
+    """
+    A string with ``identifier`` and ``original_value`` properties.
+    """
     def __init__(self, identifier):
         self.identifier = identifier
         str.__init__(identifier)
@@ -29,6 +32,9 @@ class IdValue(str):
 
 
 class IdDict(dict):
+    """
+    A dictionary with an ``identifier`` property.
+    """
     @property
     def identifier(self):
         return self._identifier
@@ -36,6 +42,13 @@ class IdDict(dict):
     @identifier.setter
     def identifier(self, identifier):
         self._identifier = identifier
+
+
+def is_versioned_value(value):
+    """
+    Returns whether the value is a versioned value.
+    """
+    return {'releaseID', 'releaseDate', 'releaseTag', 'value'} == set(value)
 
 
 def _path_without_array_indexes(path):
@@ -85,14 +98,15 @@ def flatten(obj, merge_rules, path=None, flattened=None):
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
-        # If it's neither an object nor an array, if it's `wholeListMerge`, or if it's an array containing non-objects
-        # (even if `wholeListMerge` is `false`), use the whole list merge strategy.
+        # If it's neither an object nor an array, if it's `wholeListMerge`, if it's an array containing non-objects
+        # (even if `wholeListMerge` is `false`), or if it's versioned values, use the whole list merge strategy.
         # Note: Behavior is undefined and inconsistent if the array is not in the schema and contains objects in some
         # cases but not in others.
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
         elif not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or \
-                isinstance(value, list) and any(not isinstance(item, dict) for item in value):
+                isinstance(value, list) and any(not isinstance(item, dict) for item in value) or \
+                len(value) and all(is_versioned_value(item) for item in value):
             flattened[new_path] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
