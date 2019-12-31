@@ -2,7 +2,7 @@ import uuid
 import warnings
 from enum import Enum, auto, unique
 
-from ocdsmerge.errors import DuplicateIdValueWarning
+from ocdsmerge.exceptions import DuplicateIdValueWarning
 
 VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
 

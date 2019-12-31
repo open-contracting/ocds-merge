@@ -34,10 +34,10 @@ Utilities
 Exceptions
 ----------
 
-.. autoexception:: ocdsmerge.errors.OCDSMergeError
-.. autoexception:: ocdsmerge.errors.MissingDateKeyError
-.. autoexception:: ocdsmerge.errors.NonObjectReleaseError
-.. autoexception:: ocdsmerge.errors.NullDateValueError
-.. autoexception:: ocdsmerge.errors.NonStringDateValueError
-.. autoexception:: ocdsmerge.errors.OCDSMergeWarning
-.. autoexception:: ocdsmerge.errors.DuplicateIdValueWarning
+.. autoexception:: ocdsmerge.exceptions.OCDSMergeError
+.. autoexception:: ocdsmerge.exceptions.MissingDateKeyError
+.. autoexception:: ocdsmerge.exceptions.NonObjectReleaseError
+.. autoexception:: ocdsmerge.exceptions.NullDateValueError
+.. autoexception:: ocdsmerge.exceptions.NonStringDateValueError
+.. autoexception:: ocdsmerge.exceptions.OCDSMergeWarning
+.. autoexception:: ocdsmerge.exceptions.DuplicateIdValueWarning

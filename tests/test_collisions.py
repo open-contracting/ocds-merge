@@ -4,7 +4,7 @@ import warnings
 import pytest
 
 from ocdsmerge import APPEND, MERGE_BY_POSITION, Merger
-from ocdsmerge.errors import DuplicateIdValueWarning
+from ocdsmerge.exceptions import DuplicateIdValueWarning
 from tests import load
 
 releases = load(os.path.join('schema', 'identifier-merge-duplicate-id.json'))

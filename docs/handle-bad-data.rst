@@ -12,7 +12,7 @@ Similarly, if, in a single release, objects in the same array share an ``id`` va
    import warnings
 
    import ocdsmerge
-   from ocdsmerge.errors import DuplicateIdValueWarning
+   from ocdsmerge.exceptions import DuplicateIdValueWarning
 
    merger = ocdsmerge.Merger()
 

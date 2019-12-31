@@ -3,7 +3,8 @@ from functools import lru_cache
 
 import requests
 
-from ocdsmerge.errors import MissingDateKeyError, NonObjectReleaseError, NonStringDateValueError, NullDateValueError
+from ocdsmerge.exceptions import (MissingDateKeyError, NonObjectReleaseError, NonStringDateValueError,
+                                  NullDateValueError)
 
 
 @lru_cache()
