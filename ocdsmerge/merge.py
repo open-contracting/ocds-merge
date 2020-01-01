@@ -78,61 +78,46 @@ class MergedRelease:
         for release in sorted_releases(releases):
             self.append(release)
 
-    def append(self, releases):
+    def append(self, release):
         """
         Merges one release into the merged release.
         """
-        raise NotImplementedError('subclasses must implement append()')
-
-
-class CompiledRelease(MergedRelease):
-    def __init__(self, data=None, **kwargs):
-        super().__init__(data, **kwargs)
-
-        self.data[('tag',)] = ['compiled']
-
-    def append(self, release):
-        """
-        Merges one release into a compiled release.
-        """
         release = release.copy()
 
-        # `ocid` and `date` are required fields, but the data can be invalid.
+        # Store the values of fields that set "omitWhenMerged": true.
         ocid = release.get('ocid')
-        date = release.get('date')
-        # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
-        release.pop('tag', None)  # becomes ["compiled"]
-
-        flat = flatten(release, self.merge_rules, self.rule_overrides, flattened={})
-
-        # Add an `id` and `date`.
-        self.data[('id',)] = '{}-{}'.format(ocid, date)
-        self.data[('date',)] = date
-
-        # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
-        self.data[('ocid',)] = ocid
-
-        self.data.update(flat)
-
-
-class VersionedRelease(MergedRelease):
-    def append(self, release):
-        """
-        Merges one release into a versioned release.
-        """
-        release = release.copy()
-
-        # Don't version the OCID.
-        ocid = release.pop('ocid', None)
-        self.data[('ocid',)] = ocid
-
-        # `id` and `date` are required fields, but the data can be invalid.
-        releaseID = release.get('id')
+        release_id = release.get('id')
         date = release.get('date')
         # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
         tag = release.pop('tag', None)
 
         flat = flatten(release, self.merge_rules, self.rule_overrides, flattened={})
+        self.flat_append(flat, ocid, release_id, date, tag)
+
+    def flat_append(self, flat, ocid, release_id, date, tag):
+        raise NotImplementedError('subclasses must implement flat_append()')
+
+
+class CompiledRelease(MergedRelease):
+    def __init__(self, data=None, **kwargs):
+        super().__init__(data, **kwargs)
+        self.data[('tag',)] = ['compiled']
+
+    def flat_append(self, flat, ocid, release_id, date, tag):
+        # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
+        self.data[('ocid',)] = ocid
+        # Add an `id` and `date`.
+        self.data[('id',)] = '{}-{}'.format(ocid, date)
+        self.data[('date',)] = date
+
+        self.data.update(flat)
+
+
+class VersionedRelease(MergedRelease):
+    def flat_append(self, flat, ocid, release_id, date, tag):
+        # Don't version the OCID.
+        flat.pop(('ocid',), None)
+        self.data[('ocid',)] = ocid
 
         for key, value in flat.items():
             # If key is not versioned, continue. If the value is unchanged, don't add it to the history.
@@ -143,7 +128,7 @@ class VersionedRelease(MergedRelease):
                 self.data[key] = []
 
             self.data[key].append({
-                'releaseID': releaseID,
+                'releaseID': release_id,
                 'releaseDate': date,
                 'releaseTag': tag,
                 'value': value,
