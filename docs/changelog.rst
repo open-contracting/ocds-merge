@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.3 (Unreleased)
+------------------
+
+Changed
+~~~~~~~
+
+-  Improve performance of ``flatten``.
+
 0.6.2 (2019-12-31)
 ------------------
 

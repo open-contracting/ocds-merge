@@ -53,7 +53,7 @@ def is_versioned_value(value):
     return len(value) == 4 and VERSIONED_VALUE_KEYS.issuperset(value)
 
 
-def flatten(obj, merge_rules, rule_overrides, path=(), rule_path=(), flattened=None):
+def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=()):
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
@@ -84,58 +84,63 @@ def flatten(obj, merge_rules, rule_overrides, path=(), rule_path=(), flattened=N
            ('a', '2', 'id'): 2,
        }
     """
-    if flattened is None:
-        flattened = {}
+    # Unsurprisingly, recursive calls to this method take up most of the running time (>90% on large inputs). Even if
+    # some gains can be made within this method, the largest gain would be to skip this method by either:
+    #
+    # 1. Having a plan as to which fields employ which merge strategies. However, we can only have such a plan if we
+    #    know in advance all the fields that occur. (Discovering all the fields that occur, as a preprocessing step,
+    #    would require recursion.) Such plans can only be prepared for specific publishers.
+    # 2. Parsing JSON directly into a flattened dictionary, using ijson's parse method.
+    is_list = type(obj) is list
 
-    if isinstance(obj, dict):
-        iterable = obj.items()
-        if not iterable:
-            flattened[path] = {}
+    if is_list:
+        iterable = _enumerate(obj, path, rule_path, rule_overrides.get(rule_path))
     else:
-        iterable = enumerate(obj)
-        if not iterable:
-            flattened[path] = []
-
-    # This tracks the identifiers of objects in an array, to warn about collisions.
-    identifiers = {}
+        iterable = obj.items()
 
     for key, value in iterable:
-        if type(key) is int:
-            new_key, default_key = _id_value(key, value, rule_overrides.get(rule_path))
-
-            # Check whether the identifier is used by other objects in the array.
-            default_path = path + (default_key,)
-            if default_path not in identifiers:
-                identifiers[default_path] = key
-            elif identifiers[default_path] != key:
-                warnings.warn(DuplicateIdValueWarning(rule_path, default_key, 'Multiple objects have the `id` '
-                              'value {!r} in the `{}` array'.format(default_key, '.'.join(map(str, rule_path)))))
-
+        if is_list:
             new_rule_path = rule_path
-            new_path = path + (new_key,)
         else:
             new_rule_path = rule_path + (key,)
-            new_path = path + (key,)
 
         new_path_merge_rules = merge_rules.get(new_rule_path, set())
 
         if 'omitWhenMerged' in new_path_merge_rules:
             continue
-        # If it's neither an object nor an array, if it's `wholeListMerge`, if it's an array containing non-objects
+        # If it's `wholeListMerge`, if it's neither an object nor an array, if it's an array containing non-objects
         # (even if `wholeListMerge` is `false`), or if it's versioned values, use the whole list merge strategy.
         # Note: Behavior is undefined and inconsistent if the array is not in the schema and contains objects in some
         # cases but not in others.
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
-        elif not isinstance(value, (dict, list)) or 'wholeListMerge' in new_path_merge_rules or \
+        elif 'wholeListMerge' in new_path_merge_rules or not isinstance(value, (dict, list)) or \
                 type(value) is list and any(not isinstance(item, dict) for item in value) or \
                 value and all(is_versioned_value(item) for item in value):
-            flattened[new_path] = value
+            flattened[path + (key,)] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
-            flatten(value, merge_rules, rule_overrides, new_path, new_rule_path, flattened)
+            flatten(value, merge_rules, rule_overrides, flattened, path + (key,), new_rule_path)
 
     return flattened
+
+
+def _enumerate(obj, path, rule_path, rule):
+    # This tracks the identifiers of objects in an array, to warn about collisions.
+    identifiers = {}
+
+    for key, value in enumerate(obj):
+        new_key, default_key = _id_value(key, value, rule)
+
+        # Check whether the identifier is used by other objects in the array.
+        default_path = path + (default_key,)
+        if default_path not in identifiers:
+            identifiers[default_path] = key
+        elif identifiers[default_path] != key:
+            warnings.warn(DuplicateIdValueWarning(rule_path, default_key, 'Multiple objects have the `id` '
+                          'value {!r} in the `{}` array'.format(default_key, '.'.join(map(str, rule_path)))))
+
+        yield new_key, value
 
 
 def _id_value(key, value, rule):
@@ -168,15 +173,15 @@ def _id_value(key, value, rule):
     return new_key, default_key
 
 
-def unflatten(processed):
+def unflatten(flattened):
     """
-    Unflattens a processed object into a JSON object.
+    Unflattens a flattened object into a JSON object.
     """
     unflattened = {}
 
     identifiers = {}
 
-    for key in processed:
+    for key in flattened:
         current_node = unflattened
 
         for end, part in enumerate(key, 1):
@@ -225,7 +230,7 @@ def unflatten(processed):
                 continue
 
             # If this is a full path, copy the data, omitting null'ed fields.
-            if processed[key] is not None:
-                current_node[part] = processed[key]
+            if flattened[key] is not None:
+                current_node[part] = flattened[key]
 
     return unflattened

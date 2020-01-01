@@ -11,7 +11,7 @@ def test_flatten_1():  # from documentation
         ]
     }
 
-    assert flatten(data, {}, {}) == {
+    assert flatten(data, {}, {}, {}) == {
         ('c',): 'I am a',
         ('b',): ['A', 'list'],
         ('a', '1', 'cb'): 'I am ca',
@@ -29,7 +29,7 @@ def test_flatten_2():
         ]
     }
 
-    actual = flatten(data, {}, {})
+    actual = flatten(data, {}, {}, {})
     keys = list(actual.keys())
     values = list(actual.values())
 
