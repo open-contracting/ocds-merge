@@ -9,6 +9,11 @@ Changed
 
 -  Improve performance of ``flatten``.
 
+Added
+~~~~~
+
+-  Extract ``flat_append`` from ``append`` in ``MergedRelease``, to enable custom flattening methods.
+
 0.6.2 (2019-12-31)
 ------------------
 
