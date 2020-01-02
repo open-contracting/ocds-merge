@@ -53,7 +53,7 @@ def is_versioned_value(value):
     return len(value) == 4 and VERSIONED_VALUE_KEYS.issuperset(value)
 
 
-def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=()):
+def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), versioned=False):
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
@@ -116,11 +116,11 @@ def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=()):
         # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
         elif 'wholeListMerge' in new_path_merge_rules or not isinstance(value, (dict, list)) or \
                 type(value) is list and any(not isinstance(item, dict) for item in value) or \
-                value and all(is_versioned_value(item) for item in value):
+                versioned and value and all(is_versioned_value(item) for item in value):
             flattened[path + (key,)] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
-            flatten(value, merge_rules, rule_overrides, flattened, path + (key,), new_rule_path)
+            flatten(value, merge_rules, rule_overrides, flattened, path + (key,), new_rule_path, versioned)
 
     return flattened
 

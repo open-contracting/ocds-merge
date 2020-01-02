@@ -41,6 +41,11 @@ class Merger:
 
 
 class MergedRelease:
+    """
+    Whether the class is for merging versioned releases.
+    """
+    versioned = None
+
     def __init__(self, data=None, schema=None, merge_rules=None, rule_overrides=None):
         """
         Initializes a merged release.
@@ -63,7 +68,7 @@ class MergedRelease:
         if data is None:
             self.data = {}
         else:
-            self.data = flatten(data, self.merge_rules, self.rule_overrides, flattened={})
+            self.data = flatten(data, self.merge_rules, self.rule_overrides, flattened={}, versioned=self.versioned)
 
     def asdict(self):
         """
@@ -99,6 +104,8 @@ class MergedRelease:
 
 
 class CompiledRelease(MergedRelease):
+    versioned = False
+
     def __init__(self, data=None, **kwargs):
         super().__init__(data, **kwargs)
         self.data[('tag',)] = ['compiled']
@@ -114,6 +121,8 @@ class CompiledRelease(MergedRelease):
 
 
 class VersionedRelease(MergedRelease):
+    versioned = True
+
     def flat_append(self, flat, ocid, release_id, date, tag):
         # Don't version the OCID.
         flat.pop(('ocid',), None)
