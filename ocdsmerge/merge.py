@@ -111,11 +111,11 @@ class CompiledRelease(MergedRelease):
         self.data[('tag',)] = ['compiled']
 
     def flat_append(self, flat, ocid, release_id, date, tag):
-        # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
-        self.data[('ocid',)] = ocid
         # Add an `id` and `date`.
         self.data[('id',)] = '{}-{}'.format(ocid, date)
         self.data[('date',)] = date
+        # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
+        self.data[('ocid',)] = ocid
 
         self.data.update(flat)
 

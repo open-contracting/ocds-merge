@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.4 (2020-01-02)
+------------------
+
+Fixed
+~~~~~
+
+-  Restore prior order of ``ocid`` key in merged releases.
+
 0.6.3 (2020-01-02)
 ------------------
 
