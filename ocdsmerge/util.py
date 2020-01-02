@@ -26,6 +26,7 @@ def sorted_releases(releases):
     """
     Sorts a list of releases by date.
     """
+    # Avoids an error if sorting a single compiled release.
     if isinstance(releases, list) and len(releases) == 1 and isinstance(releases[0], dict):
         return releases
     try:
