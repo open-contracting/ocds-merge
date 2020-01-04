@@ -84,19 +84,7 @@ def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), 
            ('a', '2', 'id'): 2,
        }
     """
-    # Unsurprisingly, recursive calls to this method take up the greatest share of running time. This method can be
-    # skipped either by:
-    #
-    # 1. Having a plan as to which fields employ which merge strategies. However, we can only have such a plan if we
-    #    know in advance all the fields that occur. (Discovering all the fields that occur, as a preprocessing step,
-    #    would require recursion.) Such plans can only be prepared for specific publishers.
-    # 2. Loading the JSON directly into a flat dict, using `ijson.parse`. If the JSON is loaded from a SQL database,
-    #    an adapter will need to know the merge rules and rule overrides to apply. With sqlite3, this can perhaps be
-    #    done using a dataset-specific adapter and the `PARSE_COLNAMES` constant. For now, this is too complex.
-    #
-    # https://github.com/ICRAR/ijson#events
-    # https://docs.python.org/3/library/sqlite3.html#converting-sqlite-values-to-custom-python-types
-    # https://docs.python.org/3/library/sqlite3.html#sqlite3.PARSE_COLNAMES
+    # For an exploration of alternatives, see: https://github.com/open-contracting/ocds-merge/issues/26
     is_list = type(obj) is list
 
     if is_list:
