@@ -22,6 +22,7 @@ def get_release_schema_url(tag):
     return 'https://standard.open-contracting.org/schema/{}/release-schema.json'.format(tag)
 
 
+# If we need a method to get dates from releases, see https://github.com/open-contracting/ocds-merge/issues/25
 def sorted_releases(releases):
     """
     Sorts a list of releases by date.
