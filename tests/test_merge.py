@@ -75,6 +75,18 @@ def test_errors(error, data, empty_merger):
 
 
 @pytest.mark.vcr()
+def test_missing_date_key_error(empty_merger):
+    with pytest.raises(KeyError) as excinfo:
+        empty_merger.create_compiled_release([{'date': '2010-01-01'}, {}])
+
+    message = 'The `date` field of at least one release is missing.'
+
+    assert excinfo.value.key == 'date'
+    assert excinfo.value.message == message
+    assert str(excinfo.value) == message
+
+
+@pytest.mark.vcr()
 @pytest.mark.parametrize('filename,schema', test_merge_argvalues)
 def test_merge(filename, schema):
     merger = Merger(schema)
