@@ -72,3 +72,16 @@ def test_append():
         compiled_release = merger.create_compiled_release(releases + releases)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-append.json'))
+
+
+@pytest.mark.vcr()
+def test_append_no_id():
+    merger = Merger(rule_overrides={('nested', 'array',): APPEND})
+    data = load(os.path.join('schema', 'identifier-merge-no-id.json'))
+
+    with pytest.warns(None) as records:
+        with warnings.catch_warnings():
+            compiled_release = merger.create_compiled_release(data + data)
+
+    assert compiled_release == load(os.path.join('schema', 'identifier-merge-no-id-append.json'))
+    assert not records, 'unexpected warning: {}'.format(records[0].message)

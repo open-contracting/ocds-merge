@@ -12,6 +12,9 @@
       "type": "string",
       "omitWhenMerged": true
     },
+    "noType": {
+      "description": "Should not error if no type"
+    },
     "explicitVersionIdObject": {
       "description": "Should version the `id`",
       "type": "object",

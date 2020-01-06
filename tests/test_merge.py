@@ -11,11 +11,11 @@ from ocdsmerge.exceptions import (MissingDateKeyError, NonObjectReleaseError, No
                                   NullDateValueError)
 from tests import load, path, schema_url, tags
 
-simple_schema = load('schema.json')
+simple_schema = path('schema.json')
 
 test_merge_argvalues = []
 for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
-    if isinstance(schema, str):
+    if schema and schema.startswith('http'):
         schema = schema.format(tags[minor_version])
     for suffix in ('compiled', 'versioned'):
         filenames = glob(path(os.path.join(minor_version, '*-{}.json'.format(suffix))))
@@ -75,7 +75,7 @@ def test_errors(error, data, empty_merger):
 
 
 @pytest.mark.vcr()
-def test_missing_date_key_error(empty_merger):
+def test_key_error(empty_merger):
     with pytest.raises(KeyError) as excinfo:
         empty_merger.create_compiled_release([{'date': '2010-01-01'}, {}])
 
@@ -111,6 +111,7 @@ def test_merge(filename, schema):
 @pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_extend(infix, cls, empty_merger):
+    expected = load(os.path.join('1.1', 'lists-{}.json'.format(infix)))
     releases = load(os.path.join('1.1', 'lists.json'))
 
     merged_release = getattr(empty_merger, 'create_{}_release'.format(infix))(releases[:1])
@@ -118,7 +119,10 @@ def test_extend(infix, cls, empty_merger):
     merger = cls(merged_release, merge_rules=empty_merger.merge_rules)
     merger.extend(releases[1:])
 
-    expected = load(os.path.join('1.1', 'lists-{}.json'.format(infix)))
+    assert merger.asdict() == expected
+
+    merger = cls(merged_release, schema={})
+    merger.extend(releases[1:])
 
     assert merger.asdict() == expected
 
@@ -126,6 +130,7 @@ def test_extend(infix, cls, empty_merger):
 @pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_append(infix, cls, empty_merger):
+    expected = load(os.path.join('1.1', 'lists-{}.json'.format(infix)))
     releases = load(os.path.join('1.1', 'lists.json'))
 
     merged_release = getattr(empty_merger, 'create_{}_release'.format(infix))(releases[:1])
@@ -133,7 +138,10 @@ def test_append(infix, cls, empty_merger):
     merger = cls(merged_release, merge_rules=empty_merger.merge_rules)
     merger.append(releases[1])
 
-    expected = load(os.path.join('1.1', 'lists-{}.json'.format(infix)))
+    assert merger.asdict() == expected
+
+    merger = cls(merged_release, schema={})
+    merger.extend(releases[1:])
 
     assert merger.asdict() == expected
 
