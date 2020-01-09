@@ -44,7 +44,7 @@ Changed
 Changed
 ~~~~~~~
 
--  Replace ``merge`` and ``merged_versioned`` functions with ``Merger`` class.
+-  **Backwards-incompatible:** Replace ``merge`` and ``merged_versioned`` functions with ``Merger`` class.
 
 Fixed
 ~~~~~
