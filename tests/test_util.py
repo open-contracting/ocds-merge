@@ -2,7 +2,8 @@ from ocdsmerge.util import get_release_schema_url, get_tags
 
 
 def test_get_release_schema_url():
-    assert get_release_schema_url('1__1__3') >= 'https://standard.open-contracting.org/schema/1__1__3/release-schema.json'  # noqa
+    url = 'https://standard.open-contracting.org/schema/1__1__3/release-schema.json'
+    assert get_release_schema_url('1__1__3') >= url
 
 
 def test_get_tags():

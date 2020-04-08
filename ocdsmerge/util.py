@@ -41,9 +41,11 @@ def sorted_releases(releases):
             else:
                 raise NonStringDateValueError('The `date` field of at least one release is not a string.')
         elif e.args[0] == 'string indices must be integers':
-            raise NonObjectReleaseError('At least one release is a string, not a dict. Use `json.loads` to parse the string as JSON.')  # noqa
+            raise NonObjectReleaseError('At least one release is a string, not a dict. Use `json.loads` to parse the '
+                                        'string as JSON.')
         elif e.args[0] == 'byte indices must be integers or slices, not str':
-            raise NonObjectReleaseError('At least one release is a byte-string, not a dict. Use `json.loads` to parse the byte-string as JSON.')  # noqa
+            raise NonObjectReleaseError('At least one release is a byte-string, not a dict. Use `json.loads` to parse '
+                                        'the byte-string as JSON.')
         elif e.args[0] == 'list indices must be integers or slices, not str':
             raise NonObjectReleaseError('At least one release is a list, not a dict.')
         elif e.args[0] == 'tuple indices must be integers or slices, not str':
