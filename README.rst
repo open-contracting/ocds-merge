@@ -1,4 +1,4 @@
-|PyPI Version| |Build Status| |Coverage Status| |Python Version|
+|PyPI Version| |Build Status| |Lint Status| |Coverage Status| |Python Version|
 
 This Python package creates records that conform to the `Open Contracting Data Standard <https://standard.open-contracting.org>`__. Specifically, it provides classes for merging OCDS releases with the same OCID into either a compiled release or a versioned release (collectively called "merged releases"), as described in the `OCDS documentation <https://standard.open-contracting.org/latest/en/schema/merging/>`__.
 
@@ -12,8 +12,8 @@ If you are viewing this on GitHub or PyPi, open the `full documentation <https:/
 
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/ocdsmerge.svg
    :target: https://pypi.org/project/ocdsmerge/
-.. |Build Status| image:: https://secure.travis-ci.org/open-contracting/ocds-merge.png
-   :target: https://travis-ci.org/open-contracting/ocds-merge
+.. |Build Status| image:: https://github.com/open-contracting/ocds-merge/workflows/CI/badge.svg
+.. |Lint Status| image:: https://github.com/open-contracting/ocds-merge/workflows/Lint/badge.svg
 .. |Coverage Status| image:: https://coveralls.io/repos/github/open-contracting/ocds-merge/badge.svg?branch=master
    :target: https://coveralls.io/github/open-contracting/ocds-merge?branch=master
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/ocdsmerge.svg
