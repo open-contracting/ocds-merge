@@ -70,6 +70,9 @@ autodoc_default_options = {
 }
 autodoc_member_order = 'bysource'
 
+# Needed for ReadTheDocs (Sphinx 1.8).
+master_doc = 'index'
+
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
