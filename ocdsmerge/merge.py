@@ -133,10 +133,7 @@ class VersionedRelease(MergedRelease):
             if key in self.data and (type(self.data[key]) is not list or value == self.data[key][-1]['value']):
                 continue
 
-            if key not in self.data:
-                self.data[key] = []
-
-            self.data[key].append({
+            self.data.setdefault(key, []).append({
                 'releaseID': release_id,
                 'releaseDate': date,
                 'releaseTag': tag,
