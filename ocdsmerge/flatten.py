@@ -87,12 +87,12 @@ def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), 
     # For an exploration of alternatives, see: https://github.com/open-contracting/ocds-merge/issues/26
 
     if type(obj) is list:
+        is_dict = False
         iterable = _enumerate(obj, path, rule_path, rule_overrides.get(rule_path))
         new_rule_path = rule_path
-        is_dict = False
     else:
-        iterable = obj.items()
         is_dict = True
+        iterable = obj.items()
 
     for key, value in iterable:
         if is_dict:
