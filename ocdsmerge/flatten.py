@@ -106,8 +106,8 @@ def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), 
         # (even if `wholeListMerge` is `false`), or if it's versioned values, use the whole list merge strategy.
         # Note: Behavior is undefined and inconsistent if the array is not in the schema and contains objects in some
         # cases but not in others.
-        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#whole-list-merge
-        # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#objects
+        # See https://standard.open-contracting.org/1.1/en/schema/merging/#whole-list-merge
+        # See https://standard.open-contracting.org/1.1/en/schema/merging/#objects
         elif 'wholeListMerge' in new_path_merge_rules or not isinstance(value, (dict, list)) or \
                 type(value) is list and any(not isinstance(item, dict) for item in value) or \
                 versioned and value and all(is_versioned_value(item) for item in value):
@@ -180,7 +180,7 @@ def unflatten(flattened):
 
         for end, part in enumerate(key, 1):
             # If this is a path to an item of an array.
-            # See https://standard.open-contracting.org/1.1-dev/en/schema/merging/#identifier-merge
+            # See https://standard.open-contracting.org/1.1/en/schema/merging/#identifier-merge
             if type(part) is IdValue:
                 path = key[:end]
 
