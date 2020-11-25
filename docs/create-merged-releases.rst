@@ -16,7 +16,7 @@ Patch the schema with extensions, using `ProfileBuilder <https://ocdsextensionre
 
 If you already know every extension used in a dataset (these might be listed in a `publication policy <https://standard.open-contracting.org/latest/en/implementation/publication_policy/>`__), patch the schema like so:
 
-.. code:: python
+.. code-block:: python
 
    from ocdsextensionregistry import ProfileBuilder
 
@@ -30,7 +30,7 @@ If you already know every extension used in a dataset (these might be listed in 
 
 If you have a record package, and want to add merged releases to each record, patch the schema using the extensions list in the package metadata:
 
-.. code:: python
+.. code-block:: python
 
    import json
 
@@ -55,7 +55,7 @@ Otherwise, you will need to collect all extensions across all release packages, 
 
 First, import this library, if you haven't already:
 
-.. code:: python
+.. code-block:: python
 
    import ocdsmerge
 
@@ -63,13 +63,13 @@ Then, initialize a :class:`Merger<ocdsmerge.merge.Merger>` instance. You will us
 
 If you patched the schema, run:
 
-.. code:: python
+.. code-block:: python
 
    merger = ocdsmerge.Merger(patched_schema)
 
 To use any unpatched version of OCDS, like 1.0.3, run:
 
-.. code:: python
+.. code-block:: python
 
    from ocdsmerge.util import get_release_schema_url
 
@@ -77,7 +77,7 @@ To use any unpatched version of OCDS, like 1.0.3, run:
 
 To use a locally stored release schema (for example, to avoid remote requests), run:
 
-.. code:: python
+.. code-block:: python
 
    from ocdsmerge.util import get_release_schema_url
 
@@ -89,7 +89,7 @@ To use a locally stored release schema (for example, to avoid remote requests), 
 
 Otherwise, to default to the release schema from the latest version of OCDS, run:
 
-.. code:: python
+.. code-block:: python
 
    import ocdsmerge
 
@@ -111,7 +111,7 @@ If you have a record package, and want to add merged releases to each record, ea
 
 Finally, create merged releases:
 
-.. code:: python
+.. code-block:: python
 
    # In a real-world example, the OCDS releases might be loaded from local files or remote APIs.
    releases = [
@@ -152,7 +152,7 @@ You can then create an OCDS record using :code:`compiled_release` and :code:`ver
 
 If you intend to incrementally update the record whenever there are new releases, rather than re-creating the record from scratch, store the merge rules for later use. For example, to store the merge rules in a file:
 
-.. code:: python
+.. code-block:: python
 
    import pickle
 

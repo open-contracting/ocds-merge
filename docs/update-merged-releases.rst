@@ -13,7 +13,7 @@ When creating merged releases from scratch, you had to :ref:`initialize<initiali
 
 You can :ref:`patch the schema<patch-schema>` and :ref:`initialize the merger<initialize-merger>` as before, or, if you :ref:`saved the merge rules<save-rules>`, you can initialize the merger with them, instead. For example:
 
-.. code:: python
+.. code-block:: python
 
    import pickle
 
@@ -27,7 +27,7 @@ This guarantees that the merged release will be updated following the same rules
 
 To create merged releases from scratch, a :class:`Merger<ocdsmerge.merge.Merger>` instance was used. To update merged releases, instead, use a :class:`CompiledRelease<ocdsmerge.merge.CompiledRelease>` or :class:`VersionedRelease<ocdsmerge.merge.VersionedRelease>` instance, which accepts an existing merged release as input. For example:
 
-.. code:: python
+.. code-block:: python
 
    import ocdsmerge
 
@@ -50,7 +50,7 @@ To create merged releases from scratch, a :class:`Merger<ocdsmerge.merge.Merger>
 
 You can add many releases at once, in which case the merger sorts the releases by ``date``:
 
-.. code:: python
+.. code-block:: python
 
    releases = [
       {
@@ -71,7 +71,7 @@ You can add many releases at once, in which case the merger sorts the releases b
 
 Or, you can add one release at a time, ensuring they are ordered by ``date``:
 
-.. code:: python
+.. code-block:: python
 
    release = {
        "ocid": "ocds-213czf-A",

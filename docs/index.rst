@@ -3,7 +3,9 @@ OCDS Merge |release|
 
 .. include:: ../README.rst
 
-To install::
+To install:
+
+.. code-block:: bash
 
    pip install ocdsmerge
 
