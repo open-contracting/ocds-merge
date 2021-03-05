@@ -39,5 +39,6 @@ Exceptions
 .. autoexception:: ocdsmerge.exceptions.NonObjectReleaseError
 .. autoexception:: ocdsmerge.exceptions.NullDateValueError
 .. autoexception:: ocdsmerge.exceptions.NonStringDateValueError
+.. autoexception:: ocdsmerge.exceptions.InconsistentTypeError
 .. autoexception:: ocdsmerge.exceptions.OCDSMergeWarning
 .. autoexception:: ocdsmerge.exceptions.DuplicateIdValueWarning

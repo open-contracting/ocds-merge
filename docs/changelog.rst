@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.5 (2021-02-04)
+------------------
+
+Changed
+~~~~~~~
+
+-  :func:`ocdsmerge.flatten.unflatten` raises :exc:`ocdsmerge.exceptions.InconsistentTypeError` instead of ``TypeError`` if the same path is a literal in one release and an object in another release.
+
 0.6.4 (2020-01-02)
 ------------------
 
@@ -15,12 +23,12 @@ Fixed
 Changed
 ~~~~~~~
 
--  Improve performance of ``flatten``.
+-  Improve performance of :func:`ocdsmerge.flatten.flatten`.
 
 Added
 ~~~~~
 
--  Extract ``flat_append`` from ``append`` in ``MergedRelease``, to enable custom flattening methods.
+-  :class:`ocdsmerge.merge.MergedRelease`: Extract :meth:`~ocdsmerge.merge.MergedRelease.flat_append` from :meth:`~ocdsmerge.merge.MergedRelease.append`, to enable custom flattening methods.
 
 0.6.2 (2019-12-31)
 ------------------
@@ -28,7 +36,7 @@ Added
 Changed
 ~~~~~~~
 
--  Rename ``errors`` module to ``exceptions``.
+-  Rename ``ocdsmerge.errors`` module to ``ocdsmerge.exceptions``.
 
 0.6.1 (2019-12-30)
 ------------------
@@ -44,7 +52,7 @@ Changed
 Changed
 ~~~~~~~
 
--  **Backwards-incompatible:** Replace ``merge`` and ``merged_versioned`` functions with ``Merger`` class.
+-  **Backwards-incompatible:** Replace ``merge`` and ``merged_versioned`` functions with :class:`ocdsmerge.Merger` class.
 
 Fixed
 ~~~~~

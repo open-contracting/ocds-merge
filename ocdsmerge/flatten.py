@@ -2,7 +2,7 @@ import uuid
 import warnings
 from enum import Enum, auto, unique
 
-from ocdsmerge.exceptions import DuplicateIdValueWarning
+from ocdsmerge.exceptions import DuplicateIdValueWarning, InconsistentTypeError
 
 VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
 
@@ -205,6 +205,10 @@ def unflatten(flattened):
                     current_node = new_node
 
                 continue
+
+            if not isinstance(current_node, dict):
+                message = 'An earlier release had the literal {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
+                raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]), part))
 
             # Otherwise, this is a path to a property of an object. If this is a path to a node we visited before,
             # change into it. If it's an `id` field, it's already been set to its original value.

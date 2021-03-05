@@ -7,8 +7,8 @@ from glob import glob
 import pytest
 
 from ocdsmerge import CompiledRelease, Merger, VersionedRelease
-from ocdsmerge.exceptions import (MissingDateKeyError, NonObjectReleaseError, NonStringDateValueError,
-                                  NullDateValueError)
+from ocdsmerge.exceptions import (InconsistentTypeError, MissingDateKeyError, NonObjectReleaseError,
+                                  NonStringDateValueError, NullDateValueError)
 from tests import load, path, schema_url, tags
 
 simple_schema = path('schema.json')
@@ -144,6 +144,23 @@ def test_append(infix, cls, empty_merger):
     merger.extend(releases[1:])
 
     assert merger.asdict() == expected
+
+
+def test_inconsistent_type(empty_merger):
+    data = [{
+        "date": "2000-01-01T00:00:00Z",
+        "integer": 1
+    }, {
+        "date": "2000-01-02T00:00:00Z",
+        "integer": {
+            "object": 1
+        }
+    }]
+
+    with pytest.raises(InconsistentTypeError) as excinfo:
+        empty_merger.create_compiled_release(data)
+
+    assert str(excinfo.value) == "An earlier release had the literal 1 for /integer, but the current release has an object with a 'object' key"  # noqa: E501
 
 
 @pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])

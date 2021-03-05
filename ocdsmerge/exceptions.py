@@ -25,6 +25,10 @@ class NonStringDateValueError(OCDSMergeError, TypeError):
     """Raised when a release has a non-string 'date' value"""
 
 
+class InconsistentTypeError(OCDSMergeError, TypeError):
+    """Raised when a path is a literal and an object in different releases"""
+
+
 class OCDSMergeWarning(UserWarning):
     """Base class for warnings from within this package"""
 
