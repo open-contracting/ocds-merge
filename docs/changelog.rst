@@ -4,6 +4,9 @@ Changelog
 0.6.6 (2021-04-10)
 ~~~~~~~~~~~~~~~~~~
 
+Added
+~~~~~
+
 -  Add Python wheels distribution.
 
 0.6.5 (2021-02-04)
