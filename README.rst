@@ -6,7 +6,6 @@ Instead of using this library directly, it is easier to create merged releases u
 
 -  `OCDS Kit <https://ocdskit.readthedocs.io/>`__'s `compile <https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile>`__ command-line tool
 -  OCDS Kit's `merge <https://ocdskit.readthedocs.io/en/latest/api/combine.html#ocdskit.combine.merge>`__ Python function
--  `OCDS Toucan <https://toucan.open-contracting.org/>`__'s `compile releases <https://toucan.open-contracting.org/compile/>`__ web application
 
 If you are viewing this on GitHub or PyPI, open the `full documentation <https://ocds-merge.readthedocs.io/>`__ for additional details.
 
