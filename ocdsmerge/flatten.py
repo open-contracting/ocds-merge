@@ -58,7 +58,7 @@ def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), 
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
     Replaces numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
-    in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
+    in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
 
     .. code:: json
 
