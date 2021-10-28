@@ -11,16 +11,21 @@ from ocdsmerge.exceptions import (InconsistentTypeError, MissingDateKeyError, No
                                   NonStringDateValueError, NullDateValueError)
 from tests import load, path, schema_url, tags
 
-simple_schema = path('schema.json')
 
-test_merge_argvalues = []
-for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
-    if schema and schema.startswith('http'):
-        schema = schema.format(tags[minor_version])
-    for suffix in ('compiled', 'versioned'):
-        filenames = glob(path(os.path.join(minor_version, '*-{}.json'.format(suffix))))
-        assert len(filenames), '{} fixtures not found'.format(suffix)
-        test_merge_argvalues += [(filename, schema) for filename in filenames]
+def get_test_cases():
+    test_merge_argvalues = []
+
+    simple_schema = path('schema.json')
+
+    for minor_version, schema in (('1.1', None), ('1.1', schema_url), ('1.0', schema_url), ('schema', simple_schema)):
+        if schema and schema.startswith('http'):
+            schema = schema.format(tags[minor_version])
+        for suffix in ('compiled', 'versioned'):
+            filenames = glob(path(os.path.join(minor_version, '*-{}.json'.format(suffix))))
+            assert len(filenames), '{} fixtures not found'.format(suffix)
+            test_merge_argvalues += [(filename, schema) for filename in filenames]
+
+    return test_merge_argvalues
 
 
 @pytest.mark.vcr()
