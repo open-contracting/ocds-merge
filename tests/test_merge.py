@@ -92,7 +92,7 @@ def test_key_error(empty_merger):
 
 
 @pytest.mark.vcr()
-@pytest.mark.parametrize('filename,schema', test_merge_argvalues)
+@pytest.mark.parametrize('filename,schema', get_test_cases())
 def test_merge(filename, schema):
     merger = Merger(schema)
 
