@@ -51,7 +51,7 @@ def test_ignore(empty_merger):
             warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
             empty_merger.create_compiled_release(releases)
 
-    assert not records, 'unexpected warning: {}'.format(records[0].message)
+    assert not records, f'unexpected warning: {records[0].message}'
 
 
 @pytest.mark.vcr()
@@ -84,4 +84,4 @@ def test_append_no_id():
             compiled_release = merger.create_compiled_release(data + data)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-no-id-append.json'))
-    assert not records, 'unexpected warning: {}'.format(records[0].message)
+    assert not records, f'unexpected warning: {records[0].message}'

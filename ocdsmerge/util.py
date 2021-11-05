@@ -19,7 +19,7 @@ def get_release_schema_url(tag):
     """
     Returns the URL of the release schema in the given version of OCDS.
     """
-    return 'https://standard.open-contracting.org/schema/{}/release-schema.json'.format(tag)
+    return f'https://standard.open-contracting.org/schema/{tag}/release-schema.json'
 
 
 # If we need a method to get dates from releases, see https://github.com/open-contracting/ocds-merge/issues/25

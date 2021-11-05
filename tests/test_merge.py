@@ -21,8 +21,8 @@ def get_test_cases():
         if schema and schema.startswith('http'):
             schema = schema.format(tags[minor_version])
         for suffix in ('compiled', 'versioned'):
-            filenames = glob(path(os.path.join(minor_version, '*-{}.json'.format(suffix))))
-            assert len(filenames), '{} fixtures not found'.format(suffix)
+            filenames = glob(path(os.path.join(minor_version, f'*-{suffix}.json')))
+            assert len(filenames), f'{suffix} fixtures not found'
             test_merge_argvalues += [(filename, schema) for filename in filenames]
 
     return test_merge_argvalues
@@ -42,7 +42,7 @@ def get_test_cases():
 def test_errors(error, data, empty_merger):
     for infix in ('compiled', 'versioned'):
         with pytest.raises(error):
-            getattr(empty_merger, 'create_{}_release'.format(infix))([{'date': '2010-01-01'}, data])
+            getattr(empty_merger, f'create_{infix}_release')([{'date': '2010-01-01'}, data])
 
     if not isinstance(data, dict):
         with pytest.raises(error):
@@ -51,7 +51,7 @@ def test_errors(error, data, empty_merger):
         release = deepcopy(data)
 
         expected = {
-            'id': 'None-{}'.format(data.get('date')),
+            'id': f"None-{data.get('date')}",
             'tag': ['compiled'],
         }
 
@@ -107,7 +107,7 @@ def test_merge(filename, schema):
         releases = json.load(f)
 
     original = deepcopy(releases)
-    actual = getattr(merger, 'create_{}_release'.format(infix))(releases)
+    actual = getattr(merger, f'create_{infix}_release')(releases)
 
     assert releases == original
     assert actual == expected, filename + '\n' + json.dumps(actual)
@@ -116,10 +116,10 @@ def test_merge(filename, schema):
 @pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_extend(infix, cls, empty_merger):
-    expected = load(os.path.join('1.1', 'lists-{}.json'.format(infix)))
+    expected = load(os.path.join('1.1', f'lists-{infix}.json'))
     releases = load(os.path.join('1.1', 'lists.json'))
 
-    merged_release = getattr(empty_merger, 'create_{}_release'.format(infix))(releases[:1])
+    merged_release = getattr(empty_merger, f'create_{infix}_release')(releases[:1])
 
     merger = cls(merged_release, merge_rules=empty_merger.merge_rules)
     merger.extend(releases[1:])
@@ -135,10 +135,10 @@ def test_extend(infix, cls, empty_merger):
 @pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_append(infix, cls, empty_merger):
-    expected = load(os.path.join('1.1', 'lists-{}.json'.format(infix)))
+    expected = load(os.path.join('1.1', f'lists-{infix}.json'))
     releases = load(os.path.join('1.1', 'lists.json'))
 
-    merged_release = getattr(empty_merger, 'create_{}_release'.format(infix))(releases[:1])
+    merged_release = getattr(empty_merger, f'create_{infix}_release')(releases[:1])
 
     merger = cls(merged_release, merge_rules=empty_merger.merge_rules)
     merger.append(releases[1])
@@ -208,7 +208,7 @@ def test_merge_when_array_is_mixed(i, j, simple_merger):
         del expected['mixedArray'][j]
 
     assert simple_merger.create_compiled_release(actual) == expected, \
-        'removed item index {} from release index {}'.format(j, i)
+        f'removed item index {j} from release index {i}'
 
 
 @pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
@@ -252,8 +252,8 @@ def test_merge_when_array_is_mixed_without_schema(i, j, empty_merger):
 
     if j == 0:
         assert empty_merger.create_compiled_release(actual) == expected, \
-            'removed item index {} from release index {}'.format(j, i)
+            f'removed item index {j} from release index {i}'
     else:
         with pytest.raises(AssertionError):
             assert empty_merger.create_compiled_release(actual) == expected, \
-                'removed item index {} from release index {}'.format(j, i)
+                f'removed item index {j} from release index {i}'

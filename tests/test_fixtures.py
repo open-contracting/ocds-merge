@@ -60,6 +60,6 @@ def test_valid(filename, schema):
         for error in validator(schema, format_checker=FormatChecker()).iter_errors(datum):
             errors += 1
             warnings.warn(json.dumps(error.instance, indent=2))
-            warnings.warn('{} ({})\n'.format(error.message, '/'.join(error.absolute_schema_path)))
+            warnings.warn(f"{error.message} ({'/'.join(error.absolute_schema_path)})\n")
 
-    assert errors == 0, '{} is invalid. See warnings below.'.format(filename)
+    assert errors == 0, f'{filename} is invalid. See warnings below.'

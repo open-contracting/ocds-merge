@@ -112,7 +112,7 @@ class CompiledRelease(MergedRelease):
 
     def flat_append(self, flat, ocid, release_id, date, tag):
         # Add an `id` and `date`.
-        self.data[('id',)] = '{}-{}'.format(ocid, date)
+        self.data[('id',)] = f'{ocid}-{date}'
         self.data[('date',)] = date
         # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
         self.data[('ocid',)] = ocid

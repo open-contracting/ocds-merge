@@ -132,7 +132,7 @@ def _enumerate(obj, path, rule_path, rule):
             identifiers[default_path] = key
         elif identifiers[default_path] != key:
             warnings.warn(DuplicateIdValueWarning(rule_path, default_key, 'Multiple objects have the `id` '
-                          'value {!r} in the `{}` array'.format(default_key, '.'.join(map(str, rule_path)))))
+                          f"value {default_key!r} in the `{'.'.join(map(str, rule_path))}` array"))
 
         yield new_key, value
 
