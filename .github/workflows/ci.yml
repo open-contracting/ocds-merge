@@ -17,7 +17,7 @@ jobs:
           cache-dependency-path: setup.py
       - run: pip install .[test]
       # Avoid ImportWarning from YAML on PyPy 3.7. https://github.com/yaml/pyyaml/issues/534
-      # An HTTP response contains binary data, so the JSON serializer can't be used.
+      # An HTTP response contains binary data, so pytest-cov's JSON serializer can't be used.
       - run: pytest -W error -W ignore::ImportWarning --cov ocdsmerge --vcr-record=none
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
