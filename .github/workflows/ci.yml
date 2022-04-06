@@ -22,7 +22,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
       - run: pip install .[test]
-      - run: pytest --cov ocdsmerge --vcr-record=none
+      - env:
+          PYTHONWARNINGS: error
+        run: pytest --cov ocdsmerge --vcr-record=none
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github

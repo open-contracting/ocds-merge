@@ -46,12 +46,11 @@ def test_raise(empty_merger):
 
 @pytest.mark.vcr()
 def test_ignore(empty_merger):
-    with pytest.warns(None) as records:
-        with warnings.catch_warnings():
-            warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
-            empty_merger.create_compiled_release(releases)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # no warnings
 
-    assert not records, f'unexpected warning: {records[0].message}'
+        warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
+        empty_merger.create_compiled_release(releases)
 
 
 @pytest.mark.vcr()
@@ -79,9 +78,9 @@ def test_append_no_id():
     merger = Merger(rule_overrides={('nested', 'array',): APPEND})
     data = load(os.path.join('schema', 'identifier-merge-no-id.json'))
 
-    with pytest.warns(None) as records:
-        with warnings.catch_warnings():
-            compiled_release = merger.create_compiled_release(data + data)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # no warnings
+
+        compiled_release = merger.create_compiled_release(data + data)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-no-id-append.json'))
-    assert not records, f'unexpected warning: {records[0].message}'

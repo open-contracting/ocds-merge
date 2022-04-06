@@ -1,6 +1,7 @@
 import json
 import os.path
 import re
+import warnings
 from copy import deepcopy
 from glob import glob
 
@@ -107,7 +108,11 @@ def test_merge(filename, schema):
         releases = json.load(f)
 
     original = deepcopy(releases)
-    actual = getattr(merger, f'create_{infix}_release')(releases)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")  # ignore tests/fixtures/schema/identifier-merge-duplicate-id-compiled.json
+
+        actual = getattr(merger, f'create_{infix}_release')(releases)
 
     assert releases == original
     assert actual == expected, filename + '\n' + json.dumps(actual)
