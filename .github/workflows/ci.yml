@@ -22,10 +22,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
       - run: pip install .[test]
-      - env:
-          # https://github.com/yaml/pyyaml/issues/534
-          PYTHONWARNINGS: error,ignore::ImportWarning
-        run: pytest --cov ocdsmerge --vcr-record=none
+      # https://github.com/yaml/pyyaml/issues/534
+      - run: pytest -W error -W ignore::ImportWarning --cov ocdsmerge --vcr-record=none
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
