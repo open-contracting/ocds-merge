@@ -23,7 +23,8 @@ jobs:
             ${{ runner.os }}-pip-
       - run: pip install .[test]
       - env:
-          PYTHONWARNINGS: error
+          # https://github.com/yaml/pyyaml/issues/534
+          PYTHONWARNINGS: error,ignore::ImportWarning
         run: pytest --cov ocdsmerge --vcr-record=none
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
