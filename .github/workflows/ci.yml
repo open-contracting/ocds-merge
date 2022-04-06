@@ -10,17 +10,11 @@ jobs:
         python-version: [3.6, 3.7, 3.8, 3.9, '3.10', pypy-3.7]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3.1.0
+      - uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - id: pip-cache
-        run: echo "::set-output name=dir::$(pip cache dir)"
-      - uses: actions/cache@v3
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt', 'setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          cache: pip
+          cache-dependency-path: setup.py
       - run: pip install .[test]
       # Avoid ImportWarning from YAML on PyPy 3.7. https://github.com/yaml/pyyaml/issues/534
       # An HTTP response contains binary data, so the JSON serializer can't be used.
