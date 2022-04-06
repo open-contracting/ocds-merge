@@ -8,8 +8,8 @@ from glob import glob
 import pytest
 
 from ocdsmerge import CompiledRelease, Merger, VersionedRelease
-from ocdsmerge.exceptions import (InconsistentTypeError, MissingDateKeyError, NonObjectReleaseError,
-                                  NonStringDateValueError, NullDateValueError)
+from ocdsmerge.exceptions import (DuplicateIdValueWarning, InconsistentTypeError, MissingDateKeyError,
+                                  NonObjectReleaseError, NonStringDateValueError, NullDateValueError)
 from tests import load, path, schema_url, tags
 
 
@@ -110,7 +110,9 @@ def test_merge(filename, schema):
     original = deepcopy(releases)
 
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")  # ignore tests/fixtures/schema/identifier-merge-duplicate-id-compiled.json
+        warnings.simplefilter('error')  # no unexpected warnings
+        if filename == os.path.join('tests', 'fixtures', 'schema', 'identifier-merge-duplicate-id-compiled.json'):
+            warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
 
         actual = getattr(merger, f'create_{infix}_release')(releases)
 

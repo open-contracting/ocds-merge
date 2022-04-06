@@ -47,7 +47,7 @@ def test_raise(empty_merger):
 @pytest.mark.vcr()
 def test_ignore(empty_merger):
     with warnings.catch_warnings():
-        warnings.simplefilter("error")  # no warnings
+        warnings.simplefilter('error')  # no unexpected warnings
 
         warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
         empty_merger.create_compiled_release(releases)
@@ -79,7 +79,7 @@ def test_append_no_id():
     data = load(os.path.join('schema', 'identifier-merge-no-id.json'))
 
     with warnings.catch_warnings():
-        warnings.simplefilter("error")  # no warnings
+        warnings.simplefilter('error')  # no unexpected warnings
 
         compiled_release = merger.create_compiled_release(data + data)
 
