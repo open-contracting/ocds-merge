@@ -12,6 +12,7 @@ def get_merge_rules(schema=None):
     """
     schema = schema or get_release_schema_url(get_tags()[-1])
     if isinstance(schema, dict):
+        # jsonref.JsonRef is deprecated, but used for backwards-compatibility with jsonref 0.x.
         return _get_merge_rules_from_dereferenced_schema(jsonref.JsonRef.replace_refs(schema))
     else:
         return _get_merge_rules_from_url_or_path(schema)
