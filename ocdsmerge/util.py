@@ -40,7 +40,7 @@ def sorted_releases(releases):
                 raise NullDateValueError('The `date` field of at least one release is null.')
             else:
                 raise NonStringDateValueError('The `date` field of at least one release is not a string.')
-        elif e.args[0] in ('string indices must be integers',
+        elif e.args[0] in ('string indices must be integers', "string indices must be integers, not 'str'",
                            'string index indices must be integers or slices, not str'):
             raise NonObjectReleaseError('At least one release is a string, not a dict. Use `json.loads` to parse the '
                                         'string as JSON.')
