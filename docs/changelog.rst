@@ -1,13 +1,18 @@
 Changelog
 =========
 
-0.6.7 (Unreleased)
-------------------
+Unreleased
+----------
+
+Changed
+~~~~~~~
+
+-  Drop support for Python 3.6 (end-of-life 2021-12-23).
 
 Added
 ~~~~~
 
--  Add PyPy 3.7 support.
+-  Add support for PyPy 3.7.
 
 0.6.6 (2021-04-10)
 ------------------
