@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-          cache-dependency-path: setup.py
+          cache-dependency-path: setup.cfg
       - run: pip install .[test]
       # Avoid ImportWarning from YAML on PyPy 3.7. https://github.com/yaml/pyyaml/issues/534
       # An HTTP response contains binary data, so pytest-cov's JSON serializer can't be used.
