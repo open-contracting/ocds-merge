@@ -37,7 +37,7 @@ def get_test_cases():
     (NonObjectReleaseError, '{}'),
     (NonObjectReleaseError, b'{}'),
     (NonObjectReleaseError, []),
-    (NonObjectReleaseError, tuple()),
+    (NonObjectReleaseError, ()),
     (NonObjectReleaseError, set()),
 ])
 def test_errors(error, data, empty_merger):
