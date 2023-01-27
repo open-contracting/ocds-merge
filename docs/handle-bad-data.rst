@@ -5,7 +5,7 @@ The merge routine merges multiple individual releases into either a compiled rel
 
 However, if objects that correspond to different things re-use ``id`` values, then only the last object is retained in the merged release, by default. (To be clear, such data has structural errors.) For example, if a publisher creates a release for each award notice in a procurement procedure, and restarts the numbering of award objects in each release from '1', then the later releases will overwrite the award objects of the earlier releases.
 
-Similarly, if, in a single release, objects in the same array share an ``id`` value, then only the last object is retained. If so, this package issues a :code:`DuplicateIdValueWarning` warning. You can turn the warning into an exception or ignore the warning using a `warning filter <https://docs.python.org/3.8/library/warnings.html>`__. For example:
+Similarly, if, in a single release, objects in the same array share an ``id`` value, then only the last object is retained. If so, this package issues a :code:`DuplicateIdValueWarning` warning. You can turn the warning into an exception or ignore the warning using a `warning filter <https://docs.python.org/3/library/warnings.html>`__. For example:
 
 .. code-block:: python
 

@@ -103,7 +103,7 @@ Changed
 ~~~~~~~
 
 -  The collision behavior is changed to always warn.
--  Remove the ``collision_behavior`` argument. Use a `warning filter <https://docs.python.org/3.8/library/warnings.html>`__ instead.
+-  Remove the ``collision_behavior`` argument. Use a `warning filter <https://docs.python.org/3/library/warnings.html>`__ instead.
 -  Add ``path`` and ``id`` properties to ``DuplicateIdValueWarning`` to store the ``path`` at which, and the ``id`` on which, the collision occurred.
 
 0.5.10.post2 (2019-11-22)
@@ -142,7 +142,7 @@ Changed
 -  Warn if multiple objects in an array have the same ``id`` value.
 -  Add a ``collision_behavior`` argument to ``merge``, ``merge_versioned``, ``add_release_to_compiled_release`` and ``add_release_to_versioned_release``, which can be set to:
 
-   -  ``ocdsmerge.WARN``: issue a ``DuplicateIdValueWarning`` `warning <https://docs.python.org/3.8/library/warnings.html>`__ (default)
+   -  ``ocdsmerge.WARN``: issue a ``DuplicateIdValueWarning`` `warning <https://docs.python.org/3/library/warnings.html>`__ (default)
    -  ``ocdsmerge.RAISE``: raise a ``DuplicateIdValueError`` exception
    -  ``ocdsmerge.IGNORE``: silently ignore the collision
 
