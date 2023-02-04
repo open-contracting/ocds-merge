@@ -1,8 +1,10 @@
 import uuid
 import warnings
 from enum import Enum, auto, unique
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union
 
 from ocdsmerge.exceptions import DuplicateIdValueWarning, InconsistentTypeError
+from ocdsmerge.rules import MergeRules
 
 VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
 
@@ -15,21 +17,25 @@ class MergeStrategy(Enum):
 
 globals().update(MergeStrategy.__members__)
 
+Identifier = Union[int, str]
+Flattened = Dict[Tuple[Identifier, ...], Any]
+RuleOverrides = Dict[Tuple[str, ...], MergeStrategy]
+
 
 class IdValue(str):
     """
     A string with ``identifier`` and ``original_value`` properties.
     """
-    def __init__(self, identifier):
+    def __init__(self, identifier: Identifier):
         self.identifier = identifier
         str.__init__(identifier)
 
     @property
-    def original_value(self):
+    def original_value(self) -> Optional[Identifier]:
         return self._original_value
 
     @original_value.setter
-    def original_value(self, original_value):
+    def original_value(self, original_value: Optional[Identifier]) -> None:
         self._original_value = original_value
 
 
@@ -38,22 +44,30 @@ class IdDict(dict):
     A dictionary with an ``identifier`` property.
     """
     @property
-    def identifier(self):
+    def identifier(self) -> Identifier:
         return self._identifier
 
     @identifier.setter
-    def identifier(self, identifier):
+    def identifier(self, identifier: Identifier) -> None:
         self._identifier = identifier
 
 
-def is_versioned_value(value):
+def is_versioned_value(value: Dict[str, Any]) -> bool:
     """
     Returns whether the value is a versioned value.
     """
     return len(value) == 4 and VERSIONED_VALUE_KEYS.issuperset(value)
 
 
-def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), versioned=False):
+def flatten(
+    obj: Union[List[Dict[str, Any]], Dict[str, Any]],
+    merge_rules: MergeRules,
+    rule_overrides: RuleOverrides,
+    flattened: Flattened,
+    path: Tuple[Identifier, ...] = (),
+    rule_path: Tuple[str, ...] = (),
+    versioned: Optional[bool] = False
+) -> Flattened:
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
@@ -119,7 +133,9 @@ def flatten(obj, merge_rules, rule_overrides, flattened, path=(), rule_path=(), 
     return flattened
 
 
-def _enumerate(obj, path, rule_path, rule):
+def _enumerate(
+    obj: List[Dict[str, Any]], path: Tuple[Identifier, ...], rule_path: Tuple[str, ...], rule: Optional[MergeStrategy]
+) -> Generator[Tuple[IdValue, Any], None, None]:
     # This tracks the identifiers of objects in an array, to warn about collisions.
     identifiers = {}
 
@@ -137,7 +153,7 @@ def _enumerate(obj, path, rule_path, rule):
         yield new_key, value
 
 
-def _id_value(key, value, rule):
+def _id_value(key: int, value: Dict[str, Any], rule: Optional[MergeStrategy]) -> Tuple[IdValue, IdValue]:
     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
     if 'id' in value:
@@ -167,13 +183,13 @@ def _id_value(key, value, rule):
     return new_key, default_key
 
 
-def unflatten(flattened):
+def unflatten(flattened: Flattened) -> Dict[str, Any]:
     """
     Unflattens a flattened object into a JSON object.
     """
-    unflattened = {}
+    unflattened: Dict[str, Any] = {}
 
-    identifiers = {}
+    identifiers: Dict[Tuple[Identifier, ...], IdDict] = {}
 
     for key in flattened:
         current_node = unflattened
@@ -209,6 +225,10 @@ def unflatten(flattened):
             if not isinstance(current_node, dict):
                 message = 'An earlier release had the literal {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
                 raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]), part))
+
+            # When running mypy, uncomment these lines:
+            # if TYPE_CHECKING:
+            #     assert type(part) is str
 
             # Otherwise, this is a path to a property of an object. If this is a path to a node we visited before,
             # change into it. If it's an `id` field, it's already been set to its original value.

@@ -1,16 +1,23 @@
-from ocdsmerge.flatten import flatten, unflatten
-from ocdsmerge.rules import get_merge_rules
+from typing import Any, Dict, List, Optional, Type
+
+from ocdsmerge.flatten import Flattened, RuleOverrides, flatten, unflatten
+from ocdsmerge.rules import MergeRules, Schema, get_merge_rules
 from ocdsmerge.util import sorted_releases
 
 
 class Merger:
-    def __init__(self, schema=None, merge_rules=None, rule_overrides=None):
+    def __init__(
+        self,
+        schema: Schema = None,
+        merge_rules: Optional[MergeRules] = None,
+        rule_overrides: Optional[RuleOverrides] = None,
+    ):
         """
         Initializes a reusable ``Merger`` instance for creating merged releases.
 
         :param schema: the release schema (if not provided, will default to the latest version of OCDS)
-        :param dict merge_rules: the merge rules (if not provided, will determine the rules from the ``schema``)
-        :param dict rule_overrides: any rule overrides, in which keys are field paths as tuples, and values are either
+        :param merge_rules: the merge rules (if not provided, will determine the rules from the ``schema``)
+        :param rule_overrides: any rule overrides, in which keys are field paths as tuples, and values are either
             ``ocdsmerge.APPEND`` or ``ocdsmerge.MERGE_BY_POSITION``
         :type schema: dict or str
         """
@@ -22,19 +29,19 @@ class Merger:
         self.merge_rules = merge_rules
         self.rule_overrides = rule_overrides
 
-    def create_compiled_release(self, releases):
+    def create_compiled_release(self, releases: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Merges a list of releases into a compiled release.
         """
         return self._create_merged_release(CompiledRelease, releases)
 
-    def create_versioned_release(self, releases):
+    def create_versioned_release(self, releases: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Merges a list of releases into a versioned release.
         """
         return self._create_merged_release(VersionedRelease, releases)
 
-    def _create_merged_release(self, cls, releases):
+    def _create_merged_release(self, cls: Type[MergedRelease], releases: List[Dict[str, Any]]) -> Dict[str, Any]:
         merged_release = cls(merge_rules=self.merge_rules, rule_overrides=self.rule_overrides)
         merged_release.extend(releases)
         return merged_release.asdict()
@@ -44,16 +51,22 @@ class MergedRelease:
     """
     Whether the class is for merging versioned releases.
     """
-    versioned = None
+    versioned: Optional[bool] = None
 
-    def __init__(self, data=None, schema=None, merge_rules=None, rule_overrides=None):
+    def __init__(
+        self,
+        data: Optional[Dict[str, Any]] = None,
+        schema: Schema = None,
+        merge_rules: Optional[MergeRules] = None,
+        rule_overrides: Optional[RuleOverrides] = None,
+    ):
         """
         Initializes a merged release.
 
-        :param dict data: the latest copy of the merged release, if any
+        :param data: the latest copy of the merged release, if any
         :param schema: the release schema (if not provided, will default to the latest version of OCDS)
-        :param dict merge_rules: the merge rules (if not provided, will determine the rules from the ``schema``)
-        :param dict rule_overrides: any rule overrides, in which keys are field paths as tuples, and values are either
+        :param merge_rules: the merge rules (if not provided, will determine the rules from the ``schema``)
+        :param rule_overrides: any rule overrides, in which keys are field paths as tuples, and values are either
             ``ocdsmerge.APPEND`` or ``ocdsmerge.MERGE_BY_POSITION``
         :type schema: dict or str
         """
@@ -70,20 +83,20 @@ class MergedRelease:
         else:
             self.data = flatten(data, self.merge_rules, self.rule_overrides, flattened={}, versioned=self.versioned)
 
-    def asdict(self):
+    def asdict(self) -> Dict[str, Any]:
         """
         Returns the merged release as a dictionary.
         """
         return unflatten(self.data)
 
-    def extend(self, releases):
+    def extend(self, releases: List[Dict[str, Any]]) -> None:
         """
         Sorts and merges many releases into the merged release.
         """
         for release in sorted_releases(releases):
             self.append(release)
 
-    def append(self, release):
+    def append(self, release: Dict[str, Any]) -> None:
         """
         Merges one release into the merged release.
         """
@@ -99,18 +112,22 @@ class MergedRelease:
         flat = flatten(release, self.merge_rules, self.rule_overrides, flattened={})
         self.flat_append(flat, ocid, release_id, date, tag)
 
-    def flat_append(self, flat, ocid, release_id, date, tag):
+    def flat_append(
+        self, flat: Flattened, ocid: Optional[str], release_id: Optional[str], date: Optional[str], tag: Optional[str]
+    ) -> None:
         raise NotImplementedError('subclasses must implement flat_append()')
 
 
 class CompiledRelease(MergedRelease):
     versioned = False
 
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(data, **kwargs)
         self.data[('tag',)] = ['compiled']
 
-    def flat_append(self, flat, ocid, release_id, date, tag):
+    def flat_append(
+        self, flat: Flattened, ocid: Optional[str], release_id: Optional[str], date: Optional[str], tag: Optional[str]
+    ) -> None:
         # Add an `id` and `date`.
         self.data[('id',)] = f'{ocid}-{date}'
         self.data[('date',)] = date
@@ -123,7 +140,9 @@ class CompiledRelease(MergedRelease):
 class VersionedRelease(MergedRelease):
     versioned = True
 
-    def flat_append(self, flat, ocid, release_id, date, tag):
+    def flat_append(
+        self, flat: Flattened, ocid: Optional[str], release_id: Optional[str], date: Optional[str], tag: Optional[str]
+    ) -> None:
         # Don't version the OCID.
         flat.pop(('ocid',), None)
         self.data[('ocid',)] = ocid

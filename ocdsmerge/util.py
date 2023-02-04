@@ -1,5 +1,6 @@
 import re
 from functools import lru_cache
+from typing import Any, Dict, List
 
 import requests
 
@@ -8,14 +9,14 @@ from ocdsmerge.exceptions import (MissingDateKeyError, NonObjectReleaseError, No
 
 
 @lru_cache()
-def get_tags():
+def get_tags() -> List[str]:
     """
     Returns the tags of all versions of OCDS in alphabetical order.
     """
     return re.findall(r'"(\d+__\d+__\d+)/', requests.get('https://standard.open-contracting.org/schema/').text)
 
 
-def get_release_schema_url(tag):
+def get_release_schema_url(tag: str) -> str:
     """
     Returns the URL of the release schema in the given version of OCDS.
     """
@@ -23,7 +24,7 @@ def get_release_schema_url(tag):
 
 
 # If we need a method to get dates from releases, see https://github.com/open-contracting/ocds-merge/issues/25
-def sorted_releases(releases):
+def sorted_releases(releases: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Sorts a list of releases by date.
     """

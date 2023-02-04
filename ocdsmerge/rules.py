@@ -1,11 +1,15 @@
 from functools import lru_cache
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import jsonref
 
 from ocdsmerge.util import get_release_schema_url, get_tags
 
+MergeRules = Dict[Tuple[str, ...], Set[str]]
+Schema = Optional[Union[str, Dict[str, Any]]]
 
-def get_merge_rules(schema=None):
+
+def get_merge_rules(schema: Schema = None) -> MergeRules:
     """
     Returns merge rules as key-value pairs, in which the key is a JSON path as a tuple, and the value is a list of
     merge properties whose values are `true`.
@@ -19,7 +23,7 @@ def get_merge_rules(schema=None):
 
 
 @lru_cache()
-def _get_merge_rules_from_url_or_path(schema):
+def _get_merge_rules_from_url_or_path(schema: str) -> MergeRules:
     if schema.startswith('http'):
         deref_schema = jsonref.load_uri(schema)
     else:
@@ -28,11 +32,13 @@ def _get_merge_rules_from_url_or_path(schema):
     return _get_merge_rules_from_dereferenced_schema(deref_schema)
 
 
-def _get_merge_rules_from_dereferenced_schema(deref_schema):
+def _get_merge_rules_from_dereferenced_schema(deref_schema: Dict[str, Any]) -> MergeRules:
     return dict(_get_merge_rules(deref_schema['properties']))
 
 
-def _get_merge_rules(properties, path=None):
+def _get_merge_rules(
+    properties: Dict[str, Any], path: Optional[Tuple[str, ...]] = None
+) -> Generator[Tuple[Tuple[str, ...], Set[str]], None, None]:
     """
     Yields merge rules as key-value pairs, in which the first element is a JSON path as a tuple, and the second element
     is a list of merge properties whose values are `true`.
@@ -67,7 +73,7 @@ def _get_merge_rules(properties, path=None):
                     yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
 
-def _get_types(prop):
+def _get_types(prop: Dict[str, Any]) -> List[str]:
     """
     Returns a property's `type` as a list.
     """
