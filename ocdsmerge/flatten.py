@@ -1,7 +1,7 @@
 import uuid
 import warnings
 from enum import Enum, auto, unique
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 from ocdsmerge.exceptions import DuplicateIdValueWarning, InconsistentTypeError
 from ocdsmerge.rules import MergeRules

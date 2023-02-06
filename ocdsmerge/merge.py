@@ -41,7 +41,7 @@ class Merger:
         """
         return self._create_merged_release(VersionedRelease, releases)
 
-    def _create_merged_release(self, cls: Type[MergedRelease], releases: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _create_merged_release(self, cls: Type["MergedRelease"], releases: List[Dict[str, Any]]) -> Dict[str, Any]:
         merged_release = cls(merge_rules=self.merge_rules, rule_overrides=self.rule_overrides)
         merged_release.extend(releases)
         return merged_release.asdict()
