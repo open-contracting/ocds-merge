@@ -164,7 +164,7 @@ def _id_value(key: int, value: Dict[str, Any], rule: Optional[MergeStrategy]) ->
         id_value = None
         identifier = str(uuid.uuid1(1))  # use 1 instead of MAC address
 
-    # Calculate the default key for the warning.
+    # Calculate the key for the warning, which checks for collisions using the default merge strategy.
     default_key = IdValue(identifier)
 
     if rule == MergeStrategy.APPEND:
