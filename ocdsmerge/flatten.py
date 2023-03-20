@@ -112,9 +112,9 @@ def flatten(
         if is_dict:
             new_rule_path = rule_path + (key,)
 
-        new_path_merge_rules = merge_rules.get(new_rule_path, set())
+        new_path_merge_rules = merge_rules.get(new_rule_path, None)
 
-        if 'omitWhenMerged' in new_path_merge_rules:
+        if new_path_merge_rules == 'omitWhenMerged':
             continue
         # If it's `wholeListMerge`, if it's neither an object nor an array, if it's an array containing non-objects
         # (even if `wholeListMerge` is `false`), or if it's versioned values, use the whole list merge strategy.
@@ -122,7 +122,7 @@ def flatten(
         # cases but not in others.
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#objects
-        elif 'wholeListMerge' in new_path_merge_rules or not isinstance(value, (dict, list)) or \
+        elif new_path_merge_rules == 'wholeListMerge' or not isinstance(value, (dict, list)) or \
                 type(value) is list and any(not isinstance(item, dict) for item in value) or \
                 versioned and value and all(is_versioned_value(item) for item in value):
             flattened[path + (key,)] = value
