@@ -55,22 +55,48 @@ def test_ignore(empty_merger):
 
 @pytest.mark.vcr()
 def test_merge_by_position():
+    fields = ['identifierMerge', 'array', 'identifierMerge', 'array']
+    string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
+
     merger = Merger(rule_overrides={('nested', 'array',): MERGE_BY_POSITION})
 
-    with pytest.warns(DuplicateIdValueWarning):
+    with pytest.warns(DuplicateIdValueWarning) as records:
         compiled_release = merger.create_compiled_release(releases + releases)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-by-position.json'))
 
+    assert len(records) == 4
+
+    for i, record in enumerate(records):
+        message = string.format(fields[i])
+
+        assert record.message.path == ('nested', fields[i],)
+        assert record.message.id == '1'
+        assert record.message.message == message
+        assert str(record.message) == message
+
 
 @pytest.mark.vcr()
 def test_append():
+    fields = ['identifierMerge', 'array', 'identifierMerge', 'array']
+    string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
+
     merger = Merger(rule_overrides={('nested', 'array',): APPEND})
 
-    with pytest.warns(DuplicateIdValueWarning):
+    with pytest.warns(DuplicateIdValueWarning) as records:
         compiled_release = merger.create_compiled_release(releases + releases)
 
     assert compiled_release == load(os.path.join('schema', 'identifier-merge-duplicate-id-append.json'))
+
+    assert len(records) == 4
+
+    for i, record in enumerate(records):
+        message = string.format(fields[i])
+
+        assert record.message.path == ('nested', fields[i],)
+        assert record.message.id == '1'
+        assert record.message.message == message
+        assert str(record.message) == message
 
 
 @pytest.mark.vcr()
