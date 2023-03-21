@@ -39,19 +39,6 @@ class IdValue(str):
         self._original_value = original_value
 
 
-class IdDict(dict):
-    """
-    A dictionary with an ``identifier`` property.
-    """
-    @property
-    def identifier(self) -> Identifier:
-        return self._identifier
-
-    @identifier.setter
-    def identifier(self, identifier: Identifier) -> None:
-        self._identifier = identifier
-
-
 def is_versioned_value(value: Dict[str, Any]) -> bool:
     """
     Returns whether the value is a versioned value.
@@ -189,7 +176,7 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
     """
     unflattened: Dict[str, Any] = {}
 
-    identifiers: Dict[Tuple[Identifier, ...], IdDict] = {}
+    identifiers: Dict[Tuple[Identifier, ...], Dict] = {}
 
     for key in flattened:
         current_node = unflattened
@@ -207,15 +194,14 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
 
                 # Otherwise, append a new object, and change into it.
                 else:
-                    new_node = IdDict()
-                    new_node.identifier = part.identifier
+                    new_node = {}
 
                     # If the original object had an `id` value, set it.
                     if part.original_value is not None:
                         new_node['id'] = part.original_value
 
                     # Cache which identifiers appear in which arrays.
-                    identifiers[path + (new_node.identifier,)] = new_node
+                    identifiers[path + (part.identifier,)] = new_node
 
                     current_node.append(new_node)
                     current_node = new_node
