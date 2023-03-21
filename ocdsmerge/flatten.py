@@ -182,6 +182,10 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
         current_node = unflattened
 
         for end, part in enumerate(key, 1):
+            # When running mypy, uncomment these lines:
+            # if TYPE_CHECKING:
+            #     assert type(part) is str
+
             # If this is a path to an item of an array.
             # See https://standard.open-contracting.org/1.1/en/schema/merging/#identifier-merge
             if type(part) is IdValue:
@@ -201,28 +205,21 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
                         new_node['id'] = part.original_value
 
                     # Cache which identifiers appear in which arrays.
-                    identifiers[path + (part.identifier,)] = new_node
+                    identifiers[id_path] = new_node
 
                     current_node.append(new_node)
                     current_node = new_node
 
-                continue
-
-            if not isinstance(current_node, dict):
+            elif not isinstance(current_node, dict):
                 message = 'An earlier release had the literal {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
                 raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]), part))
 
-            # When running mypy, uncomment these lines:
-            # if TYPE_CHECKING:
-            #     assert type(part) is str
-
             # Otherwise, this is a path to a property of an object. If this is a path to a node we visited before,
             # change into it. If it's an `id` field, it's already been set to its original value.
-            if part in current_node:
+            elif part in current_node:
                 current_node = current_node[part]
-                continue
 
-            if end < len(key):
+            elif end < len(key):
                 # If the path is to a new array, start a new array, and change into it.
                 if type(key[end]) is IdValue:
                     current_node[part] = []
@@ -231,10 +228,9 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
                     current_node[part] = {}
 
                 current_node = current_node[part]
-                continue
 
             # If this is a full path, copy the data, omitting null'ed fields.
-            if flattened[key] is not None:
+            elif flattened[key] is not None:
                 current_node[part] = flattened[key]
 
     return unflattened
