@@ -189,15 +189,9 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
             # If this is a path to an item of an array.
             # See https://standard.open-contracting.org/1.1/en/schema/merging/#identifier-merge
             if type(part) is IdValue:
-                path = key[:end]
-
-                # If the `id` of an object in the array matches, change into it.
-                id_path = path + (part.identifier,)
-                if id_path in identifiers:
-                    current_node = identifiers[id_path]
-
-                # Otherwise, append a new object, and change into it.
-                else:
+                # If no `id` of an object in the array matches, append a new object.
+                id_path = key[:end - 1] + (part.identifier,)
+                if id_path not in identifiers:
                     new_node = {}
 
                     # If the original object had an `id` value, set it.
@@ -208,7 +202,9 @@ def unflatten(flattened: Flattened) -> Dict[str, Any]:
                     identifiers[id_path] = new_node
 
                     current_node.append(new_node)
-                    current_node = new_node
+
+                # Change into it.
+                current_node = identifiers[id_path]
 
             elif not isinstance(current_node, dict):
                 message = 'An earlier release had the literal {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
