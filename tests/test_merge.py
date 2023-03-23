@@ -153,7 +153,7 @@ def test_append(infix, cls, empty_merger):
     assert merger.asdict() == expected
 
     merger = cls(merged_release, schema={})
-    merger.extend(releases[1:])
+    merger.append(releases[1])
 
     assert merger.asdict() == expected
 
