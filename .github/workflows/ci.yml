@@ -16,7 +16,7 @@ jobs:
           cache: pip
           cache-dependency-path: setup.cfg
       - run: pip install .[test]
-      - run: pytest -W error --cov ocdsmerge
+      - run: pytest -W error --cov ocdsmerge --vcr-record=none
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
