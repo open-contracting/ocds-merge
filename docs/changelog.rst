@@ -12,7 +12,7 @@ Changed
 Added
 ~~~~~
 
--  Add support for PyPy 3.7.
+-  Add PyPy support.
 
 0.6.6 (2021-04-10)
 ------------------
