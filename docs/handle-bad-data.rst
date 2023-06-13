@@ -28,7 +28,7 @@ Similarly, if, in a single release, objects in the same array share an ``id`` va
        warnings.filterwarnings('ignore', category=DuplicateIdValueWarning)
        compiled_release = merger.create_compiled_release(releases)
 
-  # {'tag': ['compiled'], 'id': 'None-None', 'awards': [{'id': '1'}]}
+   # {'tag': ['compiled'], 'id': 'None-None', 'awards': [{'id': '1'}]}
 
 If you know in advance that the individual releases have structural errors as described above, you can change the behavior of the merge routine by setting a :code:`rule_overrides` argument on a per-field basis:
 
