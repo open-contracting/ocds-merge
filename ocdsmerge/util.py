@@ -13,6 +13,9 @@ def get_tags() -> List[str]:
     """
     Returns the tags of all versions of OCDS in alphabetical order.
     """
+    # response = requests.get('https://api.github.com/repos/open-contracting/standard/tags')
+    # response.raise_for_status()
+    # return [tag['name'] for tag in response.text()]
     response = requests.get('https://standard.open-contracting.org/schema/')
     response.raise_for_status()
     return re.findall(r'"(\d+__\d+__\d+)/', response.text)
