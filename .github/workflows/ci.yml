@@ -16,11 +16,7 @@ jobs:
           cache: pip
           cache-dependency-path: setup.cfg
       - run: pip install .[test]
-      # Python 3.8 wants to overwrite cassettes.
-      - if: matrix.python-version != '3.8'
-        run: pytest -W error --cov ocdsmerge --vcr-record=none
-      - if: matrix.python-version == '3.8'
-        run: pytest -W error -W ignore::ResourceWarning --cov ocdsmerge --vcr-record=all
+      - run: pytest -W error --cov ocdsmerge --vcr-record=none
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
