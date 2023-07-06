@@ -7,6 +7,7 @@ Unreleased
 Changed
 ~~~~~~~
 
+-  :func:`ocdsmerge.util.get_tags` raises an error if it encounters an HTTP error.
 -  Drop support for Python 3.6 (end-of-life 2021-12-23).
 
 Added

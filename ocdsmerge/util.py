@@ -13,7 +13,9 @@ def get_tags() -> List[str]:
     """
     Returns the tags of all versions of OCDS in alphabetical order.
     """
-    return re.findall(r'"(\d+__\d+__\d+)/', requests.get('https://standard.open-contracting.org/schema/').text)
+    response = requests.get('https://standard.open-contracting.org/schema/')
+    response.raise_for_status()
+    return re.findall(r'"(\d+__\d+__\d+)/', response.text)
 
 
 def get_release_schema_url(tag: str) -> str:
