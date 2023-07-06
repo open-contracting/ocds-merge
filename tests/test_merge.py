@@ -29,7 +29,6 @@ def get_test_cases():
     return test_merge_argvalues
 
 
-@pytest.mark.vcr()
 @pytest.mark.parametrize('error, data', [
     (MissingDateKeyError, {}),
     (NullDateValueError, {'date': None}),
@@ -80,7 +79,6 @@ def test_errors(error, data, empty_merger):
         assert empty_merger.create_versioned_release([release]) == expected
 
 
-@pytest.mark.vcr()
 def test_key_error(empty_merger):
     with pytest.raises(KeyError) as excinfo:
         empty_merger.create_compiled_release([{'date': '2010-01-01'}, {}])
@@ -92,7 +90,6 @@ def test_key_error(empty_merger):
     assert str(excinfo.value) == message
 
 
-@pytest.mark.vcr()
 @pytest.mark.parametrize('filename,schema', get_test_cases())
 def test_merge(filename, schema):
     merger = Merger(schema)
@@ -120,7 +117,6 @@ def test_merge(filename, schema):
     assert actual == expected, filename + '\n' + json.dumps(actual)
 
 
-@pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_extend(infix, cls, empty_merger):
     expected = load(os.path.join('1.1', f'lists-{infix}.json'))
@@ -139,7 +135,6 @@ def test_extend(infix, cls, empty_merger):
     assert merger.asdict() == expected
 
 
-@pytest.mark.vcr()
 @pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_append(infix, cls, empty_merger):
     expected = load(os.path.join('1.1', f'lists-{infix}.json'))

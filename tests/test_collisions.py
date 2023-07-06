@@ -10,7 +10,6 @@ from tests import load
 releases = load(os.path.join('schema', 'identifier-merge-duplicate-id.json'))
 
 
-@pytest.mark.vcr()
 def test_warn(empty_merger):
     fields = ['identifierMerge', 'array']
     string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
@@ -29,7 +28,6 @@ def test_warn(empty_merger):
         assert str(record.message) == message
 
 
-@pytest.mark.vcr()
 def test_raise(empty_merger):
     with pytest.raises(DuplicateIdValueWarning) as excinfo:
         with warnings.catch_warnings():
@@ -44,7 +42,6 @@ def test_raise(empty_merger):
     assert str(excinfo.value) == message
 
 
-@pytest.mark.vcr()
 def test_ignore(empty_merger):
     with warnings.catch_warnings():
         warnings.simplefilter('error')  # no unexpected warnings
@@ -53,7 +50,6 @@ def test_ignore(empty_merger):
         empty_merger.create_compiled_release(releases)
 
 
-@pytest.mark.vcr()
 def test_merge_by_position():
     fields = ['identifierMerge', 'array', 'identifierMerge', 'array']
     string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
@@ -76,7 +72,6 @@ def test_merge_by_position():
         assert str(record.message) == message
 
 
-@pytest.mark.vcr()
 def test_append():
     fields = ['identifierMerge', 'array', 'identifierMerge', 'array']
     string = "Multiple objects have the `id` value '1' in the `nested.{}` array"
@@ -99,7 +94,6 @@ def test_append():
         assert str(record.message) == message
 
 
-@pytest.mark.vcr()
 def test_append_no_id():
     merger = Merger(rule_overrides={('nested', 'array',): APPEND})
     data = load(os.path.join('schema', 'identifier-merge-no-id.json'))
