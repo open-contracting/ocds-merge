@@ -22,7 +22,7 @@ def get_merge_rules(schema: Schema = None) -> MergeRules:
         return _get_merge_rules_from_url_or_path(schema)
 
 
-@lru_cache()
+@lru_cache
 def _get_merge_rules_from_url_or_path(schema: str) -> MergeRules:
     if schema.startswith('http'):
         deref_schema = jsonref.load_uri(schema)

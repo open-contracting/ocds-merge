@@ -8,7 +8,7 @@ from ocdsmerge.exceptions import (MissingDateKeyError, NonObjectReleaseError, No
                                   NullDateValueError)
 
 
-@lru_cache()
+@lru_cache
 def get_tags() -> List[str]:
     """
     Returns the tags of all versions of OCDS in alphabetical order.
