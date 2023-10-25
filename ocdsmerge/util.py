@@ -4,8 +4,12 @@ from typing import Any, Dict, List
 
 import requests
 
-from ocdsmerge.exceptions import (MissingDateKeyError, NonObjectReleaseError, NonStringDateValueError,
-                                  NullDateValueError)
+from ocdsmerge.exceptions import (
+    MissingDateKeyError,
+    NonObjectReleaseError,
+    NonStringDateValueError,
+    NullDateValueError,
+)
 
 
 @lru_cache

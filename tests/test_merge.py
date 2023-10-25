@@ -8,8 +8,14 @@ from glob import glob
 import pytest
 
 from ocdsmerge import CompiledRelease, Merger, VersionedRelease
-from ocdsmerge.exceptions import (DuplicateIdValueWarning, InconsistentTypeError, MissingDateKeyError,
-                                  NonObjectReleaseError, NonStringDateValueError, NullDateValueError)
+from ocdsmerge.exceptions import (
+    DuplicateIdValueWarning,
+    InconsistentTypeError,
+    MissingDateKeyError,
+    NonObjectReleaseError,
+    NonStringDateValueError,
+    NullDateValueError,
+)
 from tests import load, path, schema_url, tags
 
 
