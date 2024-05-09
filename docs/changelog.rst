@@ -1,13 +1,14 @@
 Changelog
 =========
 
-Unreleased
-----------
+0.7.0 (2024-05-08)
+------------------
 
 Changed
 ~~~~~~~
 
 -  :func:`ocdsmerge.util.get_tags` raises an error if it encounters an HTTP error.
+-  :exc:`ocdsmerge.exceptions.DuplicateIdValueWarning` has no custom attributes.
 -  Drop support for Python 3.6 and 3.7.
 
 Added

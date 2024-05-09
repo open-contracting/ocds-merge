@@ -134,8 +134,10 @@ def _enumerate(
         if default_path not in identifiers:
             identifiers[default_path] = key
         elif identifiers[default_path] != key:
-            warnings.warn(DuplicateIdValueWarning(rule_path, default_key, 'Multiple objects have the `id` '
-                          f"value {default_key!r} in the `{'.'.join(map(str, rule_path))}` array"))
+            warnings.warn(
+                f'Multiple objects have the `id` value {default_key!r} in the `{".".join(map(str, rule_path))}` array',
+                category=DuplicateIdValueWarning,
+            )
 
         yield new_key, value
 

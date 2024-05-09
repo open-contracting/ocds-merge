@@ -1,6 +1,3 @@
-from typing import Tuple
-
-
 class OCDSMergeError(Exception):
     """Base class for exceptions from within this package"""
 
@@ -38,11 +35,3 @@ class OCDSMergeWarning(UserWarning):
 
 class DuplicateIdValueWarning(OCDSMergeWarning):
     """Used when at least two objects in the same array have the same value for the 'id' field"""
-
-    def __init__(self, path: Tuple[str, ...], id, message: str):
-        self.path = path
-        self.id = id
-        self.message = message
-
-    def __str__(self) -> str:
-        return str(self.message)

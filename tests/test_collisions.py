@@ -20,12 +20,7 @@ def test_warn(empty_merger):
     assert len(records) == 2
 
     for i, record in enumerate(records):
-        message = string.format(fields[i])
-
-        assert record.message.path == ('nested', fields[i],)
-        assert record.message.id == '1'
-        assert record.message.message == message
-        assert str(record.message) == message
+        assert str(record.message) == string.format(fields[i])
 
 
 def test_raise(empty_merger):
@@ -34,12 +29,7 @@ def test_raise(empty_merger):
             warnings.filterwarnings('error', category=DuplicateIdValueWarning)
             empty_merger.create_compiled_release(releases)
 
-    message = "Multiple objects have the `id` value '1' in the `nested.identifierMerge` array"
-
-    assert excinfo.value.path == ('nested', 'identifierMerge',)
-    assert excinfo.value.id == '1'
-    assert excinfo.value.message == message
-    assert str(excinfo.value) == message
+    assert str(excinfo.value) == "Multiple objects have the `id` value '1' in the `nested.identifierMerge` array"
 
 
 def test_ignore(empty_merger):
@@ -64,12 +54,7 @@ def test_merge_by_position():
     assert len(records) == 4
 
     for i, record in enumerate(records):
-        message = string.format(fields[i])
-
-        assert record.message.path == ('nested', fields[i],)
-        assert record.message.id == '1'
-        assert record.message.message == message
-        assert str(record.message) == message
+        assert str(record.message) == string.format(fields[i])
 
 
 def test_append():
@@ -86,12 +71,7 @@ def test_append():
     assert len(records) == 4
 
     for i, record in enumerate(records):
-        message = string.format(fields[i])
-
-        assert record.message.path == ('nested', fields[i],)
-        assert record.message.id == '1'
-        assert record.message.message == message
-        assert str(record.message) == message
+        assert str(record.message) == string.format(fields[i])
 
 
 def test_append_no_id():
