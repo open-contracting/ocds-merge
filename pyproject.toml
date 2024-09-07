@@ -1,3 +1,40 @@
 [build-system]
 requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "ocdsmerge"
+version = "0.7.0"
+authors = [{name = "Open Contracting Partnership", email = "data@open-contracting.org"}]
+description = "A library and reference implementation for merging OCDS releases"
+readme = "README.rst"
+license = {text = "BSD"}
+urls = {Homepage = "https://github.com/open-contracting/ocds-merge"}
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    "jsonref",
+    "requests",
+]
+
+[project.optional-dependencies]
+test = [
+    "coverage",
+    "jsonschema",
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "tests.*",
+]
