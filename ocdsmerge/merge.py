@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Type
+from __future__ import annotations
+
+from typing import Any
 
 from ocdsmerge.flatten import Flattened, RuleOverrides, flatten, unflatten
 from ocdsmerge.rules import MergeRules, Schema, get_merge_rules
@@ -9,8 +11,8 @@ class Merger:
     def __init__(
         self,
         schema: Schema = None,
-        merge_rules: Optional[MergeRules] = None,
-        rule_overrides: Optional[RuleOverrides] = None,
+        merge_rules: MergeRules | None = None,
+        rule_overrides: RuleOverrides | None = None,
     ):
         """
         Initializes a reusable ``Merger`` instance for creating merged releases.
@@ -29,19 +31,19 @@ class Merger:
         self.merge_rules = merge_rules
         self.rule_overrides = rule_overrides
 
-    def create_compiled_release(self, releases: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def create_compiled_release(self, releases: list[dict[str, Any]]) -> dict[str, Any]:
         """
         Merges a list of releases into a compiled release.
         """
         return self._create_merged_release(CompiledRelease, releases)
 
-    def create_versioned_release(self, releases: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def create_versioned_release(self, releases: list[dict[str, Any]]) -> dict[str, Any]:
         """
         Merges a list of releases into a versioned release.
         """
         return self._create_merged_release(VersionedRelease, releases)
 
-    def _create_merged_release(self, cls: Type["MergedRelease"], releases: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _create_merged_release(self, cls: type[MergedRelease], releases: list[dict[str, Any]]) -> dict[str, Any]:
         merged_release = cls(merge_rules=self.merge_rules, rule_overrides=self.rule_overrides)
         merged_release.extend(releases)
         return merged_release.asdict()
@@ -51,14 +53,14 @@ class MergedRelease:
     """
     Whether the class is for merging versioned releases.
     """
-    versioned: Optional[bool] = None
+    versioned: bool | None = None
 
     def __init__(
         self,
-        data: Optional[Dict[str, Any]] = None,
+        data: dict[str, Any] | None = None,
         schema: Schema = None,
-        merge_rules: Optional[MergeRules] = None,
-        rule_overrides: Optional[RuleOverrides] = None,
+        merge_rules: MergeRules | None = None,
+        rule_overrides: RuleOverrides | None = None,
     ):
         """
         Initializes a merged release.
@@ -83,20 +85,20 @@ class MergedRelease:
         else:
             self.data = flatten(data, self.merge_rules, self.rule_overrides, flattened={}, versioned=self.versioned)
 
-    def asdict(self) -> Dict[str, Any]:
+    def asdict(self) -> dict[str, Any]:
         """
         Returns the merged release as a dictionary.
         """
         return unflatten(self.data)
 
-    def extend(self, releases: List[Dict[str, Any]]) -> None:
+    def extend(self, releases: list[dict[str, Any]]) -> None:
         """
         Sorts and merges many releases into the merged release.
         """
         for release in sorted_releases(releases):
             self.append(release)
 
-    def append(self, release: Dict[str, Any]) -> None:
+    def append(self, release: dict[str, Any]) -> None:
         """
         Merges one release into the merged release.
         """
@@ -113,7 +115,7 @@ class MergedRelease:
         self.flat_append(flat, ocid, release_id, date, tag)
 
     def flat_append(
-        self, flat: Flattened, ocid: Optional[str], release_id: Optional[str], date: Optional[str], tag: Optional[str]
+        self, flat: Flattened, ocid: str | None, release_id: str | None, date: str | None, tag: str | None
     ) -> None:
         raise NotImplementedError('subclasses must implement flat_append()')
 
@@ -121,12 +123,12 @@ class MergedRelease:
 class CompiledRelease(MergedRelease):
     versioned = False
 
-    def __init__(self, data: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(self, data: dict[str, Any] | None = None, **kwargs):
         super().__init__(data, **kwargs)
         self.data[('tag',)] = ['compiled']
 
     def flat_append(
-        self, flat: Flattened, ocid: Optional[str], release_id: Optional[str], date: Optional[str], tag: Optional[str]
+        self, flat: Flattened, ocid: str | None, release_id: str | None, date: str | None, tag: str | None  # noqa: ARG002
     ) -> None:
         # Add an `id` and `date`.
         self.data[('id',)] = f'{ocid}-{date}'
@@ -141,7 +143,7 @@ class VersionedRelease(MergedRelease):
     versioned = True
 
     def flat_append(
-        self, flat: Flattened, ocid: Optional[str], release_id: Optional[str], date: Optional[str], tag: Optional[str]
+        self, flat: Flattened, ocid: str | None, release_id: str | None, date: str | None, tag: str | None
     ) -> None:
         # Don't version the OCID.
         flat.pop(('ocid',), None)

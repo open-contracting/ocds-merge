@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from functools import lru_cache
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, Optional, Tuple, Union
 
 import jsonref
 
@@ -18,8 +20,7 @@ def get_merge_rules(schema: Schema = None) -> MergeRules:
     if isinstance(schema, dict):
         # jsonref.JsonRef is deprecated, but used for backwards-compatibility with jsonref 0.x.
         return _get_merge_rules_from_dereferenced_schema(jsonref.JsonRef.replace_refs(schema))
-    else:
-        return _get_merge_rules_from_url_or_path(schema)
+    return _get_merge_rules_from_url_or_path(schema)
 
 
 @lru_cache
@@ -32,13 +33,13 @@ def _get_merge_rules_from_url_or_path(schema: str) -> MergeRules:
     return _get_merge_rules_from_dereferenced_schema(deref_schema)
 
 
-def _get_merge_rules_from_dereferenced_schema(deref_schema: Dict[str, Any]) -> MergeRules:
+def _get_merge_rules_from_dereferenced_schema(deref_schema: dict[str, Any]) -> MergeRules:
     return dict(_get_merge_rules(deref_schema['properties']))
 
 
 def _get_merge_rules(
-    properties: Dict[str, Any], path: Optional[Tuple[str, ...]] = None
-) -> Generator[Tuple[Tuple[str, ...], str], None, None]:
+    properties: dict[str, Any], path: tuple[str, ...] | None = None
+) -> Generator[tuple[tuple[str, ...], str], None, None]:
     """
     Yields merge rules as key-value pairs, in which the first element is a JSON path as a tuple, and the second element
     is the merge rule as a string ("omitWhenMerged" or "wholeListMerge").
@@ -47,7 +48,7 @@ def _get_merge_rules(
         path = ()
 
     for key, value in properties.items():
-        new_path = path + (key,)
+        new_path = (*path, key)
         types = _get_types(value)
 
         # `omitWhenMerged` supersedes all other rules.
@@ -73,7 +74,7 @@ def _get_merge_rules(
                     yield from _get_merge_rules(value['items']['properties'], path=new_path)
 
 
-def _get_types(prop: Dict[str, Any]) -> List[str]:
+def _get_types(prop: dict[str, Any]) -> list[str]:
     """
     Returns a property's `type` as a list.
     """

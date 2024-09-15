@@ -17,7 +17,7 @@ from glob import glob
 
 import pytest
 from jsonschema import FormatChecker
-from jsonschema.validators import Draft4Validator as validator
+from jsonschema.validators import Draft4Validator as Validator
 
 from tests import load, path, tags
 
@@ -40,24 +40,26 @@ def get_test_cases():
         assert len(filenames), 'ocds fixtures not found'
         for versioned, schema_path in ((False, release_schema_path), (True, versioned_release_schema_path)):
             schema = load(schema_path.format(patch_tag))
-            for filename in filenames:
-                if not versioned ^ filename.endswith('-versioned.json'):
-                    test_valid_argvalues.append((filename, schema))
+            test_valid_argvalues.extend(
+                (filename, schema)
+                for filename in filenames
+                if not versioned ^ filename.endswith('-versioned.json')
+            )
 
     return test_valid_argvalues
 
 
-@pytest.mark.parametrize('filename,schema', get_test_cases())
+@pytest.mark.parametrize(('filename', 'schema'), get_test_cases())
 def test_valid(filename, schema):
     errors = 0
 
     with open(filename) as f:
         data = json.load(f)
-    if filename.endswith('-versioned.json') or filename.endswith('-compiled.json'):
+    if filename.endswith(('-compiled.json', '-versioned.json')):
         data = [data]
 
     for datum in data:
-        for error in validator(schema, format_checker=FormatChecker()).iter_errors(datum):
+        for error in Validator(schema, format_checker=FormatChecker()).iter_errors(datum):
             errors += 1
             warnings.warn(json.dumps(error.instance, indent=2))
             warnings.warn(f"{error.message} ({'/'.join(error.absolute_schema_path)})\n")

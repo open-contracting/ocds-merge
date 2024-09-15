@@ -35,7 +35,7 @@ def get_test_cases():
     return test_merge_argvalues
 
 
-@pytest.mark.parametrize('error, data', [
+@pytest.mark.parametrize(('error', 'data'), [
     (MissingDateKeyError, {}),
     (NullDateValueError, {'date': None}),
     (NonStringDateValueError, {'date': {}}),
@@ -96,14 +96,11 @@ def test_key_error(empty_merger):
     assert str(excinfo.value) == message
 
 
-@pytest.mark.parametrize('filename,schema', get_test_cases())
+@pytest.mark.parametrize(('filename', 'schema'), get_test_cases())
 def test_merge(filename, schema):
     merger = Merger(schema)
 
-    if filename.endswith('-compiled.json'):
-        infix = 'compiled'
-    else:
-        infix = 'versioned'
+    infix = 'compiled' if filename.endswith('-compiled.json') else 'versioned'
 
     with open(filename) as f:
         expected = json.load(f)
@@ -123,7 +120,7 @@ def test_merge(filename, schema):
     assert actual == expected, filename + '\n' + json.dumps(actual)
 
 
-@pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
+@pytest.mark.parametrize(('infix', 'cls'), [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_extend(infix, cls, empty_merger):
     expected = load(os.path.join('1.1', f'lists-{infix}.json'))
     releases = load(os.path.join('1.1', 'lists.json'))
@@ -141,7 +138,7 @@ def test_extend(infix, cls, empty_merger):
     assert merger.asdict() == expected
 
 
-@pytest.mark.parametrize('infix,cls', [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
+@pytest.mark.parametrize(('infix', 'cls'), [('compiled', CompiledRelease), ('versioned', VersionedRelease)])
 def test_append(infix, cls, empty_merger):
     expected = load(os.path.join('1.1', f'lists-{infix}.json'))
     releases = load(os.path.join('1.1', 'lists.json'))
@@ -176,7 +173,7 @@ def test_inconsistent_type(empty_merger):
     assert str(excinfo.value) == "An earlier release had the literal 1 for /integer, but the current release has an object with a 'object' key"  # noqa: E501
 
 
-@pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
+@pytest.mark.parametrize(('i', 'j'), [(0, 0), (0, 1), (1, 0), (1, 1)])
 def test_merge_when_array_is_mixed(i, j, simple_merger):
     data = [{
         "ocid": "ocds-213czf-A",
@@ -219,7 +216,7 @@ def test_merge_when_array_is_mixed(i, j, simple_merger):
         f'removed item index {j} from release index {i}'
 
 
-@pytest.mark.parametrize('i,j', [(0, 0), (0, 1), (1, 0), (1, 1)])
+@pytest.mark.parametrize(('i', 'j'), [(0, 0), (0, 1), (1, 0), (1, 1)])
 def test_merge_when_array_is_mixed_without_schema(i, j, empty_merger):
     data = [{
         'ocid': 'ocds-213czf-A',

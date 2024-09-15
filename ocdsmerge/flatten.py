@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 import uuid
 import warnings
 from enum import Enum, auto, unique
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Generator, Tuple, Union
 
 from ocdsmerge.exceptions import DuplicateIdValueWarning, InconsistentTypeError
-from ocdsmerge.rules import MergeRules
+
+if TYPE_CHECKING:
+    from ocdsmerge.rules import MergeRules
 
 VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
 
@@ -23,6 +27,8 @@ RuleOverrides = Dict[Tuple[str, ...], MergeStrategy]
 
 
 class IdValue(str):
+    __slots__ = ('identifier', '_original_value')
+
     """
     A string with ``identifier`` and ``original_value`` properties.
     """
@@ -31,15 +37,15 @@ class IdValue(str):
         str.__init__(identifier)
 
     @property
-    def original_value(self) -> Optional[Identifier]:
+    def original_value(self) -> Identifier | None:
         return self._original_value
 
     @original_value.setter
-    def original_value(self, original_value: Optional[Identifier]) -> None:
+    def original_value(self, original_value: Identifier | None) -> None:
         self._original_value = original_value
 
 
-def is_versioned_value(value: Dict[str, Any]) -> bool:
+def is_versioned_value(value: dict[str, Any]) -> bool:
     """
     Returns whether the value is a versioned value.
     """
@@ -47,19 +53,19 @@ def is_versioned_value(value: Dict[str, Any]) -> bool:
 
 
 def flatten(
-    obj: Union[List[Dict[str, Any]], Dict[str, Any]],
+    obj: list[dict[str, Any]] | dict[str, Any],
     merge_rules: MergeRules,
     rule_overrides: RuleOverrides,
     flattened: Flattened,
-    path: Tuple[Identifier, ...] = (),
-    rule_path: Tuple[str, ...] = (),
-    versioned: Optional[bool] = False
+    path: tuple[Identifier, ...] = (),
+    rule_path: tuple[str, ...] = (),
+    versioned: bool | None = False,  # noqa: FBT002
 ) -> Flattened:
     """
     Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
 
     Replaces numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
-    in arrays with different `id` values have different JSON paths – and makes it easy to identify such arrays.
+    in arrays with different `id` values have different JSON paths - and makes it easy to identify such arrays.
 
     .. code:: json
 
@@ -97,7 +103,7 @@ def flatten(
 
     for key, value in iterable:
         if is_dict:
-            new_rule_path = rule_path + (key,)
+            new_rule_path = (*rule_path, key)
 
         new_path_merge_rules = merge_rules.get(new_rule_path, None)
 
@@ -109,20 +115,20 @@ def flatten(
         # cases but not in others.
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#objects
-        elif new_path_merge_rules == 'wholeListMerge' or not isinstance(value, (dict, list)) or \
+        if new_path_merge_rules == 'wholeListMerge' or not isinstance(value, (dict, list)) or \
                 type(value) is list and any(not isinstance(item, dict) for item in value) or \
                 versioned and value and all(is_versioned_value(item) for item in value):
-            flattened[path + (key,)] = value
+            flattened[(*path, key)] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
-            flatten(value, merge_rules, rule_overrides, flattened, path + (key,), new_rule_path, versioned)
+            flatten(value, merge_rules, rule_overrides, flattened, (*path, key), new_rule_path, versioned)
 
     return flattened
 
 
 def _enumerate(
-    obj: List[Dict[str, Any]], path: Tuple[Identifier, ...], rule_path: Tuple[str, ...], rule: Optional[MergeStrategy]
-) -> Generator[Tuple[IdValue, Any], None, None]:
+    obj: list[dict[str, Any]], path: tuple[Identifier, ...], rule_path: tuple[str, ...], rule: MergeStrategy | None
+) -> Generator[tuple[IdValue, Any], None, None]:
     # This tracks the identifiers of objects in an array, to warn about collisions.
     identifiers = {}
 
@@ -130,7 +136,7 @@ def _enumerate(
         new_key, default_key = _id_value(key, value, rule)
 
         # Check whether the identifier is used by other objects in the array.
-        default_path = path + (default_key,)
+        default_path = (*path, default_key)
         if default_path not in identifiers:
             identifiers[default_path] = key
         elif identifiers[default_path] != key:
@@ -142,7 +148,7 @@ def _enumerate(
         yield new_key, value
 
 
-def _id_value(key: int, value: Dict[str, Any], rule: Optional[MergeStrategy]) -> Tuple[IdValue, IdValue]:
+def _id_value(key: int, value: dict[str, Any], rule: MergeStrategy | None) -> tuple[IdValue, IdValue]:
     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
     if 'id' in value:
@@ -157,10 +163,8 @@ def _id_value(key: int, value: Dict[str, Any], rule: Optional[MergeStrategy]) ->
     default_key = IdValue(identifier)
 
     if rule == MergeStrategy.APPEND:
-        if 'id' in value:
-            new_key = IdValue(str(uuid.uuid1(1)))
-        else:  # avoid creating an extra UUID
-            new_key = default_key
+        # Avoid creating an extra UUID.
+        new_key = IdValue(str(uuid.uuid1(1))) if 'id' in value else default_key
     elif rule == MergeStrategy.MERGE_BY_POSITION:
         new_key = IdValue(key)
     else:
@@ -172,21 +176,20 @@ def _id_value(key: int, value: Dict[str, Any], rule: Optional[MergeStrategy]) ->
     return new_key, default_key
 
 
-def unflatten(flattened: Flattened) -> Dict[str, Any]:
+def unflatten(flattened: Flattened) -> dict[str, Any]:
     """
     Unflattens a flattened object into a JSON object.
     """
-    unflattened: Dict[str, Any] = {}
+    unflattened: dict[str, Any] = {}
 
-    identifiers: Dict[Tuple[Identifier, ...], Dict] = {}
+    identifiers: dict[tuple[Identifier, ...], dict] = {}
 
     for key in flattened:
         current_node = unflattened
 
         for end, part in enumerate(key, 1):
-            # When running mypy, uncomment these lines:
-            # if TYPE_CHECKING:
-            #     assert type(part) is str
+            if TYPE_CHECKING:
+                assert type(part) is str
 
             # If this is a path to an item of an array.
             # See https://standard.open-contracting.org/1.1/en/schema/merging/#identifier-merge
