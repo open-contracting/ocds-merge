@@ -16,26 +16,20 @@ from ocdsmerge.exceptions import (
 
 @lru_cache
 def get_tags() -> list[str]:
-    """
-    Returns the tags of all versions of OCDS in alphabetical order.
-    """
+    """Return the tags of all versions of OCDS in alphabetical order."""
     response = requests.get('https://standard.open-contracting.org/schema/', timeout=10)
     response.raise_for_status()
     return re.findall(r'"(\d+__\d+__\d+)/', response.text)
 
 
 def get_release_schema_url(tag: str) -> str:
-    """
-    Returns the URL of the release schema in the given version of OCDS.
-    """
+    """Return the URL of the release schema in the given version of OCDS."""
     return f'https://standard.open-contracting.org/schema/{tag}/release-schema.json'
 
 
 # If we need a method to get dates from releases, see https://github.com/open-contracting/ocds-merge/issues/25
 def sorted_releases(releases: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """
-    Sorts a list of releases by date.
-    """
+    """Sort a list of releases by date."""
     # Avoids an error if sorting a single compiled release.
     if isinstance(releases, list) and len(releases) == 1 and isinstance(releases[0], dict):
         return releases

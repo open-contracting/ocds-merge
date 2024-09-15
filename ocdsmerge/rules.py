@@ -1,20 +1,25 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Any, Dict, Generator, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 import jsonref
 
 from ocdsmerge.util import get_release_schema_url, get_tags
 
-MergeRules = Dict[Tuple[str, ...], str]
-Schema = Optional[Union[str, Dict[str, Any]]]
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+MergeRules = dict[tuple[str, ...], str]
+Schema = Optional[Union[str, dict[str, Any]]]
 
 
 def get_merge_rules(schema: Schema = None) -> MergeRules:
     """
-    Returns merge rules as key-value pairs, in which the key is a JSON path as a tuple, and the value is the merge rule
-    as a string ("omitWhenMerged" or "wholeListMerge").
+    Return merge rules as key-value pairs.
+
+    The key is a JSON path as a tuple, and the value is the merge rule as a string
+    ("omitWhenMerged" or "wholeListMerge").
     """
     schema = schema or get_release_schema_url(get_tags()[-1])
     if isinstance(schema, dict):
@@ -41,8 +46,10 @@ def _get_merge_rules(
     properties: dict[str, Any], path: tuple[str, ...] | None = None
 ) -> Generator[tuple[tuple[str, ...], str], None, None]:
     """
-    Yields merge rules as key-value pairs, in which the first element is a JSON path as a tuple, and the second element
-    is the merge rule as a string ("omitWhenMerged" or "wholeListMerge").
+    Yield merge rules as key-value pairs.
+
+    The first element is a JSON path as a tuple, and the second element is the merge rule as a string
+    ("omitWhenMerged" or "wholeListMerge").
     """
     if path is None:
         path = ()
@@ -75,9 +82,7 @@ def _get_merge_rules(
 
 
 def _get_types(prop: dict[str, Any]) -> list[str]:
-    """
-    Returns a property's `type` as a list.
-    """
+    """Return a property's `type` as a list."""
     if 'type' not in prop:
         return []
     if isinstance(prop['type'], str):

@@ -7,4 +7,5 @@ recursive-include tests *.json
 recursive-include tests *.md
 recursive-include tests *.py
 recursive-include tests *.yaml
+exclude .pre-commit-config.yaml
 exclude .readthedocs.yaml

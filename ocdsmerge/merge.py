@@ -15,7 +15,7 @@ class Merger:
         rule_overrides: RuleOverrides | None = None,
     ):
         """
-        Initializes a reusable ``Merger`` instance for creating merged releases.
+        Initialize a reusable ``Merger`` instance for creating merged releases.
 
         :param schema: the release schema (if not provided, will default to the latest version of OCDS)
         :param merge_rules: the merge rules (if not provided, will determine the rules from the ``schema``)
@@ -32,15 +32,11 @@ class Merger:
         self.rule_overrides = rule_overrides
 
     def create_compiled_release(self, releases: list[dict[str, Any]]) -> dict[str, Any]:
-        """
-        Merges a list of releases into a compiled release.
-        """
+        """Merge a list of releases into a compiled release."""
         return self._create_merged_release(CompiledRelease, releases)
 
     def create_versioned_release(self, releases: list[dict[str, Any]]) -> dict[str, Any]:
-        """
-        Merges a list of releases into a versioned release.
-        """
+        """Merge a list of releases into a versioned release."""
         return self._create_merged_release(VersionedRelease, releases)
 
     def _create_merged_release(self, cls: type[MergedRelease], releases: list[dict[str, Any]]) -> dict[str, Any]:
@@ -50,9 +46,8 @@ class Merger:
 
 
 class MergedRelease:
-    """
-    Whether the class is for merging versioned releases.
-    """
+    """Whether the class is for merging versioned releases."""
+
     versioned: bool | None = None
 
     def __init__(
@@ -63,7 +58,7 @@ class MergedRelease:
         rule_overrides: RuleOverrides | None = None,
     ):
         """
-        Initializes a merged release.
+        Initialize a merged release.
 
         :param data: the latest copy of the merged release, if any
         :param schema: the release schema (if not provided, will default to the latest version of OCDS)
@@ -86,22 +81,16 @@ class MergedRelease:
             self.data = flatten(data, self.merge_rules, self.rule_overrides, flattened={}, versioned=self.versioned)
 
     def asdict(self) -> dict[str, Any]:
-        """
-        Returns the merged release as a dictionary.
-        """
+        """Return the merged release as a dictionary."""
         return unflatten(self.data)
 
     def extend(self, releases: list[dict[str, Any]]) -> None:
-        """
-        Sorts and merges many releases into the merged release.
-        """
+        """Sort and merge many releases into the merged release."""
         for release in sorted_releases(releases):
             self.append(release)
 
     def append(self, release: dict[str, Any]) -> None:
-        """
-        Merges one release into the merged release.
-        """
+        """Merge one release into the merged release."""
         release = release.copy()
 
         # Store the values of fields that set "omitWhenMerged": true.

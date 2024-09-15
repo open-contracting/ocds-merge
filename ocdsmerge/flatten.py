@@ -3,11 +3,13 @@ from __future__ import annotations
 import uuid
 import warnings
 from enum import Enum, auto, unique
-from typing import TYPE_CHECKING, Any, Dict, Generator, Tuple, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from ocdsmerge.exceptions import DuplicateIdValueWarning, InconsistentTypeError
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from ocdsmerge.rules import MergeRules
 
 VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
@@ -22,8 +24,8 @@ class MergeStrategy(Enum):
 globals().update(MergeStrategy.__members__)
 
 Identifier = Union[int, str]
-Flattened = Dict[Tuple[Identifier, ...], Any]
-RuleOverrides = Dict[Tuple[str, ...], MergeStrategy]
+Flattened = dict[tuple[Identifier, ...], Any]
+RuleOverrides = dict[tuple[str, ...], MergeStrategy]
 
 
 class IdValue(str):
@@ -46,9 +48,7 @@ class IdValue(str):
 
 
 def is_versioned_value(value: dict[str, Any]) -> bool:
-    """
-    Returns whether the value is a versioned value.
-    """
+    """Return whether the value is a versioned value."""
     return len(value) == 4 and VERSIONED_VALUE_KEYS.issuperset(value)
 
 
@@ -62,10 +62,10 @@ def flatten(
     versioned: bool | None = False,  # noqa: FBT002
 ) -> Flattened:
     """
-    Flattens a JSON object into key-value pairs, in which the key is the JSON path as a tuple. For example:
+    Flatten a JSON object into key-value pairs, in which the key is the JSON path as a tuple.
 
-    Replaces numbers in JSON paths (representing positions in arrays) with special objects. This ensures that objects
-    in arrays with different `id` values have different JSON paths - and makes it easy to identify such arrays.
+    It replaces numbers in JSON paths (representing positions in arrays) with special objects. This ensures objects
+    in arrays with different ``id`` values have different JSON paths - and makes it easy to identify such arrays.
 
     .. code:: json
 
@@ -143,6 +143,7 @@ def _enumerate(
             warnings.warn(
                 f'Multiple objects have the `id` value {default_key!r} in the `{".".join(map(str, rule_path))}` array',
                 category=DuplicateIdValueWarning,
+                stacklevel=2,
             )
 
         yield new_key, value
@@ -177,9 +178,7 @@ def _id_value(key: int, value: dict[str, Any], rule: MergeStrategy | None) -> tu
 
 
 def unflatten(flattened: Flattened) -> dict[str, Any]:
-    """
-    Unflattens a flattened object into a JSON object.
-    """
+    """Unflattens a flattened object into a JSON object."""
     unflattened: dict[str, Any] = {}
 
     identifiers: dict[tuple[Identifier, ...], dict] = {}
