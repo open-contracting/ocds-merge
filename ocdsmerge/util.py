@@ -42,8 +42,11 @@ def sorted_releases(releases: list[dict[str, Any]]) -> list[dict[str, Any]]:
             if 'NoneType' in e.args[0]:
                 raise NullDateValueError('The `date` field of at least one release is null.') from e
             raise NonStringDateValueError('The `date` field of at least one release is not a string.') from e
-        if e.args[0] in ('string indices must be integers', "string indices must be integers, not 'str'",
-                           'string index indices must be integers or slices, not str'):
+        if e.args[0] in {
+            'string indices must be integers',
+            "string indices must be integers, not 'str'",
+            'string index indices must be integers or slices, not str',
+        }:
             raise NonObjectReleaseError(
                 'At least one release is a string, not a dict. Use `json.loads` to parse the string as JSON.'
             ) from e
@@ -55,6 +58,6 @@ def sorted_releases(releases: list[dict[str, Any]]) -> list[dict[str, Any]]:
             raise NonObjectReleaseError('At least one release is a list, not a dict.') from e
         if e.args[0] == 'tuple indices must be integers or slices, not str':
             raise NonObjectReleaseError('At least one release is a tuple, not a dict.') from e
-        if e.args[0] in ("'set' object is not subscriptable", "'set' object is not subscriptable (key 'date')"):
+        if e.args[0] in {"'set' object is not subscriptable", "'set' object is not subscriptable (key 'date')"}:
             raise NonObjectReleaseError('At least one release is a set, not a dict.') from e
         raise
