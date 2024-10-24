@@ -223,8 +223,8 @@ Changed
 Fixed
 ~~~~~
 
--  If a field’s value is set to ``null``, it is omitted from the compiled release.
--  If a field’s value is an empty object or empty array in a release, skip it.
+-  If a field's value is set to ``null``, it is omitted from the compiled release.
+-  If a field's value is an empty object or empty array in a release, skip it.
 
 0.5.1 (2019-01-09)
 ------------------
@@ -245,7 +245,7 @@ Advisories
 
 The following behaviors were previously undocumented, though they are implied by the merge rules:
 
--  If an array doesn’t set ``wholeListMerge`` and its objects have the same ``id`` in the same release, only the last object is retained. `66d2352 <https://github.com/open-contracting/ocds-merge/commit/66d2352791457f5f7436ba7049587dec4ebfaa89>`__
+-  If an array doesn't set ``wholeListMerge`` and its objects have the same ``id`` in the same release, only the last object is retained. `66d2352 <https://github.com/open-contracting/ocds-merge/commit/66d2352791457f5f7436ba7049587dec4ebfaa89>`__
 -  If a field sets ``omitWhenMerged``, ``wholeListMerge`` is ignored on its sub-fields.
 -  If an array sets ``wholeListMerge``, ``omitWhenMerged`` is ignored on its sub-fields. `a88b618 <https://github.com/open-contracting/ocds-merge/commit/a88b6183d4da6a680d74d8078b969e30126c9ca8>`__
 
@@ -255,13 +255,13 @@ Added
 -  Test cases for other implementations. See README.
 -  You can specify the merge rules with a new ``merge_rules`` argument. `#17 <https://github.com/open-contracting/ocds-merge/pull/17>`__ `#18 <https://github.com/open-contracting/ocds-merge/pull/18>`__
 -  You can specify a custom schema by passing parsed JSON to the existing ``schema`` argument. `4244b3f <https://github.com/open-contracting/ocds-merge/commit/4244b3f007ef8400617dcd02f9bf9659b06c3248>`__
--  If the schema isn’t provided or is a URL or file path, it is parsed once and cached. `5d2f831 <https://github.com/open-contracting/ocds-merge/commit/5d2f83183d43919156962ac909e3a5b231da7c0c>`__
+-  If the schema isn't provided or is a URL or file path, it is parsed once and cached. `5d2f831 <https://github.com/open-contracting/ocds-merge/commit/5d2f83183d43919156962ac909e3a5b231da7c0c>`__
 -  Recognizes OCDS 1.0 ``ocdsOmit`` and ``ocdsVersion`` merge strategies. `e67353d <https://github.com/open-contracting/ocds-merge/commit/e67353d07e4a4f80c4c4f2edb9c782977b68ab7f>`__
 
 Changed
 ~~~~~~~
 
--  Sets the ``id`` of the compiled release to a concatenation of the ``ocid`` and the latest release’s ``date``, instead of to the latest release’s ``id``. `8c89e43 <https://github.com/open-contracting/ocds-merge/commit/8c89e43871d24881316aee22ce5b13f7dbb4ccd9>`__
+-  Sets the ``id`` of the compiled release to a concatenation of the ``ocid`` and the latest release's ``date``, instead of to the latest release's ``id``. `8c89e43 <https://github.com/open-contracting/ocds-merge/commit/8c89e43871d24881316aee22ce5b13f7dbb4ccd9>`__
 -  Maintains the same order as the input data, as much as possible. `#9 <https://github.com/open-contracting/ocds-merge/pull/9>`__ `da648b0 <https://github.com/open-contracting/ocds-merge/commit/da648b03ddffdb996b273d18776031c8eed3c4b8>`__
 
 Fixed
@@ -269,19 +269,19 @@ Fixed
 
 The following conditions occur on structurally correct OCDS data:
 
--  If the items in an array were non-objects, the array wouldn’t be treated as a single value. `#14 <https://github.com/open-contracting/ocds-merge/pull/14>`__
+-  If the items in an array were non-objects, the array wouldn't be treated as a single value. `#14 <https://github.com/open-contracting/ocds-merge/pull/14>`__
 -  If an array were mixing objects with and without ``id`` fields, the compiled release would merge objects if an array index matched an ``id`` value. The new behavior is to keep any objects without ``id`` values. `0e26402 <https://github.com/open-contracting/ocds-merge/commit/0e26402198b4df97d5d740eb92d38b6f149aece4>`__
--  If objects in an array weren’t defined in the schema and had no ``id`` fields, the objects would be merged based on array index. The new behavior is to keep all objects. `0e26402 <https://github.com/open-contracting/ocds-merge/commit/0e26402198b4df97d5d740eb92d38b6f149aece4>`__
+-  If objects in an array weren't defined in the schema and had no ``id`` fields, the objects would be merged based on array index. The new behavior is to keep all objects. `0e26402 <https://github.com/open-contracting/ocds-merge/commit/0e26402198b4df97d5d740eb92d38b6f149aece4>`__
 
-The following conditions don’t occur in OCDS schema, but can occur in extensions:
+The following conditions don't occur in OCDS schema, but can occur in extensions:
 
 -  If objects in an array were defined in the schema and had no ``id`` fields, and ``wholeListMerge`` were not set, the objects would be merged based on array index, instead of using the whole-list-merge strategy. `73dd088 <https://github.com/open-contracting/ocds-merge/commit/73dd088da9fbfc9035ea94f65ff8244162dc049f>`__
 -  If an array were defined in the schema as having objects and non-objects, the identifier-merge strategy would sometimes be used instead of the whole-list-merge strategy. `d222e09 <https://github.com/open-contracting/ocds-merge/commit/d222e09e63cdf361c9cf072bbe8ca9b89a466e87>`__
 
-The following conditions don’t occur in OCDS schema, or in extensions authored by the Open Contracting Partnership, but can occur in extensions authored by others:
+The following conditions don't occur in OCDS schema, or in extensions authored by the Open Contracting Partnership, but can occur in extensions authored by others:
 
 -  If ``omitWhenMerged`` or ``wholeListMerge`` were ``false``, they were treated as ``true``, instead of being ignored. `d115fa2 <https://github.com/open-contracting/ocds-merge/commit/d115fa2802a8fc341f7265a478dd3c85ec31db63>`__
--  If ``omitWhenMerged`` were set on an array of non-objects, the array wouldn’t be omitted, instead of being omitted. `2d39a0f <https://github.com/open-contracting/ocds-merge/commit/2d39a0fe666258761d44aea81861ef42ac01a181>`__
+-  If ``omitWhenMerged`` were set on an array of non-objects, the array wouldn't be omitted, instead of being omitted. `2d39a0f <https://github.com/open-contracting/ocds-merge/commit/2d39a0fe666258761d44aea81861ef42ac01a181>`__
 -  If ``wholeListMerge`` were set on an object, only the latest version of the object would be retained in the compiled release, instead of merging all versions of the object. `b2a0dc6 <https://github.com/open-contracting/ocds-merge/commit/b2a0dc657bb4556c265d796c1afcc160b632cc2a>`__
 
 0.4 (2018-01-04)
