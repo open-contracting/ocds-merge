@@ -29,7 +29,7 @@ RuleOverrides = dict[tuple[str, ...], MergeStrategy]
 
 
 class IdValue(str):
-    __slots__ = ('identifier', '_original_value')
+    __slots__ = ('_original_value', 'identifier')
 
     """
     A string with ``identifier`` and ``original_value`` properties.
@@ -116,8 +116,8 @@ def flatten(
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#objects
         if new_path_merge_rules == 'wholeListMerge' or not isinstance(value, (dict, list)) or \
-                type(value) is list and any(not isinstance(item, dict) for item in value) or \
-                versioned and value and all(is_versioned_value(item) for item in value):
+                (type(value) is list and any(not isinstance(item, dict) for item in value)) or \
+                (versioned and value and all(is_versioned_value(item) for item in value)):
             flattened[(*path, key)] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
