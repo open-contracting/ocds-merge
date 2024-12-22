@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from functools import lru_cache
+from operator import itemgetter
 from typing import Any
 
 import requests
@@ -34,7 +35,7 @@ def sorted_releases(releases: list[dict[str, Any]]) -> list[dict[str, Any]]:
     if isinstance(releases, list) and len(releases) == 1 and isinstance(releases[0], dict):
         return releases
     try:
-        return sorted(releases, key=lambda release: release['date'])
+        return sorted(releases, key=itemgetter('date'))
     except KeyError as e:
         raise MissingDateKeyError('date', 'The `date` field of at least one release is missing.') from e
     except TypeError as e:
