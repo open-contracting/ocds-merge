@@ -194,7 +194,7 @@ def unflatten(flattened: Flattened) -> dict[str, Any]:
             # See https://standard.open-contracting.org/1.1/en/schema/merging/#identifier-merge
             if type(part) is IdValue:
                 # If no `id` of an object in the array matches, append a new object.
-                id_path = key[:end - 1] + (part.identifier,)
+                id_path = (*key[:end - 1], part.identifier)
                 if id_path not in identifiers:
                     new_node = {}
 
