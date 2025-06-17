@@ -7,6 +7,7 @@ Unreleased
 Changed
 ~~~~~~~
 
+-  :func:`ocdsmerge.flatten.flatten` accepts ``versioned`` as a keyword argument only.
 -  Drop support for Python 3.8.
 
 0.7.0 (2024-05-08)

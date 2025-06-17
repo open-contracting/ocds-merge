@@ -59,7 +59,8 @@ def flatten(
     flattened: Flattened,
     path: tuple[Identifier, ...] = (),
     rule_path: tuple[str, ...] = (),
-    versioned: bool | None = False,  # noqa: FBT002
+    *,
+    versioned: bool | None = False,
 ) -> Flattened:
     """
     Flatten a JSON object into key-value pairs, in which the key is the JSON path as a tuple.
@@ -121,7 +122,7 @@ def flatten(
             flattened[(*path, key)] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
-            flatten(value, merge_rules, rule_overrides, flattened, (*path, key), new_rule_path, versioned)
+            flatten(value, merge_rules, rule_overrides, flattened, (*path, key), new_rule_path, versioned=versioned)
 
     return flattened
 
