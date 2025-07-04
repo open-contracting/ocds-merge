@@ -156,10 +156,15 @@ def test_append(infix, cls, empty_merger):
     assert merger.asdict() == expected
 
 
-def test_inconsistent_type(empty_merger):
+@pytest.mark.parametrize(('value', 'infix'), [
+    (1, '1'),
+    ([1], '[1]'),
+    ([{'object': 1}], "[{'object': 1}]")
+])
+def test_inconsistent_type_object_last(value, infix, empty_merger):
     data = [{
         "date": "2000-01-01T00:00:00Z",
-        "integer": 1
+        "integer": value
     }, {
         "date": "2000-01-02T00:00:00Z",
         "integer": {
@@ -170,7 +175,28 @@ def test_inconsistent_type(empty_merger):
     with pytest.raises(InconsistentTypeError) as excinfo:
         empty_merger.create_compiled_release(data)
 
-    assert str(excinfo.value) == "An earlier release had the literal 1 for /integer, but the current release has an object with a 'object' key"  # noqa: E501
+    assert str(excinfo.value) == f"An earlier release had the value {infix} for /integer, but the current release has an object with a 'object' key"  # noqa: E501
+
+
+def test_inconsistent_type_object_first(empty_merger):
+    data = [{
+        "date": "2000-01-01T00:00:00Z",
+        "integer": {
+            "object": 1
+        }
+    }, {
+        "date": "2000-01-02T00:00:00Z",
+        "integer": [
+            {
+                "object": 1
+            }
+        ]
+    }]
+
+    with pytest.raises(InconsistentTypeError) as excinfo:
+        empty_merger.create_compiled_release(data)
+
+    assert str(excinfo.value) == "An earlier release had the object {'object': 1} for /integer, but the current release has an array"  # noqa: E501
 
 
 @pytest.mark.parametrize(('i', 'j'), [(0, 0), (0, 1), (1, 0), (1, 1)])

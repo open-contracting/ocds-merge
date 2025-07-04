@@ -26,7 +26,7 @@ class NonStringDateValueError(OCDSMergeError, TypeError):
 
 
 class InconsistentTypeError(OCDSMergeError, TypeError):
-    """Raised when a path is a literal and an object in different releases."""
+    """Raised when a path is a literal, an object, and/or an array in different releases."""
 
 
 class OCDSMergeWarning(UserWarning):

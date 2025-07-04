@@ -1,8 +1,13 @@
 Changelog
 =========
 
-Unreleased
-----------
+0.8.0 (2025-07-04)
+------------------
+
+Fixed
+~~~~~
+
+-  :func:`ocdsmerge.flatten.unflatten` raises :exc:`ocdsmerge.exceptions.InconsistentTypeError` if the same path is an object in one release and an array in another release.
 
 Changed
 ~~~~~~~

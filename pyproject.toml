@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ocdsmerge"
-version = "0.7.0"
+version = "0.8.0"
 authors = [{name = "Open Contracting Partnership", email = "data@open-contracting.org"}]
 description = "A library and reference implementation for merging OCDS releases"
 readme = "README.rst"

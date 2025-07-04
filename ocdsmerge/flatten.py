@@ -206,13 +206,17 @@ def unflatten(flattened: Flattened) -> dict[str, Any]:
                     # Cache which identifiers appear in which arrays.
                     identifiers[id_path] = new_node
 
-                    current_node.append(new_node)
+                    try:
+                        current_node.append(new_node)
+                    except AttributeError as e:
+                        message = 'An earlier release had the object {!r} for /{}, but the current release has an array'  # noqa: E501
+                        raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]))) from e
 
                 # Change into it.
                 current_node = identifiers[id_path]
 
             elif not isinstance(current_node, dict):
-                message = 'An earlier release had the literal {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
+                message = 'An earlier release had the value {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
                 raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]), part))
 
             # Otherwise, this is a path to a property of an object. If this is a path to a node we visited before,

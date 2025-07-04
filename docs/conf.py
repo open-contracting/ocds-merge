@@ -15,7 +15,7 @@ project = "OCDS Merge"
 copyright = "2019, Open Contracting Partnership"
 author = "Open Contracting Partnership"
 
-version = "0.7.0"
+version = "0.8.0"
 release = version
 
 # -- General configuration ---------------------------------------------------
