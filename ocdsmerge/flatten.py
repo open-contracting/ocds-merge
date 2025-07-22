@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 import warnings
 from enum import Enum, auto, unique
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 from ocdsmerge.exceptions import DuplicateIdValueWarning, InconsistentTypeError
 
@@ -23,7 +23,7 @@ class MergeStrategy(Enum):
 
 globals().update(MergeStrategy.__members__)
 
-Identifier = Union[int, str]
+Identifier = int | str
 Flattened = dict[tuple[Identifier, ...], Any]
 RuleOverrides = dict[tuple[str, ...], MergeStrategy]
 

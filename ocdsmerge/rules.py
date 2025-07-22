@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import jsonref
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
 MergeRules = dict[tuple[str, ...], str]
-Schema = Optional[Union[str, dict[str, Any]]]
+Schema = str | dict[str, Any] | None
 
 
 def get_merge_rules(schema: Schema = None) -> MergeRules:
