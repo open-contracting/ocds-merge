@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Changed
+~~~~~~~
+
+-  Add support for Python 3.13.
+-  Drop support for Python 3.9.
+
 0.8.0 (2025-07-04)
 ------------------
 
