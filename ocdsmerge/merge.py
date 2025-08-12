@@ -94,19 +94,24 @@ class MergedRelease:
         release = release.copy()
 
         # Store the values of fields that set "omitWhenMerged": true.
-        ocid = release.get('ocid')
-        release_id = release.get('id')
-        date = release.get('date')
+        ocid = release.get("ocid")
+        release_id = release.get("id")
+        date = release.get("date")
         # Prior to OCDS 1.1.4, `tag` didn't set "omitWhenMerged": true.
-        tag = release.pop('tag', None)
+        tag = release.pop("tag", None)
 
         flat = flatten(release, self.merge_rules, self.rule_overrides, flattened={})
         self.flat_append(flat, ocid, release_id, date, tag)
 
     def flat_append(
-        self, flat: Flattened, ocid: str | None, release_id: str | None, date: str | None, tag: str | None
+        self,
+        flat: Flattened,
+        ocid: str | None,
+        release_id: str | None,
+        date: str | None,
+        tag: str | None,
     ) -> None:
-        raise NotImplementedError('subclasses must implement flat_append()')
+        raise NotImplementedError("subclasses must implement flat_append()")
 
 
 class CompiledRelease(MergedRelease):
@@ -114,16 +119,21 @@ class CompiledRelease(MergedRelease):
 
     def __init__(self, data: dict[str, Any] | None = None, **kwargs):
         super().__init__(data, **kwargs)
-        self.data[('tag',)] = ['compiled']
+        self.data[("tag",)] = ["compiled"]
 
     def flat_append(
-        self, flat: Flattened, ocid: str | None, release_id: str | None, date: str | None, tag: str | None  # noqa: ARG002
+        self,
+        flat: Flattened,
+        ocid: str | None,
+        release_id: str | None,  # noqa: ARG002
+        date: str | None,
+        tag: str | None,  # noqa: ARG002
     ) -> None:
         # Add an `id` and `date`.
-        self.data[('id',)] = f'{ocid}-{date}'
-        self.data[('date',)] = date
+        self.data[("id",)] = f"{ocid}-{date}"
+        self.data[("date",)] = date
         # In OCDS 1.0, `ocid` incorrectly sets "mergeStrategy": "ocdsOmit".
-        self.data[('ocid',)] = ocid
+        self.data[("ocid",)] = ocid
 
         self.data.update(flat)
 
@@ -132,20 +142,27 @@ class VersionedRelease(MergedRelease):
     versioned = True
 
     def flat_append(
-        self, flat: Flattened, ocid: str | None, release_id: str | None, date: str | None, tag: str | None
+        self,
+        flat: Flattened,
+        ocid: str | None,
+        release_id: str | None,
+        date: str | None,
+        tag: str | None,
     ) -> None:
         # Don't version the OCID.
-        flat.pop(('ocid',), None)
-        self.data[('ocid',)] = ocid
+        flat.pop(("ocid",), None)
+        self.data[("ocid",)] = ocid
 
         for key, value in flat.items():
             # If key is not versioned, continue. If the value is unchanged, don't add it to the history.
-            if key in self.data and (type(self.data[key]) is not list or value == self.data[key][-1]['value']):
+            if key in self.data and (type(self.data[key]) is not list or value == self.data[key][-1]["value"]):
                 continue
 
-            self.data.setdefault(key, []).append({
-                'releaseID': release_id,
-                'releaseDate': date,
-                'releaseTag': tag,
-                'value': value,
-            })
+            self.data.setdefault(key, []).append(
+                {
+                    "releaseID": release_id,
+                    "releaseDate": date,
+                    "releaseTag": tag,
+                    "value": value,
+                }
+            )

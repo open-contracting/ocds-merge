@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
     from ocdsmerge.rules import MergeRules
 
-VERSIONED_VALUE_KEYS = frozenset(['releaseID', 'releaseDate', 'releaseTag', 'value'])
+VERSIONED_VALUE_KEYS = frozenset(["releaseID", "releaseDate", "releaseTag", "value"])
 
 
 @unique
@@ -29,11 +29,12 @@ RuleOverrides = dict[tuple[str, ...], MergeStrategy]
 
 
 class IdValue(str):
-    __slots__ = ('_original_value', 'identifier')
+    __slots__ = ("_original_value", "identifier")
 
     """
     A string with ``identifier`` and ``original_value`` properties.
     """
+
     def __init__(self, identifier: Identifier):
         self.identifier = identifier
         str.__init__(identifier)
@@ -108,7 +109,7 @@ def flatten(
 
         new_path_merge_rules = merge_rules.get(new_rule_path, None)
 
-        if new_path_merge_rules == 'omitWhenMerged':
+        if new_path_merge_rules == "omitWhenMerged":
             continue
         # If it's `wholeListMerge`, if it's neither an object nor an array, if it's an array containing non-objects
         # (even if `wholeListMerge` is `false`), or if it's versioned values, use the whole list merge strategy.
@@ -116,9 +117,12 @@ def flatten(
         # cases but not in others.
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#whole-list-merge
         # See https://standard.open-contracting.org/1.1/en/schema/merging/#objects
-        if new_path_merge_rules == 'wholeListMerge' or not isinstance(value, (dict, list)) or \
-                (type(value) is list and any(not isinstance(item, dict) for item in value)) or \
-                (versioned and value and all(is_versioned_value(item) for item in value)):
+        if (
+            new_path_merge_rules == "wholeListMerge"
+            or not isinstance(value, (dict, list))
+            or (type(value) is list and any(not isinstance(item, dict) for item in value))
+            or (versioned and value and all(is_versioned_value(item) for item in value))
+        ):
             flattened[(*path, key)] = value
         # Recurse into non-empty objects, and arrays of objects that aren't `wholeListMerge`.
         elif value:
@@ -142,7 +146,7 @@ def _enumerate(
             identifiers[default_path] = key
         elif identifiers[default_path] != key:
             warnings.warn(
-                f'Multiple objects have the `id` value {default_key!r} in the `{".".join(map(str, rule_path))}` array',
+                f"Multiple objects have the `id` value {default_key!r} in the `{'.'.join(map(str, rule_path))}` array",
                 category=DuplicateIdValueWarning,
                 stacklevel=2,
             )
@@ -153,8 +157,8 @@ def _enumerate(
 def _id_value(key: int, value: dict[str, Any], rule: MergeStrategy | None) -> tuple[IdValue, IdValue]:
     # If it is an array of objects, get the `id` value to apply the identifier merge strategy.
     # https://standard.open-contracting.org/latest/en/schema/merging/#identifier-merge
-    if 'id' in value:
-        id_value = value['id']
+    if "id" in value:
+        id_value = value["id"]
         identifier = id_value
     # If the object contained no top-level `id` value, set a unique value.
     else:
@@ -166,7 +170,7 @@ def _id_value(key: int, value: dict[str, Any], rule: MergeStrategy | None) -> tu
 
     if rule == MergeStrategy.APPEND:
         # Avoid creating an extra UUID.
-        new_key = IdValue(str(uuid.uuid1(1))) if 'id' in value else default_key
+        new_key = IdValue(str(uuid.uuid1(1))) if "id" in value else default_key
     elif rule == MergeStrategy.MERGE_BY_POSITION:
         new_key = IdValue(key)
     else:
@@ -195,13 +199,13 @@ def unflatten(flattened: Flattened) -> dict[str, Any]:
             # See https://standard.open-contracting.org/1.1/en/schema/merging/#identifier-merge
             if type(part) is IdValue:
                 # If no `id` of an object in the array matches, append a new object.
-                id_path = (*key[:end - 1], part.identifier)
+                id_path = (*key[: end - 1], part.identifier)
                 if id_path not in identifiers:
                     new_node = {}
 
                     # If the original object had an `id` value, set it.
                     if part.original_value is not None:
-                        new_node['id'] = part.original_value
+                        new_node["id"] = part.original_value
 
                     # Cache which identifiers appear in which arrays.
                     identifiers[id_path] = new_node
@@ -209,15 +213,17 @@ def unflatten(flattened: Flattened) -> dict[str, Any]:
                     try:
                         current_node.append(new_node)
                     except AttributeError as e:
-                        message = 'An earlier release had the object {!r} for /{}, but the current release has an array'  # noqa: E501
-                        raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]))) from e
+                        message = (
+                            "An earlier release had the object {!r} for /{}, but the current release has an array"
+                        )
+                        raise InconsistentTypeError(message.format(current_node, "/".join(key[: end - 1]))) from e
 
                 # Change into it.
                 current_node = identifiers[id_path]
 
             elif not isinstance(current_node, dict):
-                message = 'An earlier release had the value {!r} for /{}, but the current release has an object with a {!r} key'  # noqa: E501
-                raise InconsistentTypeError(message.format(current_node, '/'.join(key[:end - 1]), part))
+                message = "An earlier release had the value {!r} for /{}, but the current release has an object with a {!r} key"  # noqa: E501
+                raise InconsistentTypeError(message.format(current_node, "/".join(key[: end - 1]), part))
 
             # Otherwise, this is a path to a property of an object. If this is a path to a node we visited before,
             # change into it. If it's an `id` field, it's already been set to its original value.
