@@ -22,9 +22,12 @@ from tests import load, path, schema_url, tags
 def get_test_cases():
     test_merge_argvalues = []
 
-    simple_schema = path("schema.json")
-
-    for minor_version, schema in (("1.1", None), ("1.1", schema_url), ("1.0", schema_url), ("schema", simple_schema)):
+    for minor_version, schema in (
+        ("1.1", None),
+        ("1.1", schema_url),
+        ("1.0", schema_url),
+        ("schema", path("schema.json")),
+    ):
         if schema and schema.startswith("http"):
             schema = schema.format(tags[minor_version])
         for suffix in ("compiled", "versioned"):
@@ -48,7 +51,7 @@ def get_test_cases():
         (NonObjectReleaseError, set()),
     ],
 )
-def test_errors(error, data, empty_merger):
+def test_sorted_releases_errors(error, data, empty_merger):
     for infix in ("compiled", "versioned"):
         with pytest.raises(error):
             getattr(empty_merger, f"create_{infix}_release")([{"date": "2010-01-01"}, data])
@@ -90,7 +93,7 @@ def test_errors(error, data, empty_merger):
         assert empty_merger.create_versioned_release([release]) == expected
 
 
-def test_key_error(empty_merger):
+def test_sorted_releases_key_error(empty_merger):
     with pytest.raises(KeyError) as excinfo:
         empty_merger.create_compiled_release([{"date": "2010-01-01"}, {}])
 
@@ -122,7 +125,7 @@ def test_merge(filename, schema):
         actual = getattr(merger, f"create_{infix}_release")(releases)
 
     assert releases == original
-    assert actual == expected, filename + "\n" + json.dumps(actual)
+    assert actual == expected, f"{filename}\n{json.dumps(actual, indent=2)}"
 
 
 @pytest.mark.parametrize(("infix", "cls"), [("compiled", CompiledRelease), ("versioned", VersionedRelease)])
