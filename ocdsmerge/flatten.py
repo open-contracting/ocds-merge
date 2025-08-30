@@ -29,11 +29,9 @@ RuleOverrides = dict[tuple[str, ...], MergeStrategy]
 
 
 class IdValue(str):
-    __slots__ = ("_original_value", "identifier")
+    """A string with ``identifier`` and ``original_value`` properties."""
 
-    """
-    A string with ``identifier`` and ``original_value`` properties.
-    """
+    __slots__ = ("_original_value", "identifier")
 
     def __init__(self, identifier: Identifier):
         self.identifier = identifier
