@@ -46,18 +46,27 @@ def sorted_releases(releases: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if e.args[0] in {
             "string indices must be integers",
             "string indices must be integers, not 'str'",
-            "string index indices must be integers or slices, not str",
+            "string index indices must be integers or slices, not 'str'",  # PyPy
         }:
             raise NonObjectReleaseError(
                 "At least one release is a string, not a dict. Use `json.loads` to parse the string as JSON."
             ) from e
-        if e.args[0] == "byte indices must be integers or slices, not str":
+        if e.args[0] in {
+            "byte indices must be integers or slices, not str",
+            "byte indices must be integers or slices, not 'str'",  # PyPy
+        }:
             raise NonObjectReleaseError(
                 "At least one release is a byte-string, not a dict. Use `json.loads` to parse the byte-string as JSON."
             ) from e
-        if e.args[0] == "list indices must be integers or slices, not str":
+        if e.args[0] in {
+            "list indices must be integers or slices, not str",
+            "list indices must be integers or slices, not 'str'",  # PyPy
+        }:
             raise NonObjectReleaseError("At least one release is a list, not a dict.") from e
-        if e.args[0] == "tuple indices must be integers or slices, not str":
+        if e.args[0] in {
+            "tuple indices must be integers or slices, not str",
+            "tuple indices must be integers or slices, not 'str'",  # PyPy
+        }:
             raise NonObjectReleaseError("At least one release is a tuple, not a dict.") from e
         if e.args[0] in {"'set' object is not subscriptable", "'set' object is not subscriptable (key 'date')"}:
             raise NonObjectReleaseError("At least one release is a set, not a dict.") from e
