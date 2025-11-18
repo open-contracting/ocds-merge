@@ -46,7 +46,7 @@ def sorted_releases(releases: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if e.args[0] in {
             "string indices must be integers",
             "string indices must be integers, not 'str'",
-            "string index indices must be integers or slices, not 'str'",  # PyPy
+            "string indices must be integers or slices, not 'str'",  # PyPy
         }:
             raise NonObjectReleaseError(
                 "At least one release is a string, not a dict. Use `json.loads` to parse the string as JSON."
