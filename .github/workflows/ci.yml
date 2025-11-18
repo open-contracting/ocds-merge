@@ -19,6 +19,6 @@ jobs:
           cache-dependency-path: pyproject.toml
       - run: pip install .[test]
       - run: coverage run --source=ocdsmerge -m pytest -W error
-      # https://github.com/coverallsapp/homebrew-coveralls/issues/65
-      - if: matrix.os != 'macos-latest'
-        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
+      - uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        with:
+          fail_ci_if_error: true
