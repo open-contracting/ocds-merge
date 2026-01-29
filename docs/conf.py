@@ -35,6 +35,12 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
 html_static_path = []
+html_theme_options = {
+    "announcement": """
+    <strong>New!</strong> Use the <a href="https://ocds-merge-rs.readthedocs.io/">Rust version of OCDS Merge</a>
+    for better performance.
+    """,
+}
 
 # -- Extension configuration -------------------------------------------------
 
