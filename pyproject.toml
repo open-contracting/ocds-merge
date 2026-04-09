@@ -65,3 +65,6 @@ ignore-variadic-names = true
     "PLW2901",
 ]
 "tests/test_fixtures.py" = ["B028"]  # warnings
+
+[tool.uv.pip]
+exclude-newer = "1 week"
