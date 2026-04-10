@@ -4,10 +4,14 @@ Changelog
 Unreleased
 ----------
 
-Changed
-~~~~~~~
+Added
+~~~~~
 
 -  Add support for Python 3.13, 3.14.
+
+Removed
+~~~~~~~
+
 -  Drop support for Python 3.9.
 
 0.8.0 (2025-07-04)
@@ -22,6 +26,10 @@ Changed
 ~~~~~~~
 
 -  :func:`ocdsmerge.flatten.flatten` accepts ``versioned`` as a keyword argument only.
+
+Removed
+~~~~~~~
+
 -  Drop support for Python 3.8.
 
 0.7.0 (2024-05-08)
@@ -32,6 +40,10 @@ Changed
 
 -  :func:`ocdsmerge.util.get_tags` raises an error if it encounters an HTTP error.
 -  :exc:`ocdsmerge.exceptions.DuplicateIdValueWarning` has no custom attributes.
+
+Removed
+~~~~~~~
+
 -  Drop support for Python 3.6 and 3.7.
 
 Added
