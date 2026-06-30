@@ -164,6 +164,27 @@ def test_append(infix, cls, empty_merger):
     assert merger.asdict() == expected
 
 
+@pytest.mark.parametrize(
+    ("first_id", "second_id", "expected"),
+    [
+        (1, 1, [{"id": 1, "x": "first", "y": "second"}]),
+        ("1", "1", [{"id": "1", "x": "first", "y": "second"}]),
+        (1, "1", [{"id": 1, "x": "first"}, {"id": "1", "y": "second"}]),
+    ],
+)
+def test_identifier_merge_id_type(first_id, second_id, expected, empty_merger):
+    data = [
+        {"date": "2000-01-01T00:00:00Z", "array": [{"id": first_id, "x": "first"}]},
+        {"date": "2000-01-02T00:00:00Z", "array": [{"id": second_id, "y": "second"}]},
+    ]
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # no unexpected warnings
+        actual = empty_merger.create_compiled_release(data)
+
+    assert actual["array"] == expected
+
+
 @pytest.mark.parametrize(("value", "infix"), [(1, "1"), ([1], "[1]"), ([{"object": 1}], "[{'object': 1}]")])
 def test_inconsistent_type_object_last(value, infix, empty_merger):
     data = [
