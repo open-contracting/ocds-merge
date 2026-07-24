@@ -5,5 +5,3 @@ jobs:
     uses: open-contracting/.github/.github/workflows/lint.yml@main
     permissions:
       contents: read
-    with:
-      python-version: '3.10'
